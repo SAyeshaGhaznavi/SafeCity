@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Authorized Login</title>
+    <script>
+        function togglePassword() {
+            const pwd = document.getElementById('password');
+            pwd.type = pwd.type === 'password' ? 'text' : 'password';
+        }
+    </script>
+</head>
+<body style="font-family: Arial; text-align:center;">
+    <h1>Authorized Personnel Login</h1>
+
+    <div style="width:300px; margin:auto; padding:20px; border:1px solid #ccc; border-radius:10px;">
+
+        <input type="text" placeholder="Agency Email/Username" style="width:100%; margin-bottom:10px; padding:8px;">
+
+        <div style="position:relative;">
+            <input id="password" type="password" placeholder="Password" style="width:100%; margin-bottom:10px; padding:8px;">
+            <button onclick="togglePassword()" style="position:absolute; right:5px; top:5px;">👁</button>
+        </div>
+
+        <input type="text" placeholder="Badge Number/Personnel ID" style="width:100%; margin-bottom:10px; padding:8px;">
+
+        <div style="text-align:right; font-size:12px;">
+            <a href="#">Forgot Password</a>
+        </div>
+
+        <button style="margin-top:10px; width:100%;">Access Dashboard</button>
+
+        <p style="margin-top:10px; font-size:12px;">
+            New to SafeCity? <a href="#">Register Badge</a>
+        </p>
+    </div>
+</body>
+</html>
