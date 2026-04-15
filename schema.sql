@@ -95,3 +95,58 @@ CREATE TABLE Logs (
 
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
+
+INSERT INTO Users (name, email, password_hash, phone, role)
+VALUES
+('Ali Khan', 'ali@gmail.com', 'hashed_pw_1', '03001234567', 'Citizen'),
+('Sara Ahmed', 'sara@gmail.com', 'hashed_pw_2', '03007654321', 'Police'),
+('Usman Tariq', 'usman@gmail.com', 'hashed_pw_3', '03001112233', 'Detective'),
+('Emergency Unit 1', 'ambulance@city.gov', 'hashed_pw_4', '1122', 'Ambulance'),
+('Admin User', 'admin@safecity.com', 'hashed_pw_5', '03009998877', 'Admin');
+
+INSERT INTO CrimeCategories (name)
+VALUES
+('Theft'),
+('Robbery'),
+('Harassment'),
+('Accident'),
+('Cyber Crime');
+
+INSERT INTO Complaints (user_id, category_id, description, location, status)
+VALUES
+(1, 1, 'Mobile phone stolen in market', 'Lahore Mall Road', 'Pending'),
+(1, 3, 'Harassment reported near bus stop', 'Gulberg Lahore', 'In Progress');
+
+INSERT INTO Evidence (complaint_id, file_url)
+VALUES
+(1, 'uploads/photo1.jpg'),
+(2, 'uploads/video1.mp4');
+
+INSERT INTO Cases (complaint_id, assigned_police_id, assigned_detective_id, notes)
+VALUES
+(1, 2, 3, 'Investigating theft case'),
+(2, 2, NULL, 'Patrol assigned to location');
+
+INSERT INTO Dispatch (complaint_id, assigned_unit_id, status, eta)
+VALUES
+(2, 4, 'Dispatched', 10),
+(1, 4, 'On Route', 5);
+
+INSERT INTO VolunteerDetails (volunteer_id, availability, skills)
+VALUES
+(1, 1, 'First Aid, Rescue Support');
+
+INSERT INTO VolunteerAssignments (volunteer_id, complaint_id)
+VALUES
+(1, 2);
+
+INSERT INTO Notifications (user_id, message, is_read)
+VALUES
+(1, 'Your complaint has been received', 0),
+(2, 'New case assigned to you', 0);
+
+INSERT INTO Logs (user_id, action)
+VALUES
+(1, 'Created complaint'),
+(2, 'Updated case status'),
+(3, 'Viewed complaint details');
