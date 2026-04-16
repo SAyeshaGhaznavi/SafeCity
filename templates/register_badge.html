@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <a href="{{ url_for('register_badge') }}">Register Badge</a>
+</head>
+
+<body style="font-family: Arial; text-align:center;">
+
+<h1>SafeCity Badge Registration</h1>
+
+<!-- FIXED LINE 14: Removed the accidental </form> at the end -->
+<form method="POST" action="/register_badge">
+
+<div style="width:320px; margin:auto; padding:20px; border:1px solid #ccc; border-radius:10px;">
+
+    <!-- NAME -->
+    <input type="text" name="name" placeholder="Full Name"
+        style="width:100%; margin-bottom:10px; padding:8px;" required>
+
+    <!-- EMAIL -->
+    <input type="email" name="email" placeholder="Email"
+        style="width:100%; margin-bottom:10px; padding:8px;" required>
+
+    <!-- PASSWORD -->
+    <input type="password" name="password" placeholder="Password"
+        style="width:100%; margin-bottom:10px; padding:8px;" required>
+
+    <!-- BADGE NUMBER -->
+    <input type="text" name="badgenumber" placeholder="Badge Number"
+        style="width:100%; margin-bottom:10px; padding:8px;" required>
+
+    <!-- BUTTON -->
+    <button type="submit" style="width:100%; padding:10px;">
+        Register
+    </button>
+
+    <!-- FIXED LINE 45: Changed to read the Python error message -->
+    {% if msg %}
+        <p style="color: red; font-weight: bold; margin-top:10px;">{{ msg }}</p>
+    {% endif %}
+
+</div>
+
+</form>
+
+</body>
+</html>

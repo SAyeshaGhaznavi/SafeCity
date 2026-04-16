@@ -1,11 +1,15 @@
-CREATE TABLE Users (
-    user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+CREATE TABLE Citizens (
+    citizen_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    cnic TEXT UNIQUE NOT NULL
+);
+
+CREATE TABLE AuthorizedPersonnel (
+    personnel_id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
-    phone TEXT,
-    role TEXT CHECK(role IN ('Citizen','Police','Detective','Ambulance','Volunteer','Admin','Operator')) NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    badge_number TEXT UNIQUE NOT NULL
 );
 
 CREATE TABLE CrimeCategories (
@@ -96,13 +100,19 @@ CREATE TABLE Logs (
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
 );
 
-INSERT INTO Users (name, email, password_hash, phone, role)
-VALUES
-('Ali Khan', 'ali@gmail.com', 'hashed_pw_1', '03001234567', 'Citizen'),
-('Sara Ahmed', 'sara@gmail.com', 'hashed_pw_2', '03007654321', 'Police'),
-('Usman Tariq', 'usman@gmail.com', 'hashed_pw_3', '03001112233', 'Detective'),
-('Emergency Unit 1', 'ambulance@city.gov', 'hashed_pw_4', '1122', 'Ambulance'),
-('Admin User', 'admin@safecity.com', 'hashed_pw_5', '03009998877', 'Admin');
+INSERT INTO Citizens (name, cnic) VALUES
+('Ali Raza', '35202-1234567-1'),
+('Ayesha Khan', '35202-2345678-2'),
+('Usman Tariq', '35202-3456789-3'),
+('Fatima Noor', '35202-4567890-4'),
+('Hassan Ali', '35202-5678901-5');
+
+INSERT INTO AuthorizedPersonnel (name, email, password_hash, badge_number) VALUES
+('Inspector Ahmed', 'ahmed@safe.com', 'ahmed123', 'BADGE-1001'),
+('Detective Sara', 'sara@safe.com', 'sara456', 'BADGE-1002'),
+('Officer Bilal', 'bilal@safe.com', 'bilalpass', 'BADGE-1003'),
+('Admin Hamza', 'hamza@safe.com', 'hamzapass123', 'BADGE-1004'),
+('Operator Zainab', 'zainab@safe.com', 'zainab789', 'BADGE-1005');
 
 INSERT INTO CrimeCategories (name)
 VALUES

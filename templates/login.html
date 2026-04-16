@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Authorized Login</title>
+
     <script>
         function togglePassword() {
             const pwd = document.getElementById('password');
@@ -9,29 +10,88 @@
         }
     </script>
 </head>
+
 <body style="font-family: Arial; text-align:center;">
-    <h1>Authorized Personnel Login</h1>
 
-    <div style="width:300px; margin:auto; padding:20px; border:1px solid #ccc; border-radius:10px;">
+<h1>Authorized Personnel Login</h1>
 
-        <input type="text" placeholder="Agency Email/Username" style="width:100%; margin-bottom:10px; padding:8px;">
+<form method="POST" action="/login">
 
-        <div style="position:relative;">
-            <input id="password" type="password" placeholder="Password" style="width:100%; margin-bottom:10px; padding:8px;">
-            <button onclick="togglePassword()" style="position:absolute; right:5px; top:5px;">👁</button>
-        </div>
+<div style="width:300px; margin:auto; padding:20px; border:1px solid #ccc; border-radius:10px;">
 
-        <input type="text" placeholder="Badge Number/Personnel ID" style="width:100%; margin-bottom:10px; padding:8px;">
+    <!-- USERNAME -->
+    <input type="text" name="username"
+        placeholder="Agency Username"
+        value="{{ request.form.get('username','') }}"
+        style="width:100%; margin-bottom:5px; padding:8px;">
 
-        <div style="text-align:right; font-size:12px;">
-            <a href="#">Forgot Password</a>
-        </div>
+    <small style="color:red;">
+        {% with messages = get_flashed_messages(category_filter=['username_error']) %}
+            {% if messages %}{{ messages[0] }}{% endif %}
+        {% endwith %}
+    </small>
 
-        <button style="margin-top:10px; width:100%;">Access Dashboard</button>
+    <!-- EMAIL -->
+    <input type="email" name="email"
+        placeholder="Agency Email"
+        value="{{ request.form.get('email','') }}"
+        style="width:100%; margin-bottom:5px; padding:8px;">
 
-        <p style="margin-top:10px; font-size:12px;">
-            New to SafeCity? <a href="#">Register Badge</a>
-        </p>
+    <small style="color:red;">
+        {% with messages = get_flashed_messages(category_filter=['email_error']) %}
+            {% if messages %}{{ messages[0] }}{% endif %}
+        {% endwith %}
+    </small>
+
+    <!-- PASSWORD -->
+    <div style="position:relative;">
+        <input id="password" type="password" name="password"
+            placeholder="Password"
+            style="width:100%; margin-bottom:5px; padding:8px;">
+
+        <button type="button" onclick="togglePassword()"
+            style="position:absolute; right:5px; top:5px;">
+            👁
+        </button>
     </div>
+
+    <small style="color:red;">
+        {% with messages = get_flashed_messages(category_filter=['password_error']) %}
+            {% if messages %}{{ messages[0] }}{% endif %}
+        {% endwith %}
+    </small>
+
+    <!-- BADGE -->
+    <input type="text" name="badge_number"
+        placeholder="Badge Number/Personnel ID"
+        value="{{ request.form.get('badge_number','') }}"
+        style="width:100%; margin-bottom:5px; padding:8px;">
+
+    <small style="color:red;">
+        {% with messages = get_flashed_messages(category_filter=['badge_error']) %}
+            {% if messages %}{{ messages[0] }}{% endif %}
+        {% endwith %}
+    </small>
+
+    <br><br>
+
+    <!-- 🔽 ADDED PART ONLY -->
+    <div style="text-align:right; font-size:12px; margin-top:5px;">
+        <a href="#">Forgot Password</a>
+    </div>
+
+    <p style="margin-top:10px; font-size:12px;">
+        New to SafeCity? <a href="{{ url_for('register_badge') }}">Register Badge</a>
+    </p>
+    <!-- 🔼 END ADDED PART -->
+
+    <button type="submit" style="width:100%; padding:10px;">
+        Access Dashboard
+    </button>
+
+</div>
+
+</form>
+
 </body>
 </html>

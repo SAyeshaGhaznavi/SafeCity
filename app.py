@@ -5,6 +5,7 @@ from flask import session
 from flask import url_for,  flash
 
 app = Flask(__name__)
+app.secret_key = "safe_city_secret_123"
 
 DATABASE = "safecity.db"
 
@@ -54,9 +55,94 @@ def portal():
 def report():
     return render_template('report.html')
 
-@app.route('/login')
+
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    return render_template('login.html')
+    if request.method == 'POST':
+
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        badge_number = request.form.get('badge_number')
+
+        conn = get_db_connection()
+
+        user = conn.execute(
+            "SELECT * FROM AuthorizedPersonnel WHERE email = ?",
+            (email,)
+        ).fetchone()
+
+        conn.close()
+
+        error = False
+
+        if not user:
+            flash("Email is incorrect", "email_error")
+            error = True
+
+        if user:
+
+            if user['badge_number'] != badge_number:
+                flash("Badge number is incorrect", "badge_error")
+                error = True
+
+            if user['password_hash'] != password:
+                flash("Password is incorrect", "password_error")
+                error = True
+
+            if username and username != user['name']:
+                flash("Username is incorrect", "username_error")
+                error = True
+
+        if error:
+            return render_template("login.html")
+
+        session['user_id'] = user['personnel_id']
+        session['name'] = user['name']
+
+        return redirect(url_for('police_dashboard'))
+
+    return render_template("login.html")
+
+@app.route('/register_badge', methods=['GET', 'POST'])
+def register_badge():
+    if request.method == 'POST':
+
+        name = request.form.get('name', '').strip()
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '')
+        badgenumber = request.form.get('badgenumber', '').strip()
+
+        if not name or not email or not password or not badgenumber:
+            return render_template("register_badge.html", msg="Please fill in all fields ⚠️")
+
+        conn = get_db_connection()
+
+        existing = conn.execute(
+            "SELECT * FROM AuthorizedPersonnel WHERE name = ? OR email = ?",
+            (name, email)
+        ).fetchone()
+
+        if existing:
+            conn.close()
+            return render_template("register_badge.html", msg="Name or Email already exists ❌")
+        
+        conn.execute(
+            "INSERT INTO AuthorizedPersonnel (name, email, password_hash, badge_number) VALUES (?, ?, ?, ?)",
+            (name, email, password, badgenumber)
+        )
+
+        conn.commit()
+        conn.close()
+
+        flash("Registered Successfully ✅", "success")
+        return redirect(url_for("portal"))
+
+    return render_template("register_badge.html")
+
+@app.route('/police_dashboard')
+def police_dashboard():
+    return render_template('police_dashboard.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
