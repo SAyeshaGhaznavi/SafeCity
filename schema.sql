@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS Citizens (
     citizen_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
+    full_name TEXT NOT NULL,
     cnic TEXT UNIQUE NOT NULL
 );
 
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS CrimeCategories (
 
 CREATE TABLE IF NOT EXISTS Complaints (
     complaint_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
+    user_id INTEGER,
     category_id INTEGER,
     description TEXT NOT NULL,
     location TEXT NOT NULL,
@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS Logs (
     FOREIGN KEY (user_id) REFERENCES Citizens(citizen_id)
 );
 
-INSERT INTO Citizens (name, cnic) VALUES
+INSERT INTO Citizens (full_name, cnic) VALUES
 ('Ali Raza', '35202-1234567-1'),
 ('Ayesha Khan', '35202-2345678-2'),
 ('Usman Tariq', '35202-3456789-3'),

@@ -56,6 +56,11 @@
     .btn-outline:hover{border-color:var(--muted)}
     .hotline{text-align:center;font-size:0.75rem;color:var(--muted);padding:8px;border-top:1px solid var(--border)}
     .hotline strong{color:var(--cyan)}
+
+    /* FLASH MESSAGES */
+    .flash-msg{padding:10px 14px;border-radius:8px;font-size:0.82rem;font-weight:600;border:1px solid}
+    .flash-success{background:rgba(0,229,160,0.12);color:#00e5a0;border-color:rgba(0,229,160,0.25)}
+    .flash-error{background:rgba(255,78,106,0.12);color:#ff4e6a;border-color:rgba(255,78,106,0.25)}
   </style>
 </head>
 <body>
@@ -68,6 +73,16 @@
 
     <div class="phone-content">
       <div class="content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div style="display:flex;flex-direction:column;gap:8px">
+              {% for category, message in messages %}
+                <div class="flash-msg {{ 'flash-success' if category == 'success' else 'flash-error' }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
         <!-- CRIME TYPE -->
         <div>
           <div class="section-label">Crime Type</div>
@@ -82,7 +97,8 @@
         </div>
 
         <!-- FORM -->
-        <form method="POST" action="/report">
+        <form method="POST" action="/report" enctype="multipart/form-data">
+          <input type="hidden" name="crime_type" id="crimeTypeInput" value="Theft">
           <div style="display:flex;flex-direction:column;gap:12px">
             <div class="form-group">
               <label>Description</label>
@@ -104,8 +120,8 @@
               <input type="checkbox" id="anon" name="anonymous">
               <label for="anon" style="font-size:0.8rem;text-transform:none;letter-spacing:0;color:var(--muted);font-weight:400">Report Anonymously</label>
             </div>
+            <input type="file" id="fileInput" style="display:none" accept="image/*,video/*" name="evidence" onchange="document.querySelector('.upload-text').textContent = this.files[0] ? this.files[0].name : 'Tap to upload evidence (Images/Video)'">
             <div class="upload-area" onclick="document.getElementById('fileInput').click()">
-              <input type="file" id="fileInput" style="display:none" accept="image/*,video/*">
               <div class="upload-icon">📎</div>
               <div class="upload-text">Tap to upload evidence (Images/Video)</div>
             </div>
@@ -120,7 +136,7 @@
     </div>
   </div>
   <script>
-    function selectCrime(btn){document.querySelectorAll('.crime-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active')}
+    function selectCrime(btn){document.querySelectorAll('.crime-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.getElementById('crimeTypeInput').value=btn.querySelector('.crime-btn-label').textContent}
   </script>
 </body>
 </html>

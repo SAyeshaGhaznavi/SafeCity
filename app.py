@@ -1,11 +1,19 @@
 import sqlite3
+import os
+import time
 from flask import Flask, request, render_template, redirect
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import session
 from flask import url_for,  flash
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = "safe_city_secret_123"
+
+UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'uploads')
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 DATABASE = "safecity.db"
 
@@ -47,13 +55,160 @@ def run_initdb():
 def splash():
     return render_template('splash.html')
 
+@app.route('/viewdb')
+def view_db():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    # 1. Get the names of all tables in the database
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+    tables = cursor.fetchall()
+
+    # 2. Loop through each table and grab all its rows
+    table_data = {}
+    for table in tables:
+        table_name = table['name']
+        cursor.execute(f"SELECT * FROM {table_name};")
+        data = cursor.fetchall()
+        table_data[table_name] = data
+    
+    conn.close()
+    
+    # 3. Send the data to the same HTML template you already made
+    return render_template("initdb.html", table_data=table_data)
+
 @app.route('/portal')
 def portal():
     return render_template('portal.html')
 
-@app.route('/report')
+@app.route('/report', methods=['GET', 'POST'])
 def report():
-    return render_template('report.html')
+    # GET → serve the form
+    if request.method == 'GET':
+        return render_template('report.html')
+
+    # ------------------------------------------------------------------
+    # POST → handle submission
+    # ------------------------------------------------------------------
+
+    # 1. Pull every field from the form
+    crime_type   = request.form.get('crime_type', 'Other').strip()
+    description  = request.form.get('description', '').strip()
+    location     = request.form.get('location', '').strip()
+    full_name    = request.form.get('full_name', '').strip()
+    cnic         = request.form.get('cnic', '').strip()
+    is_anonymous = 'anonymous' in request.form        # checkbox
+    evidence     = request.files.get('evidence')       # may be None
+
+    # 2. Basic validation
+    errors = []
+    if not description:
+        errors.append('Description is required.')
+    if not location:
+        errors.append('Location is required.')
+    if not is_anonymous:
+        if not full_name:
+            errors.append('Full name is required (or check "Report Anonymously").')
+        if not cnic:
+            errors.append('CNIC is required (or check "Report Anonymously").')
+
+    if errors:
+        for e in errors:
+            flash(e, 'error')
+        return redirect(url_for('report'))
+
+    db = get_db_connection()
+    try:
+        # ----------------------------------------------------------
+        # 3. Resolve category_id  (insert if it doesn't exist yet)
+        # ----------------------------------------------------------
+        row = db.execute(
+            'SELECT category_id FROM CrimeCategories WHERE name = ?',
+            (crime_type,)
+        ).fetchone()
+
+        if row:
+            category_id = row['category_id']
+        else:
+            cursor = db.execute(
+                'INSERT INTO CrimeCategories (name) VALUES (?)',
+                (crime_type,)
+            )
+            category_id = cursor.lastrowid
+
+        # ----------------------------------------------------------
+        # 4. Resolve user_id
+        #    - If the user is logged in via session, use that.
+        #    - Otherwise look up (or create) a Citizen by CNIC.
+        #    - Anonymous reports store user_id as NULL.
+        # ----------------------------------------------------------
+        user_id = session.get('user_id')
+
+        if not user_id and not is_anonymous:
+            citizen = db.execute(
+                'SELECT citizen_id FROM Citizens WHERE cnic = ?',
+                (cnic,)
+            ).fetchone()
+
+            if citizen:
+                user_id = citizen['citizen_id']
+            else:
+                cursor = db.execute(
+                    'INSERT INTO Citizens (full_name, cnic) VALUES (?, ?)',
+                    (full_name, cnic)
+                )
+                user_id = cursor.lastrowid
+                # Auto-log them in so future reports reuse the same record
+                session['user_id'] = user_id
+
+        if is_anonymous:
+            user_id = None
+
+        # ----------------------------------------------------------
+        # 5. Insert the complaint
+        # ----------------------------------------------------------
+        cursor = db.execute(
+            '''INSERT INTO Complaints
+               (user_id, category_id, description, location, status)
+               VALUES (?, ?, ?, ?, ?)''',
+            (user_id, category_id, description, location, 'Pending')
+        )
+        complaint_id = cursor.lastrowid
+
+        # ----------------------------------------------------------
+        # 6. Handle optional evidence upload
+        # ----------------------------------------------------------
+        if evidence and evidence.filename:
+            # Sanitise the filename but keep the original extension
+            safe_name = secure_filename(evidence.filename)
+            ext = safe_name.rsplit('.', 1)[-1] if '.' in safe_name else 'bin'
+            stored_name = f"ev_{complaint_id}_{int(time.time())}.{ext}"
+            save_path = os.path.join(app.config['UPLOAD_FOLDER'], stored_name)
+            evidence.save(save_path)
+
+            file_url = f"/uploads/{stored_name}"
+
+            db.execute(
+                'INSERT INTO Evidence (complaint_id, file_url) VALUES (?, ?)',
+                (complaint_id, file_url)
+            )
+
+        db.commit()
+
+    except Exception as exc:
+        db.rollback()
+        app.logger.error('Report submission failed: %s', exc)
+        flash('Something went wrong. Please try again.', 'error')
+        return redirect(url_for('report'))
+
+    finally:
+        db.close()
+
+    # ------------------------------------------------------------------
+    # 7. Success → flash message and redirect to portal
+    # ------------------------------------------------------------------
+    flash('Thank you for reporting. Your complaint has been submitted successfully.', 'success')
+    return redirect(url_for('report'))
 
 
 @app.route('/login', methods=['GET', 'POST'])
