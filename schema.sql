@@ -26,7 +26,7 @@ CREATE TABLE Complaints (
     status TEXT DEFAULT 'Pending' CHECK(status IN ('Pending','In Progress','Resolved')),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (user_id) REFERENCES Citizens(citizen_id),
     FOREIGN KEY (category_id) REFERENCES CrimeCategories(category_id)
 );
 
@@ -61,7 +61,7 @@ CREATE TABLE Dispatch (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (complaint_id) REFERENCES Complaints(complaint_id),
-    FOREIGN KEY (assigned_unit_id) REFERENCES Users(user_id)
+    FOREIGN KEY (assigned_unit_id) REFERENCES Citizens(citizen_id)
 );
 
 CREATE TABLE VolunteerDetails (
@@ -77,7 +77,7 @@ CREATE TABLE VolunteerAssignments (
     volunteer_id INTEGER NOT NULL,
     complaint_id INTEGER NOT NULL,
 
-    FOREIGN KEY (volunteer_id) REFERENCES Users(user_id),
+    FOREIGN KEY (volunteer_id) REFERENCES Citizens(citizen_id),
     FOREIGN KEY (complaint_id) REFERENCES Complaints(complaint_id)
 );
 
@@ -88,7 +88,7 @@ CREATE TABLE Notifications (
     is_read INTEGER DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+    FOREIGN KEY (user_id) REFERENCES Citizens(citizen_id)
 );
 
 CREATE TABLE Logs (
@@ -97,7 +97,7 @@ CREATE TABLE Logs (
     action TEXT NOT NULL,
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+    FOREIGN KEY (user_id) REFERENCES Citizens(citizen_id)
 );
 
 INSERT INTO Citizens (name, cnic) VALUES

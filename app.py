@@ -144,5 +144,49 @@ def register_badge():
 def police_dashboard():
     return render_template('police_dashboard.html')
 
+@app.route('/submit_report', methods=['POST'])
+def submit_report():
+    name = request.form.get('name')
+    cnic = request.form.get('cnic')
+    description = request.form.get('description')
+    location = request.form.get('location')
+    category_name = request.form.get('category')
+    anonymous = request.form.get('anonymous')
+    conn = get_db_connection()
+    if anonymous:
+        user_id = None
+    else:
+        citizen = conn.execute(
+            "SELECT * FROM Citizens WHERE cnic = ?",
+            (cnic,)
+        ).fetchone()
+
+        if citizen:
+            user_id = citizen['citizen_id']
+        else:
+            cursor = conn.execute(
+                "INSERT INTO Citizens (name, cnic) VALUES (?, ?)",
+                (name, cnic)
+            )
+            user_id = cursor.lastrowid
+
+    category = conn.execute(
+        "SELECT category_id FROM CrimeCategories WHERE name = ?",
+        (category_name,)
+    ).fetchone()
+
+    category_id = category['category_id'] if category else None
+
+    conn.execute("""
+        INSERT INTO Complaints (user_id, category_id, description, location)
+        VALUES (?, ?, ?, ?)
+    """, (user_id, category_id, description, location))
+
+    conn.commit()
+    conn.close()
+
+    flash("Complaint submitted successfully 🚀", "success")
+    return redirect(url_for('report'))
+
 if __name__ == '__main__':
     app.run(debug=True)
