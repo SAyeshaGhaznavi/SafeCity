@@ -144,5 +144,25 @@ def register_badge():
 def police_dashboard():
     return render_template('police_dashboard.html')
 
+@app.route('/citizen_dashboard')
+def citizen_dashboard():
+    return render_template('citizen_dashboard.html')
+
+@app.route('/case_tracking')
+def case_tracking():
+    return render_template('case_tracking.html')
+
+@app.route('/case_detail/<int:case_id>')
+def case_detail(case_id):
+    return render_template('case_detail.html')
+
+@app.route('/emergency_tracking')
+def emergency_tracking():
+    return render_template('emergency_tracking.html')
+
+@app.route('/statistics_board')
+def statistics_board():
+    return render_template('statistics_board.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
