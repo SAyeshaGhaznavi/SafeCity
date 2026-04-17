@@ -185,8 +185,42 @@ def submit_report():
     conn.commit()
     conn.close()
 
-    flash("Complaint submitted successfully 🚀", "success")
+    flash("Complaint submitted successfully ", "success")
     return redirect(url_for('report'))
+
+#user can track all the complaints
+@app.route('/track', methods=['POST'])
+def track():
+    cnic = request.form.get('cnic')
+
+    conn = get_db_connection()
+
+    complaints = conn.execute("""
+        SELECT * FROM Complaints
+        WHERE user_id = (
+            SELECT citizen_id FROM Citizens WHERE cnic = ?
+        )
+    """, (cnic,)).fetchall()
+
+    conn.close()
+
+    return render_template("track.html", complaints=complaints)
+
+#view complaints and update status , this is for police
+@app.route('/update_status/<int:id>/<status>')
+def update_status(id, status):
+    conn = get_db_connection()
+
+    conn.execute(
+        "UPDATE Complaints SET status = ? WHERE complaint_id = ?",
+        (status, id)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for('police_dashboard'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
