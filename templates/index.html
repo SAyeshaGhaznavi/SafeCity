@@ -1,9 +1,32 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Flask App</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SafeCity</title>
+  <!-- index.html mirrors splash - redirects to splash or acts as entry -->
+  <meta http-equiv="refresh" content="0; url=/" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --navy:#0a0f1e; --cyan:#00c8ff; --white:#f0f4ff; }
+    body { background: var(--navy); color: var(--white); font-family: 'DM Sans', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 20px; }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: linear-gradient(rgba(0,200,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,200,255,0.04) 1px, transparent 1px);
+      background-size: 60px 60px; pointer-events: none;
+    }
+    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 3rem; letter-spacing: 6px; color: var(--white); }
+    .logo span { color: var(--cyan); }
+    .spinner { width: 40px; height: 40px; border: 3px solid rgba(0,200,255,0.15); border-top-color: var(--cyan); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    p { color: #7a8db0; font-size: 0.85rem; }
+    a { color: var(--cyan); text-decoration: none; font-weight: 600; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
 </head>
 <body>
-    <h1>Hello from Flask in VS Code 🚀</h1>
+  <div class="logo">SAFE<span>CITY</span></div>
+  <div class="spinner"></div>
+  <p>Loading... <a href="/">Click here if not redirected</a></p>
 </body>
 </html>

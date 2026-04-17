@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeCity – Statistics</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--navy:#0a0f1e;--cyan:#00c8ff;--white:#f0f4ff;--muted:#7a8db0;--red:#ff4e6a;--yellow:#ffb830;--green:#00e5a0;--border:rgba(0,200,255,0.15);--card:rgba(255,255,255,0.04)}
+    html,body{height:100vh;width:100%;background:#0a0a0a;display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;overflow:hidden;margin:0;padding:0;color:var(--white)}
+    .phone-frame{width:380px;height:92vh;background:var(--navy);border:12px solid #111;border-radius:40px;overflow:hidden;box-shadow:0 0 80px rgba(0,200,255,0.2),0 0 0 1px rgba(0,200,255,0.08);display:flex;flex-direction:column;position:relative;background-image:linear-gradient(rgba(0,200,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,255,0.025) 1px,transparent 1px);background-size:50px 50px}
+    .phone-frame::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:160px;height:28px;background:#111;border-radius:0 0 20px 20px;z-index:100}
+    .phone-frame::after{content:'9:41  ▲  🔋';position:absolute;top:5px;left:0;right:0;text-align:center;font-size:0.62rem;color:rgba(240,244,255,0.6);z-index:101;font-weight:600;letter-spacing:1.5px}
+    .phone-content{flex:1;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;scrollbar-width:thin;scrollbar-color:rgba(0,200,255,0.2) transparent}
+    .phone-content::-webkit-scrollbar{width:3px}
+    .phone-content::-webkit-scrollbar-thumb{background:rgba(0,200,255,0.3);border-radius:2px}
+
+    .header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0;background:rgba(10,15,30,0.92)}
+    .back-btn{background:none;border:none;color:var(--cyan);font-size:1.2rem;cursor:pointer;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;transition:all 0.2s}
+    .back-btn:hover{background:rgba(0,200,255,0.1)}
+    .header-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:2px;flex:1}
+
+    .content{flex:1;padding:14px;display:flex;flex-direction:column;gap:12px;overflow-y:auto}
+    .content::-webkit-scrollbar{width:3px}
+    .content::-webkit-scrollbar-thumb{background:rgba(0,200,255,0.3);border-radius:2px}
+
+    .time-filter{display:flex;gap:7px;flex-wrap:wrap}
+    .filter-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:5px 11px;border-radius:6px;cursor:pointer;font-size:0.7rem;font-weight:700;transition:all 0.2s;text-transform:uppercase;letter-spacing:0.5px;font-family:'DM Sans',sans-serif}
+    .filter-btn.active{background:rgba(0,200,255,0.15);border-color:var(--cyan);color:var(--cyan)}
+    .filter-btn:hover{border-color:var(--cyan)}
+
+    .stat-row{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between}
+    .stat-left{display:flex;align-items:center;gap:10px}
+    .stat-ico{width:42px;height:42px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+    .ico-red{background:rgba(255,78,106,0.15)}
+    .ico-cyan{background:rgba(0,200,255,0.12)}
+    .ico-yellow{background:rgba(255,184,48,0.12)}
+    .ico-green{background:rgba(0,229,160,0.12)}
+    .stat-lbl{font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;font-weight:600;margin-bottom:3px}
+    .stat-val{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;line-height:1}
+    .stat-change{font-size:0.7rem;padding:3px 8px;border-radius:4px;background:rgba(0,229,160,0.15);color:var(--green);font-weight:700}
+    .stat-change.down{background:rgba(255,78,106,0.12);color:var(--red)}
+
+    .chart-block{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px}
+    .chart-title{font-weight:700;font-size:0.82rem;margin-bottom:12px}
+    .bar-item{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+    .bar-item:last-child{margin-bottom:0}
+    .bar-lbl{width:64px;font-size:0.7rem;color:var(--muted);flex-shrink:0}
+    .bar-track{flex:1;height:20px;background:rgba(0,200,255,0.07);border-radius:4px;overflow:hidden}
+    .bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;font-size:0.65rem;font-weight:700;color:var(--navy)}
+    .bf-red{background:linear-gradient(90deg,var(--red),#ff7a8a)}
+    .bf-yellow{background:linear-gradient(90deg,var(--yellow),#ffc858)}
+    .bf-cyan{background:linear-gradient(90deg,var(--cyan),#66e5ff)}
+    .bf-green{background:linear-gradient(90deg,var(--green),#4dffce)}
+
+    .pie-wrap{display:flex;flex-direction:column;align-items:center;gap:12px}
+    .pie{width:100px;height:100px;border-radius:50%;background:conic-gradient(var(--red) 0% 30%,var(--cyan) 30% 55%,var(--yellow) 55% 75%,var(--green) 75% 100%);position:relative;box-shadow:0 0 20px rgba(0,200,255,0.15)}
+    .pie-center{position:absolute;inset:10px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;border:1px solid var(--border)}
+    .pie-num{font-family:'Bebas Neue',sans-serif;font-size:0.9rem;color:var(--cyan)}
+    .pie-sub{font-size:0.55rem;color:var(--muted)}
+    .legend-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;width:100%}
+    .legend-item{display:flex;align-items:center;gap:6px;font-size:0.72rem;color:var(--muted)}
+    .legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+
+    .bottom-nav{display:flex;border-top:1px solid var(--border);background:rgba(10,15,30,0.95);flex-shrink:0}
+    .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:9px 6px;font-size:0.55rem;color:var(--muted);text-decoration:none;transition:color 0.2s;cursor:pointer;border:none;background:transparent;font-family:'DM Sans',sans-serif}
+    .nav-btn.active,.nav-btn:hover{color:var(--cyan)}
+    .nav-btn-icon{font-size:1rem}
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+    <div class="header">
+      <button class="back-btn" onclick="window.history.back()">←</button>
+      <div class="header-title">STATISTICS</div>
+    </div>
+
+    <div class="phone-content">
+      <div class="content">
+        <div class="time-filter">
+          <button class="filter-btn" onclick="setFilter(this)">This Week</button>
+          <button class="filter-btn active" onclick="setFilter(this)">This Month</button>
+          <button class="filter-btn" onclick="setFilter(this)">This Year</button>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat-left"><div class="stat-ico ico-red">🚨</div><div><div class="stat-lbl">Total Incidents</div><div class="stat-val" style="color:var(--red)">1,248</div></div></div>
+          <div class="stat-change">+12%</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-left"><div class="stat-ico ico-cyan">✅</div><div><div class="stat-lbl">Resolved Cases</div><div class="stat-val" style="color:var(--cyan)">856</div></div></div>
+          <div class="stat-change">+8%</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-left"><div class="stat-ico ico-yellow">⏳</div><div><div class="stat-lbl">Pending Cases</div><div class="stat-val" style="color:var(--yellow)">234</div></div></div>
+          <div class="stat-change down">-3%</div>
+        </div>
+        <div class="stat-row">
+          <div class="stat-left"><div class="stat-ico ico-green">👮</div><div><div class="stat-lbl">Active Officers</div><div class="stat-val" style="color:var(--green)">127</div></div></div>
+          <div class="stat-change">+2%</div>
+        </div>
+
+        <!-- CRIME TYPE CHART -->
+        <div class="chart-block">
+          <div class="chart-title">Crime Type Breakdown</div>
+          <div class="bar-item"><span class="bar-lbl">Theft</span><div class="bar-track"><div class="bar-fill bf-red" style="width:35%">312</div></div></div>
+          <div class="bar-item"><span class="bar-lbl">Assault</span><div class="bar-track"><div class="bar-fill bf-red" style="width:22%">195</div></div></div>
+          <div class="bar-item"><span class="bar-lbl">Noise</span><div class="bar-track"><div class="bar-fill bf-yellow" style="width:18%">158</div></div></div>
+          <div class="bar-item"><span class="bar-lbl">Traffic</span><div class="bar-track"><div class="bar-fill bf-cyan" style="width:25%">220</div></div></div>
+          <div class="bar-item"><span class="bar-lbl">Other</span><div class="bar-track"><div class="bar-fill bf-green" style="width:15%">131</div></div></div>
+        </div>
+
+        <!-- PIE CHART -->
+        <div class="chart-block">
+          <div class="chart-title">Case Status Distribution</div>
+          <div class="pie-wrap">
+            <div class="pie"><div class="pie-center"><div class="pie-num">1,248</div><div class="pie-sub">Total</div></div></div>
+            <div class="legend-grid">
+              <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Pending (30%)</div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--cyan)"></div>In Progress (25%)</div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--yellow)"></div>Under Review (20%)</div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Resolved (25%)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RESPONSE TIME -->
+        <div class="chart-block" style="margin-bottom:8px">
+          <div class="chart-title">Avg Response Time (min)</div>
+          <div class="bar-item"><span class="bar-lbl">Police</span><div class="bar-track"><div class="bar-fill bf-cyan" style="width:45%">7.2</div></div></div>
+          <div class="bar-item"><span class="bar-lbl">Ambulance</span><div class="bar-track"><div class="bar-fill bf-green" style="width:60%">9.8</div></div></div>
+          <div class="bar-item"><span class="bar-lbl">Fire Dept</span><div class="bar-track"><div class="bar-fill bf-red" style="width:55%">8.9</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <a href="/police_dashboard" class="nav-btn"><span class="nav-btn-icon">📊</span>Dashboard</a>
+      <a href="/case_tracking" class="nav-btn"><span class="nav-btn-icon">📋</span>Cases</a>
+      <a href="/statistics_board" class="nav-btn active"><span class="nav-btn-icon">📈</span>Stats</a>
+      <a href="/register_badge" class="nav-btn"><span class="nav-btn-icon">🪪</span>Officers</a>
+    </div>
+  </div>
+  <script>
+    function setFilter(btn){document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active')}
+  </script>
+</body>
+</html>

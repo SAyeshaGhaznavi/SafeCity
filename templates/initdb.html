@@ -3,35 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Database Initialized</title>
+    <title>SafeCity – Database Initialized</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root {
+        --navy: #0a0f1e;
+        --cyan: #00c8ff;
+        --white: #f0f4ff;
+        --muted: #7a8db0;
+        --success: #00e5a0;
+        --border: rgba(0,200,255,0.15);
+      }
+      html, body {
+        min-height: 100vh;
+        background: var(--navy);
+        color: var(--white);
+        font-family: 'DM Sans', sans-serif;
+        padding: 20px;
+      }
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(0,200,255,0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0,200,255,0.04) 1px, transparent 1px);
+        background-size: 60px 60px;
+        pointer-events: none;
+        z-index: 0;
+      }
+      .page-container { position: relative; z-index: 5; max-width: 1000px; margin: 0 auto; }
+      h1 {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 2.5rem;
+        letter-spacing: 2px;
+        margin-bottom: 32px;
+        display: flex; align-items: center; gap: 12px;
+      }
+      h1::before { content: '✓'; color: var(--success); font-size: 2rem; }
+      h2 {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1.5rem;
+        letter-spacing: 1px;
+        margin: 28px 0 16px 0;
+        color: var(--cyan);
+      }
+      .table-wrapper {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow-x: auto;
+        margin-bottom: 24px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+      }
+      th {
+        background: rgba(0,200,255,0.1);
+        border: 1px solid var(--border);
+        padding: 12px 16px;
+        text-align: left;
+        font-weight: 600;
+        color: var(--cyan);
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      td {
+        border: 1px solid var(--border);
+        padding: 12px 16px;
+        color: var(--muted);
+      }
+      tr:hover { background: rgba(0,200,255,0.05); }
+      .empty {
+        padding: 24px 16px;
+        text-align: center;
+        color: var(--muted);
+      }
+      .success-msg {
+        background: rgba(0,229,160,0.1);
+        border: 1px solid rgba(0,229,160,0.3);
+        color: var(--success);
+        padding: 16px 20px;
+        border-radius: 10px;
+        margin-bottom: 24px;
+        font-weight: 500;
+      }
+      @media (max-width: 640px) {
+        h1 { font-size: 2rem; }
+        h2 { font-size: 1.3rem; }
+        table { font-size: 0.8rem; }
+        th, td { padding: 8px 12px; }
+      }
+    </style>
 </head>
 <body>
-    <h1>Database Initialized Successfully!</h1>
+  <div class="page-container">
+    <div class="success-msg">
+      Database Initialized Successfully!
+    </div>
+    <h1>Database Status</h1>
     
     {% for table, rows in table_data.items() %}
-    <h2>{{ table }}</h2>
-    {% if rows %}
-        <table border="1">
+      <h2>{{ table|upper }}</h2>
+      {% if rows %}
+        <div class="table-wrapper">
+          <table>
             <thead>
-                <tr>
-                    {% for column in rows[0].keys() %}
-                        <th>{{ column }}</th>
-                    {% endfor %}
-                </tr>
+              <tr>
+                {% for column in rows[0].keys() %}
+                  <th>{{ column }}</th>
+                {% endfor %}
+              </tr>
             </thead>
             <tbody>
-                {% for row in rows %}
-                    <tr>
-                        {% for column in row.keys() %}
-                            <td>{{ row[column] }}</td>
-                        {% endfor %}
-                    </tr>
-                {% endfor %}
+              {% for row in rows %}
+                <tr>
+                  {% for column in row.keys() %}
+                    <td>{{ row[column] }}</td>
+                  {% endfor %}
+                </tr>
+              {% endfor %}
             </tbody>
-        </table>
-    {% else %}
-        <p>No data in this table.</p>
-    {% endif %}
-{% endfor %}
+          </table>
+        </div>
+      {% else %}
+        <div class="table-wrapper">
+          <div class="empty">👋 Empty table</div>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
 </body>
 </html>

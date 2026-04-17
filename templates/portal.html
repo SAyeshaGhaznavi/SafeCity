@@ -1,18 +1,171 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Portal</title>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeCity – Citizen Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--navy:#0a0f1e;--cyan:#00c8ff;--white:#f0f4ff;--muted:#7a8db0;--red:#ff4e6a;--green:#00e5a0;--border:rgba(0,200,255,0.15);--card:rgba(255,255,255,0.04)}
+    html,body{height:100vh;width:100%;background:#0a0a0a;display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;overflow:hidden;margin:0;padding:0;color:var(--white)}
+    .phone-frame{width:380px;height:92vh;background:var(--navy);border:12px solid #111;border-radius:40px;overflow:hidden;box-shadow:0 0 80px rgba(0,200,255,0.2),0 0 0 1px rgba(0,200,255,0.08);display:flex;flex-direction:column;position:relative;background-image:linear-gradient(rgba(0,200,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,255,0.025) 1px,transparent 1px);background-size:50px 50px}
+    .phone-frame::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:160px;height:28px;background:#111;border-radius:0 0 20px 20px;z-index:100}
+    .phone-frame::after{content:'9:41  ▲  🔋';position:absolute;top:5px;left:0;right:0;text-align:center;font-size:0.62rem;color:rgba(240,244,255,0.6);z-index:101;font-weight:600;letter-spacing:1.5px}
+    .phone-content{flex:1;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;scrollbar-width:thin;scrollbar-color:rgba(0,200,255,0.2) transparent}
+    .phone-content::-webkit-scrollbar{width:3px}
+    .phone-content::-webkit-scrollbar-thumb{background:rgba(0,200,255,0.3);border-radius:2px}
+
+    /* HEADER */
+    .header{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:rgba(10,15,30,0.9)}
+    .logo{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:3px}
+    .logo span{color:var(--cyan)}
+    .header-right{display:flex;align-items:center;gap:10px}
+    .user-avatar{width:30px;height:30px;border-radius:50%;background:rgba(0,200,255,0.15);border:1.5px solid var(--cyan);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--cyan);font-size:0.7rem}
+
+    /* CONTENT */
+    .content{flex:1;padding:16px;display:flex;flex-direction:column;gap:14px}
+    .page-title{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:2px}
+    .page-sub{font-size:0.75rem;color:var(--muted);margin-top:2px}
+
+    /* ACTION CARDS */
+    .action-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .action-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 12px;text-decoration:none;color:var(--white);display:flex;flex-direction:column;gap:8px;transition:all 0.2s;cursor:pointer}
+    .action-card:hover{border-color:var(--cyan);background:rgba(0,200,255,0.07);transform:translateY(-2px)}
+    .action-card.primary{background:rgba(0,200,255,0.08);border-color:rgba(0,200,255,0.3)}
+    .action-card.danger-card{background:rgba(255,78,106,0.08);border-color:rgba(255,78,106,0.3)}
+    .ac-icon{font-size:1.5rem}
+    .ac-title{font-size:0.8rem;font-weight:700}
+    .ac-desc{font-size:0.68rem;color:var(--muted);line-height:1.4}
+
+    /* SECTION */
+    .section-head{display:flex;align-items:center;justify-content:space-between}
+    .section-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:1.5px}
+    .section-link{font-size:0.7rem;color:var(--cyan);text-decoration:none;font-weight:600}
+    .section-link:hover{text-decoration:underline}
+
+    /* ALERT ITEMS */
+    .alert-list{display:flex;flex-direction:column;gap:8px}
+    .alert-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px}
+    .alert-dot{width:7px;height:7px;border-radius:50%;margin-top:5px;flex-shrink:0}
+    .alert-dot.red{background:var(--red);box-shadow:0 0 6px var(--red)}
+    .alert-dot.yellow{background:#ffb830}
+    .alert-dot.green{background:var(--green)}
+    .alert-text h4{font-size:0.8rem;font-weight:600;margin-bottom:2px}
+    .alert-text p{font-size:0.7rem;color:var(--muted)}
+    .alert-time{font-size:0.65rem;color:var(--muted);margin-left:auto;white-space:nowrap;padding-top:2px;flex-shrink:0}
+
+    /* EMERGENCY CONTACTS */
+    .contacts-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px}
+    .contacts-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+    .contact-item{background:rgba(0,200,255,0.05);border:1px solid rgba(0,200,255,0.1);border-radius:8px;padding:10px;text-align:center}
+    .contact-num{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--cyan)}
+    .contact-lbl{font-size:0.62rem;color:var(--muted);margin-top:2px}
+
+    /* BOTTOM NAV */
+    .bottom-nav{display:flex;border-top:1px solid var(--border);background:rgba(10,15,30,0.95);flex-shrink:0}
+    .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:10px 6px;font-size:0.58rem;color:var(--muted);text-decoration:none;transition:color 0.2s;cursor:pointer;border:none;background:transparent;font-family:'DM Sans',sans-serif}
+    .nav-btn.active,.nav-btn:hover{color:var(--cyan)}
+    .nav-btn-icon{font-size:1.1rem}
+  </style>
 </head>
-<body style="text-align:center; font-family: Arial;">
-    <h1>Welcome to SafeCity Portal</h1>
-
-    <!-- Logo skipped -->
-
-    <div style="margin-top: 40px;">
-        <button onclick="location.href='/report'">Report a Crime</button>
-        <button onclick="location.href='/login'">Authorized Personnel</button>
+<body>
+  <div class="phone-frame">
+    <!-- HEADER -->
+    <div class="header">
+      <div class="logo">SAFE<span>CITY</span></div>
+      <div class="header-right">
+        <div class="user-avatar">JD</div>
+      </div>
     </div>
 
-    <p style="margin-top: 20px;">Select your access portal to process</p>
+    <!-- CONTENT -->
+    <div class="phone-content">
+      <div class="content">
+        <div>
+          <div class="page-title">Welcome Back</div>
+          <div class="page-sub">Stay informed. Report incidents. Stay safe.</div>
+        </div>
+
+        <!-- ACTIONS -->
+        <div class="action-grid">
+          <a href="/report" class="action-card primary">
+            <div class="ac-icon">🚨</div>
+            <div class="ac-title">Report Crime</div>
+            <div class="ac-desc">File an incident anonymously</div>
+          </a>
+          <button onclick="alert('Emergency services notified!')" class="action-card danger-card">
+            <div class="ac-icon">🆘</div>
+            <div class="ac-title">SOS Alert</div>
+            <div class="ac-desc">Immediate emergency call</div>
+          </button>
+          <a href="/case_tracking" class="action-card">
+            <div class="ac-icon">📡</div>
+            <div class="ac-title">Track Case</div>
+            <div class="ac-desc">View your reports & status</div>
+          </a>
+          <a href="/citizen_dashboard" class="action-card">
+            <div class="ac-icon">📊</div>
+            <div class="ac-title">Dashboard</div>
+            <div class="ac-desc">Your activity overview</div>
+          </a>
+        </div>
+
+        <!-- ALERTS -->
+        <div>
+          <div class="section-head">
+            <div class="section-title">Community Alerts</div>
+            <a href="/case_tracking" class="section-link">View all →</a>
+          </div>
+          <div class="alert-list" style="margin-top:10px">
+            <div class="alert-item">
+              <div class="alert-dot red"></div>
+              <div class="alert-text">
+                <h4>Street Robbery – Gulberg III</h4>
+                <p>Police unit dispatched. Area under watch.</p>
+              </div>
+              <div class="alert-time">2h ago</div>
+            </div>
+            <div class="alert-item">
+              <div class="alert-dot yellow"></div>
+              <div class="alert-text">
+                <h4>Suspicious Activity – DHA 5</h4>
+                <p>Unverified report. Under investigation.</p>
+              </div>
+              <div class="alert-time">5h ago</div>
+            </div>
+            <div class="alert-item">
+              <div class="alert-dot green"></div>
+              <div class="alert-text">
+                <h4>Incident Resolved – Johar Town</h4>
+                <p>Traffic dispute handled. Area secure.</p>
+              </div>
+              <div class="alert-time">Yesterday</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- EMERGENCY CONTACTS -->
+        <div class="contacts-card">
+          <div class="section-head">
+            <div class="section-title">Emergency Contacts</div>
+          </div>
+          <div class="contacts-grid">
+            <div class="contact-item"><div class="contact-num">15</div><div class="contact-lbl">Police</div></div>
+            <div class="contact-item"><div class="contact-num">1122</div><div class="contact-lbl">Rescue</div></div>
+            <div class="contact-item"><div class="contact-num">16</div><div class="contact-lbl">Fire Brigade</div></div>
+            <div class="contact-item"><div class="contact-num">1915</div><div class="contact-lbl">Traffic Police</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <div class="bottom-nav">
+      <a href="/portal" class="nav-btn active"><span class="nav-btn-icon">🏠</span>Home</a>
+      <a href="/report" class="nav-btn"><span class="nav-btn-icon">🚨</span>Report</a>
+      <a href="/case_tracking" class="nav-btn"><span class="nav-btn-icon">📋</span>Cases</a>
+      <a href="/citizen_dashboard" class="nav-btn"><span class="nav-btn-icon">👤</span>Profile</a>
+    </div>
+  </div>
 </body>
 </html>

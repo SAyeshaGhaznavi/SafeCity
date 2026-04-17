@@ -1,97 +1,88 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Authorized Login</title>
-
-    <script>
-        function togglePassword() {
-            const pwd = document.getElementById('password');
-            pwd.type = pwd.type === 'password' ? 'text' : 'password';
-        }
-    </script>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeCity – Police Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--navy:#0a0f1e;--cyan:#00c8ff;--white:#f0f4ff;--muted:#7a8db0;--red:#ff4e6a;--border:rgba(0,200,255,0.15)}
+    html,body{height:100vh;width:100%;background:#0a0a0a;display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;overflow:hidden;margin:0;padding:0;color:var(--white)}
+    .phone-frame{width:380px;height:92vh;background:var(--navy);border:12px solid #111;border-radius:40px;overflow:hidden;box-shadow:0 0 80px rgba(0,200,255,0.2),0 0 0 1px rgba(0,200,255,0.08);display:flex;flex-direction:column;position:relative;background-image:linear-gradient(rgba(0,200,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,255,0.025) 1px,transparent 1px);background-size:50px 50px}
+    .phone-frame::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:160px;height:28px;background:#111;border-radius:0 0 20px 20px;z-index:100}
+    .phone-frame::after{content:'9:41  ▲  🔋';position:absolute;top:5px;left:0;right:0;text-align:center;font-size:0.62rem;color:rgba(240,244,255,0.6);z-index:101;font-weight:600;letter-spacing:1.5px}
+    .phone-content{flex:1;overflow-y:auto;overflow-x:hidden;display:flex;align-items:center;justify-content:center;padding:32px 20px;scrollbar-width:thin}
+    .phone-content::-webkit-scrollbar{width:3px}
+    .phone-content::-webkit-scrollbar-thumb{background:rgba(0,200,255,0.3);border-radius:2px}
+    .form-card{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:16px;padding:32px 24px;width:100%;max-width:320px}
+    .logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:4px;text-align:center;margin-bottom:4px}
+    .logo span{color:var(--cyan)}
+    .subtitle{text-align:center;font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:24px}
+    .form-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:2px;text-align:center;margin-bottom:4px}
+    .form-sub{font-size:0.72rem;color:var(--muted);text-align:center;margin-bottom:22px}
+    .form-group{margin-bottom:14px}
+    label{display:block;font-size:0.65rem;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px}
+    input{width:100%;padding:10px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:0.88rem;font-family:'DM Sans',sans-serif;transition:all 0.2s;outline:none}
+    input:focus{border-color:var(--cyan);background:rgba(0,200,255,0.07)}
+    input::placeholder{color:var(--muted);opacity:0.6}
+    .input-wrap{position:relative}
+    .pwd-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.9rem;padding:4px;transition:color 0.2s}
+    .pwd-toggle:hover{color:var(--cyan)}
+    .error-text{color:var(--red);font-size:0.65rem;margin-top:4px;font-weight:500;min-height:14px}
+    .btn{width:100%;padding:11px 16px;border:none;border-radius:8px;font-size:0.88rem;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif}
+    .btn-primary{background:linear-gradient(135deg,var(--cyan),#0088ff);color:var(--navy);margin-top:20px}
+    .btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,200,255,0.3)}
+    .form-footer{margin-top:20px;padding-top:16px;border-top:1px solid var(--border);text-align:center;display:flex;flex-direction:column;gap:6px}
+    .footer-link{color:var(--cyan);text-decoration:none;font-size:0.75rem;font-weight:600;transition:all 0.2s}
+    .footer-link:hover{text-decoration:underline}
+  </style>
+  <script>
+    function togglePassword(){
+      const p=document.getElementById('password');const b=document.querySelector('.pwd-toggle');
+      p.type=p.type==='password'?'text':'password';b.textContent=p.type==='password'?'👁':'🙈';
+    }
+  </script>
 </head>
-
-<body style="font-family: Arial; text-align:center;">
-
-<h1>Authorized Personnel Login</h1>
-
-<form method="POST" action="/login">
-
-<div style="width:300px; margin:auto; padding:20px; border:1px solid #ccc; border-radius:10px;">
-
-    <!-- USERNAME -->
-    <input type="text" name="username"
-        placeholder="Agency Username"
-        value="{{ request.form.get('username','') }}"
-        style="width:100%; margin-bottom:5px; padding:8px;">
-
-    <small style="color:red;">
-        {% with messages = get_flashed_messages(category_filter=['username_error']) %}
-            {% if messages %}{{ messages[0] }}{% endif %}
-        {% endwith %}
-    </small>
-
-    <!-- EMAIL -->
-    <input type="email" name="email"
-        placeholder="Agency Email"
-        value="{{ request.form.get('email','') }}"
-        style="width:100%; margin-bottom:5px; padding:8px;">
-
-    <small style="color:red;">
-        {% with messages = get_flashed_messages(category_filter=['email_error']) %}
-            {% if messages %}{{ messages[0] }}{% endif %}
-        {% endwith %}
-    </small>
-
-    <!-- PASSWORD -->
-    <div style="position:relative;">
-        <input id="password" type="password" name="password"
-            placeholder="Password"
-            style="width:100%; margin-bottom:5px; padding:8px;">
-
-        <button type="button" onclick="togglePassword()"
-            style="position:absolute; right:5px; top:5px;">
-            👁
-        </button>
+<body>
+  <div class="phone-frame">
+    <div class="phone-content">
+      <div class="form-card">
+        <div class="logo">SAFE<span>CITY</span></div>
+        <p class="subtitle">Authorized Personnel</p>
+        <h2 class="form-title">Police Login</h2>
+        <p class="form-sub">Access your officer portal</p>
+        <form method="POST" action="/login">
+          <div class="form-group">
+            <label>Username</label>
+            <input type="text" name="username" placeholder="your.username" value="{{ request.form.get('username','') }}">
+            <div class="error-text">{% with m=get_flashed_messages(category_filter=['username_error']) %}{% if m %}{{ m[0] }}{% endif %}{% endwith %}</div>
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" placeholder="you@agency.gov" value="{{ request.form.get('email','') }}" required>
+            <div class="error-text">{% with m=get_flashed_messages(category_filter=['email_error']) %}{% if m %}{{ m[0] }}{% endif %}{% endwith %}</div>
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <div class="input-wrap">
+              <input id="password" type="password" name="password" placeholder="••••••••" required>
+              <button type="button" class="pwd-toggle" onclick="togglePassword()">👁</button>
+            </div>
+            <div class="error-text">{% with m=get_flashed_messages(category_filter=['password_error']) %}{% if m %}{{ m[0] }}{% endif %}{% endwith %}</div>
+          </div>
+          <div class="form-group">
+            <label>Badge #</label>
+            <input type="text" name="badge_number" placeholder="e.g. LHR-1042" value="{{ request.form.get('badge_number','') }}" required>
+            <div class="error-text">{% with m=get_flashed_messages(category_filter=['badge_error']) %}{% if m %}{{ m[0] }}{% endif %}{% endwith %}</div>
+          </div>
+          <button type="submit" class="btn btn-primary">🚔 Access Dashboard</button>
+          <div class="form-footer">
+            <a href="{{ url_for('register_badge') }}" class="footer-link">Register Badge →</a>
+            <a href="/" class="footer-link" style="color:var(--muted)">← Back to Home</a>
+          </div>
+        </form>
+      </div>
     </div>
-
-    <small style="color:red;">
-        {% with messages = get_flashed_messages(category_filter=['password_error']) %}
-            {% if messages %}{{ messages[0] }}{% endif %}
-        {% endwith %}
-    </small>
-
-    <!-- BADGE -->
-    <input type="text" name="badge_number"
-        placeholder="Badge Number/Personnel ID"
-        value="{{ request.form.get('badge_number','') }}"
-        style="width:100%; margin-bottom:5px; padding:8px;">
-
-    <small style="color:red;">
-        {% with messages = get_flashed_messages(category_filter=['badge_error']) %}
-            {% if messages %}{{ messages[0] }}{% endif %}
-        {% endwith %}
-    </small>
-
-    <br><br>
-
-    <!-- 🔽 ADDED PART ONLY -->
-    <div style="text-align:right; font-size:12px; margin-top:5px;">
-        <a href="#">Forgot Password</a>
-    </div>
-
-    <p style="margin-top:10px; font-size:12px;">
-        New to SafeCity? <a href="{{ url_for('register_badge') }}">Register Badge</a>
-    </p>
-    <!-- 🔼 END ADDED PART -->
-
-    <button type="submit" style="width:100%; padding:10px;">
-        Access Dashboard
-    </button>
-
-</div>
-
-</form>
-
+  </div>
 </body>
 </html>

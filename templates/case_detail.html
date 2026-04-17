@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeCity – Case Detail</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--navy:#0a0f1e;--cyan:#00c8ff;--white:#f0f4ff;--muted:#7a8db0;--red:#ff4e6a;--yellow:#ffb830;--green:#00e5a0;--border:rgba(0,200,255,0.15);--card:rgba(255,255,255,0.04)}
+    html,body{height:100vh;width:100%;background:#0a0a0a;display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;overflow:hidden;margin:0;padding:0;color:var(--white)}
+    .phone-frame{width:380px;height:92vh;background:var(--navy);border:12px solid #111;border-radius:40px;overflow:hidden;box-shadow:0 0 80px rgba(0,200,255,0.2),0 0 0 1px rgba(0,200,255,0.08);display:flex;flex-direction:column;position:relative;background-image:linear-gradient(rgba(0,200,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,255,0.025) 1px,transparent 1px);background-size:50px 50px}
+    .phone-frame::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:160px;height:28px;background:#111;border-radius:0 0 20px 20px;z-index:100}
+    .phone-frame::after{content:'9:41  ▲  🔋';position:absolute;top:5px;left:0;right:0;text-align:center;font-size:0.62rem;color:rgba(240,244,255,0.6);z-index:101;font-weight:600;letter-spacing:1.5px}
+    .phone-content{flex:1;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;scrollbar-width:thin;scrollbar-color:rgba(0,200,255,0.2) transparent}
+    .phone-content::-webkit-scrollbar{width:3px}
+    .phone-content::-webkit-scrollbar-thumb{background:rgba(0,200,255,0.3);border-radius:2px}
+
+    .header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0;background:rgba(10,15,30,0.92)}
+    .back-btn{background:none;border:none;color:var(--cyan);font-size:1.2rem;cursor:pointer;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;transition:all 0.2s}
+    .back-btn:hover{background:rgba(0,200,255,0.1)}
+    .header-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:2px;flex:1}
+
+    .content{flex:1;padding:14px;display:flex;flex-direction:column;gap:12px;overflow-y:auto}
+    .content::-webkit-scrollbar{width:3px}
+    .content::-webkit-scrollbar-thumb{background:rgba(0,200,255,0.3);border-radius:2px}
+
+    .status-banner{background:rgba(0,200,255,0.08);border:1px solid rgba(0,200,255,0.25);border-radius:10px;padding:14px;text-align:center}
+    .status-badge{display:inline-block;font-size:0.65rem;font-weight:700;padding:5px 12px;border-radius:5px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;background:rgba(0,200,255,0.2);color:var(--cyan)}
+    .status-case-num{font-size:0.8rem;color:var(--muted)}
+
+    .info-grid{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .info-item{}
+    .info-label{font-size:0.6rem;color:var(--cyan);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:5px}
+    .info-value{font-size:0.85rem;color:var(--white)}
+    .info-value.highlight{color:var(--yellow)}
+
+    .block{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px}
+    .block-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:1.5px;margin-bottom:10px}
+    .block-text{font-size:0.78rem;line-height:1.65;color:var(--muted)}
+
+    .officer-row{display:flex;align-items:center;gap:10px}
+    .officer-avatar{width:38px;height:38px;border-radius:50%;background:rgba(0,200,255,0.15);border:1.5px solid var(--cyan);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--cyan);font-size:0.75rem;flex-shrink:0}
+    .officer-name{font-weight:600;font-size:0.85rem}
+    .officer-badge{font-size:0.7rem;color:var(--muted);margin-top:2px}
+
+    .evidence-item{display:flex;align-items:center;gap:10px;padding:9px 10px;background:rgba(0,200,255,0.04);border-radius:7px;border:1px solid var(--border);margin-bottom:8px}
+    .evidence-item:last-child{margin-bottom:0}
+    .evidence-icon{font-size:1.1rem}
+    .evidence-name{font-size:0.78rem;font-weight:600}
+    .evidence-size{font-size:0.65rem;color:var(--muted);margin-top:1px}
+
+    .timeline{padding-left:18px}
+    .tl-item{margin-bottom:14px;position:relative}
+    .tl-item::before{content:'';position:absolute;left:-14px;top:5px;width:8px;height:8px;background:var(--cyan);border:2px solid var(--navy);border-radius:50%}
+    .tl-item:not(:last-child)::after{content:'';position:absolute;left:-11px;top:16px;width:2px;height:calc(100% + 6px);background:var(--border)}
+    .tl-event{font-size:0.82rem;font-weight:600;margin-bottom:2px}
+    .tl-date{font-size:0.68rem;color:var(--muted)}
+
+    .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .btn{padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.78rem;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;background:transparent;color:var(--white);display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none}
+    .btn:hover{border-color:var(--cyan);color:var(--cyan)}
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+    <div class="header">
+      <button class="back-btn" onclick="window.history.back()">←</button>
+      <div class="header-title">CASE DETAILS</div>
+    </div>
+
+    <div class="phone-content">
+      <div class="content">
+        <div class="status-banner">
+          <div class="status-badge">In Progress</div>
+          <div class="status-case-num">CASE #2026-002</div>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-item"><div class="info-label">Case Type</div><div class="info-value">Noise Disturbance</div></div>
+          <div class="info-item"><div class="info-label">Date Filed</div><div class="info-value">March 18, 2026</div></div>
+          <div class="info-item"><div class="info-label">Location</div><div class="info-value">Gulberg, Lahore</div></div>
+          <div class="info-item"><div class="info-label">Priority</div><div class="info-value highlight">Medium</div></div>
+        </div>
+
+        <div class="block">
+          <div class="block-title">Assigned Officer</div>
+          <div class="officer-row">
+            <div class="officer-avatar">OS</div>
+            <div><div class="officer-name">Officer Smith</div><div class="officer-badge">Badge: LHR-451</div></div>
+          </div>
+        </div>
+
+        <div class="block">
+          <div class="block-title">Description</div>
+          <div class="block-text">Loud noise and disturbance from neighboring residential unit. Complaint filed after repeated attempts to resolve the matter peacefully. Noise incidents reported multiple times during late evening hours between 10 PM and 3 AM.</div>
+        </div>
+
+        <div class="block">
+          <div class="block-title">Evidence & Documents</div>
+          <div class="evidence-item">
+            <span class="evidence-icon">📄</span>
+            <div><div class="evidence-name">incident_report.pdf</div><div class="evidence-size">245 KB</div></div>
+          </div>
+          <div class="evidence-item">
+            <span class="evidence-icon">📷</span>
+            <div><div class="evidence-name">evidence_photo.jpg</div><div class="evidence-size">1.2 MB</div></div>
+          </div>
+        </div>
+
+        <div class="block">
+          <div class="block-title">Case Timeline</div>
+          <div class="timeline">
+            <div class="tl-item"><div class="tl-event">Case Filed</div><div class="tl-date">March 18, 2026, 2:15 PM</div></div>
+            <div class="tl-item"><div class="tl-event">Officer Assigned</div><div class="tl-date">March 19, 2026, 9:30 AM</div></div>
+            <div class="tl-item"><div class="tl-event">Initial Investigation</div><div class="tl-date">March 20, 2026, 3:45 PM</div></div>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn" onclick="alert('Message sent to Officer Smith')">📧 Message Officer</button>
+          <button class="btn" onclick="alert('Update submitted')">✏️ Add Update</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

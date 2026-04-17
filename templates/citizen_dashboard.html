@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeCity – Citizen Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--navy:#0a0f1e;--cyan:#00c8ff;--white:#f0f4ff;--muted:#7a8db0;--red:#ff4e6a;--yellow:#ffb830;--green:#00e5a0;--border:rgba(0,200,255,0.15);--card:rgba(255,255,255,0.04)}
+    html,body{height:100vh;width:100%;background:#0a0a0a;display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;overflow:hidden;margin:0;padding:0;color:var(--white)}
+    .phone-frame{width:380px;height:92vh;background:var(--navy);border:12px solid #111;border-radius:40px;overflow:hidden;box-shadow:0 0 80px rgba(0,200,255,0.2),0 0 0 1px rgba(0,200,255,0.08);display:flex;flex-direction:column;position:relative;background-image:linear-gradient(rgba(0,200,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,255,0.025) 1px,transparent 1px);background-size:50px 50px}
+    .phone-frame::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:160px;height:28px;background:#111;border-radius:0 0 20px 20px;z-index:100}
+    .phone-frame::after{content:'9:41  ▲  🔋';position:absolute;top:5px;left:0;right:0;text-align:center;font-size:0.62rem;color:rgba(240,244,255,0.6);z-index:101;font-weight:600;letter-spacing:1.5px}
+    .phone-content{flex:1;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;scrollbar-width:thin;scrollbar-color:rgba(0,200,255,0.2) transparent}
+    .phone-content::-webkit-scrollbar{width:3px}
+    .phone-content::-webkit-scrollbar-thumb{background:rgba(0,200,255,0.3);border-radius:2px}
+
+    .header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:rgba(10,15,30,0.92)}
+    .logo{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:3px}
+    .logo span{color:var(--cyan)}
+    .header-right{display:flex;align-items:center;gap:10px}
+    .user-avatar{width:30px;height:30px;border-radius:50%;background:rgba(0,200,255,0.15);border:1.5px solid var(--cyan);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--cyan);font-size:0.7rem}
+    .logout-link{font-size:0.65rem;color:var(--muted);text-decoration:none;border:1px solid var(--border);padding:4px 8px;border-radius:5px;transition:all 0.2s}
+    .logout-link:hover{color:var(--red);border-color:var(--red)}
+
+    .content{flex:1;padding:14px;display:flex;flex-direction:column;gap:14px}
+    .page-title{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:2px}
+    .page-sub{font-size:0.72rem;color:var(--muted);margin-top:2px}
+
+    .action-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .action-btn{padding:14px 12px;border:none;border-radius:10px;font-size:0.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.2s;text-decoration:none;font-family:'DM Sans',sans-serif}
+    .btn-report{background:linear-gradient(135deg,var(--cyan),#0088ff);color:var(--navy)}
+    .btn-report:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,200,255,0.3)}
+    .btn-sos{background:linear-gradient(135deg,var(--red),#ff2d5e);color:#fff}
+    .btn-sos:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,78,106,0.3)}
+
+    .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .section-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:1.5px}
+    .section-link{font-size:0.68rem;color:var(--cyan);text-decoration:none;font-weight:600}
+    .section-link:hover{text-decoration:underline}
+
+    .notif-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px 13px;display:flex;gap:10px;align-items:flex-start}
+    .notif-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0}
+    .ni-review{background:rgba(0,200,255,0.2)}
+    .ni-assigned{background:rgba(0,229,160,0.2)}
+    .ni-resolved{background:rgba(0,229,160,0.2)}
+    .notif-text{font-size:0.77rem;line-height:1.4;color:var(--white)}
+    .notif-time{font-size:0.65rem;color:var(--muted);margin-top:3px}
+    .notif-list{display:flex;flex-direction:column;gap:8px}
+
+    .report-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 13px;display:flex;align-items:center;justify-content:space-between}
+    .report-list{display:flex;flex-direction:column;gap:8px}
+    .report-type{font-size:0.82rem;font-weight:600}
+    .report-date{font-size:0.65rem;color:var(--muted);margin-top:2px}
+    .status-pill{font-size:0.6rem;font-weight:700;padding:3px 7px;border-radius:4px;text-transform:uppercase}
+    .sp-pending{background:rgba(255,184,48,0.2);color:var(--yellow)}
+    .sp-progress{background:rgba(0,200,255,0.2);color:var(--cyan)}
+    .sp-resolved{background:rgba(0,229,160,0.15);color:var(--green)}
+
+    .bottom-nav{display:flex;border-top:1px solid var(--border);background:rgba(10,15,30,0.95);flex-shrink:0}
+    .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:9px 6px;font-size:0.55rem;color:var(--muted);text-decoration:none;transition:color 0.2s;cursor:pointer;border:none;background:transparent;font-family:'DM Sans',sans-serif}
+    .nav-btn.active,.nav-btn:hover{color:var(--cyan)}
+    .nav-btn-icon{font-size:1rem}
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+    <div class="header">
+      <div class="logo">SAFE<span>CITY</span></div>
+      <div class="header-right">
+        <div class="user-avatar">JD</div>
+        <a href="/" class="logout-link">Logout</a>
+      </div>
+    </div>
+
+    <div class="phone-content">
+      <div class="content">
+        <div>
+          <div class="page-title">Citizen Dashboard</div>
+          <div class="page-sub">Welcome, John Doe. Stay safe and report any incident.</div>
+        </div>
+
+        <div class="action-grid">
+          <a href="/report" class="action-btn btn-report">👮 Report Crime</a>
+          <button onclick="alert('Emergency services notified!')" class="action-btn btn-sos">🚨 SOS Alert</button>
+        </div>
+
+        <!-- NOTIFICATIONS -->
+        <div>
+          <div class="section-head">
+            <div class="section-title">Notifications</div>
+            <a href="#" class="section-link">View all →</a>
+          </div>
+          <div class="notif-list">
+            <div class="notif-card">
+              <div class="notif-icon ni-review">🔔</div>
+              <div><div class="notif-text">Your noise disturbance report is being reviewed</div><div class="notif-time">30 minutes ago</div></div>
+            </div>
+            <div class="notif-card">
+              <div class="notif-icon ni-assigned">👤</div>
+              <div><div class="notif-text"><strong>Officer Smith</strong> assigned to your theft case</div><div class="notif-time">1 day ago</div></div>
+            </div>
+            <div class="notif-card">
+              <div class="notif-icon ni-resolved">✓</div>
+              <div><div class="notif-text">Your traffic accident complaint has been resolved</div><div class="notif-time">3 months ago</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RECENT REPORTS -->
+        <div>
+          <div class="section-head">
+            <div class="section-title">Recent Reports</div>
+            <a href="/case_tracking" class="section-link">View all →</a>
+          </div>
+          <div class="report-list">
+            <div class="report-card">
+              <div><div class="report-type">💰 Theft</div><div class="report-date">March 20, 2026, 2:15 PM</div></div>
+              <span class="status-pill sp-pending">Pending</span>
+            </div>
+            <div class="report-card">
+              <div><div class="report-type">🔊 Noise Disturbance</div><div class="report-date">March 20, 2026, 2:15 PM</div></div>
+              <span class="status-pill sp-progress">In Progress</span>
+            </div>
+            <div class="report-card">
+              <div><div class="report-type">🚗 Traffic Accident</div><div class="report-date">March 20, 2026, 2:15 PM</div></div>
+              <span class="status-pill sp-resolved">Resolved</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <a href="/portal" class="nav-btn"><span class="nav-btn-icon">🏠</span>Home</a>
+      <a href="/report" class="nav-btn"><span class="nav-btn-icon">🚨</span>Report</a>
+      <a href="/case_tracking" class="nav-btn"><span class="nav-btn-icon">📋</span>Cases</a>
+      <a href="/citizen_dashboard" class="nav-btn active"><span class="nav-btn-icon">👤</span>Profile</a>
+    </div>
+  </div>
+</body>
+</html>
