@@ -1,10 +1,10 @@
-CREATE TABLE Citizens (
+CREATE TABLE IF NOT EXISTS Citizens (
     citizen_id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     cnic TEXT UNIQUE NOT NULL
 );
 
-CREATE TABLE AuthorizedPersonnel (
+CREATE TABLE IF NOT EXISTS AuthorizedPersonnel (
     personnel_id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
@@ -12,12 +12,12 @@ CREATE TABLE AuthorizedPersonnel (
     badge_number TEXT UNIQUE NOT NULL
 );
 
-CREATE TABLE CrimeCategories (
+CREATE TABLE IF NOT EXISTS CrimeCategories (
     category_id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT UNIQUE NOT NULL
 );
 
-CREATE TABLE Complaints (
+CREATE TABLE IF NOT EXISTS Complaints (
     complaint_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     category_id INTEGER,
@@ -26,11 +26,11 @@ CREATE TABLE Complaints (
     status TEXT DEFAULT 'Pending' CHECK(status IN ('Pending','In Progress','Resolved')),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (user_id) REFERENCES Citizens(citizen_id),
     FOREIGN KEY (category_id) REFERENCES CrimeCategories(category_id)
 );
 
-CREATE TABLE Evidence (
+CREATE TABLE IF NOT EXISTS Evidence (
     evidence_id INTEGER PRIMARY KEY AUTOINCREMENT,
     complaint_id INTEGER NOT NULL,
     file_url TEXT NOT NULL,
@@ -39,7 +39,7 @@ CREATE TABLE Evidence (
     FOREIGN KEY (complaint_id) REFERENCES Complaints(complaint_id)
 );
 
-CREATE TABLE Cases (
+CREATE TABLE IF NOT EXISTS Cases (
     case_id INTEGER PRIMARY KEY AUTOINCREMENT,
     complaint_id INTEGER UNIQUE,
     assigned_police_id INTEGER,
@@ -52,7 +52,7 @@ CREATE TABLE Cases (
     FOREIGN KEY (assigned_detective_id) REFERENCES Users(user_id)
 );
 
-CREATE TABLE Dispatch (
+CREATE TABLE IF NOT EXISTS Dispatch (
     dispatch_id INTEGER PRIMARY KEY AUTOINCREMENT,
     complaint_id INTEGER NOT NULL,
     assigned_unit_id INTEGER,
@@ -61,10 +61,10 @@ CREATE TABLE Dispatch (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (complaint_id) REFERENCES Complaints(complaint_id),
-    FOREIGN KEY (assigned_unit_id) REFERENCES Users(user_id)
+    FOREIGN KEY (assigned_unit_id) REFERENCES Citizens(citizen_id)
 );
 
-CREATE TABLE VolunteerDetails (
+CREATE TABLE IF NOT EXISTS VolunteerDetails (
     volunteer_id INTEGER PRIMARY KEY,
     availability INTEGER DEFAULT 1,
     skills TEXT,
@@ -72,32 +72,32 @@ CREATE TABLE VolunteerDetails (
     FOREIGN KEY (volunteer_id) REFERENCES Users(user_id)
 );
 
-CREATE TABLE VolunteerAssignments (
+CREATE TABLE IF NOT EXISTS VolunteerAssignments (
     assignment_id INTEGER PRIMARY KEY AUTOINCREMENT,
     volunteer_id INTEGER NOT NULL,
     complaint_id INTEGER NOT NULL,
 
-    FOREIGN KEY (volunteer_id) REFERENCES Users(user_id),
+    FOREIGN KEY (volunteer_id) REFERENCES Citizens(citizen_id),
     FOREIGN KEY (complaint_id) REFERENCES Complaints(complaint_id)
 );
 
-CREATE TABLE Notifications (
+CREATE TABLE IF NOT EXISTS Notifications (
     notification_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     message TEXT NOT NULL,
     is_read INTEGER DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+    FOREIGN KEY (user_id) REFERENCES Citizens(citizen_id)
 );
 
-CREATE TABLE Logs (
+CREATE TABLE IF NOT EXISTS Logs (
     log_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER,
     action TEXT NOT NULL,
     timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+    FOREIGN KEY (user_id) REFERENCES Citizens(citizen_id)
 );
 
 INSERT INTO Citizens (name, cnic) VALUES
