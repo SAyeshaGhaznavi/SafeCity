@@ -41,18 +41,23 @@
 
     .notif-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px 13px;display:flex;gap:10px;align-items:flex-start}
     .notif-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0}
-    .ni-review{background:rgba(0,200,255,0.2)}
-    .ni-assigned{background:rgba(0,229,160,0.2)}
-    .ni-resolved{background:rgba(0,229,160,0.2)}
+    .ni-bell{background:rgba(0,200,255,0.2)}
+    .ni-person{background:rgba(0,229,160,0.2)}
+    .ni-check{background:rgba(0,229,160,0.2)}
+    .notif-body{flex:1;min-width:0}
+    .notif-top{display:flex;align-items:center;gap:6px}
     .notif-text{font-size:0.77rem;line-height:1.4;color:var(--white)}
+    .new-badge{font-size:0.5rem;font-weight:800;background:var(--cyan);color:var(--navy);padding:2px 5px;border-radius:3px;letter-spacing:0.5px;flex-shrink:0;animation:badgePulse 2s infinite}
     .notif-time{font-size:0.65rem;color:var(--muted);margin-top:3px}
     .notif-list{display:flex;flex-direction:column;gap:8px}
+    .empty-state{text-align:center;padding:10px;font-size:0.72rem;color:var(--muted)}
 
     .report-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 13px;display:flex;align-items:center;justify-content:space-between}
     .report-list{display:flex;flex-direction:column;gap:8px}
     .report-type{font-size:0.82rem;font-weight:600}
-    .report-date{font-size:0.65rem;color:var(--muted);margin-top:2px}
-    .status-pill{font-size:0.6rem;font-weight:700;padding:3px 7px;border-radius:4px;text-transform:uppercase}
+    .report-loc{font-size:0.62rem;color:var(--muted);margin-top:2px}
+    .report-date{font-size:0.65rem;color:var(--muted);margin-top:1px}
+    .status-pill{font-size:0.6rem;font-weight:700;padding:3px 7px;border-radius:4px;text-transform:uppercase;flex-shrink:0}
     .sp-pending{background:rgba(255,184,48,0.2);color:var(--yellow)}
     .sp-progress{background:rgba(0,200,255,0.2);color:var(--cyan)}
     .sp-resolved{background:rgba(0,229,160,0.15);color:var(--green)}
@@ -61,6 +66,8 @@
     .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:9px 6px;font-size:0.55rem;color:var(--muted);text-decoration:none;transition:color 0.2s;cursor:pointer;border:none;background:transparent;font-family:'DM Sans',sans-serif}
     .nav-btn.active,.nav-btn:hover{color:var(--cyan)}
     .nav-btn-icon{font-size:1rem}
+
+    @keyframes badgePulse{0%,100%{opacity:1}50%{opacity:0.6}}
   </style>
 </head>
 <body>
@@ -68,7 +75,7 @@
     <div class="header">
       <div class="logo">SAFE<span>CITY</span></div>
       <div class="header-right">
-        <div class="user-avatar">JD</div>
+        <div class="user-avatar">{{ session.name[0] if session.name else 'U' }}</div>
         <a href="/" class="logout-link">Logout</a>
       </div>
     </div>
@@ -77,7 +84,7 @@
       <div class="content">
         <div>
           <div class="page-title">Citizen Dashboard</div>
-          <div class="page-sub">Welcome, John Doe. Stay safe and report any incident.</div>
+          <div class="page-sub">Welcome, {{ session.name if session.name else 'User' }}. Stay safe and report any incident.</div>
         </div>
 
         <div class="action-grid">
@@ -89,21 +96,27 @@
         <div>
           <div class="section-head">
             <div class="section-title">Notifications</div>
-            <a href="#" class="section-link">View all →</a>
+            <a href="/notifications" class="section-link">View all →</a>
           </div>
           <div class="notif-list">
+            {% for n in recent_notifications %}
             <div class="notif-card">
-              <div class="notif-icon ni-review">🔔</div>
-              <div><div class="notif-text">Your noise disturbance report is being reviewed</div><div class="notif-time">30 minutes ago</div></div>
+              <div class="notif-icon {% if 'assigned' in n.message|lower %}ni-person{% elif 'resolved' in n.message|lower %}ni-check{% else %}ni-bell{% endif %}">
+                {% if 'assigned' in n.message|lower %}👤{% elif 'resolved' in n.message|lower %}✓{% else %}🔔{% endif %}
+              </div>
+              <div class="notif-body">
+                <div class="notif-top">
+                  <div class="notif-text">{{ n.message }}</div>
+                  {% if n.is_new %}
+                  <span class="new-badge">NEW</span>
+                  {% endif %}
+                </div>
+                <div class="notif-time">{{ n.time_ago }}</div>
+              </div>
             </div>
-            <div class="notif-card">
-              <div class="notif-icon ni-assigned">👤</div>
-              <div><div class="notif-text"><strong>Officer Smith</strong> assigned to your theft case</div><div class="notif-time">1 day ago</div></div>
-            </div>
-            <div class="notif-card">
-              <div class="notif-icon ni-resolved">✓</div>
-              <div><div class="notif-text">Your traffic accident complaint has been resolved</div><div class="notif-time">3 months ago</div></div>
-            </div>
+            {% else %}
+            <div class="empty-state">No notifications yet</div>
+            {% endfor %}
           </div>
         </div>
 
@@ -114,18 +127,18 @@
             <a href="/case_tracking" class="section-link">View all →</a>
           </div>
           <div class="report-list">
+            {% for r in recent_reports %}
             <div class="report-card">
-              <div><div class="report-type">💰 Theft</div><div class="report-date">March 20, 2026, 2:15 PM</div></div>
-              <span class="status-pill sp-pending">Pending</span>
+              <div>
+                <div class="report-type">{{ r.category_name }}</div>
+                <div class="report-loc">📍 {{ r.location }}</div>
+                <div class="report-date">{{ r.time_ago }}</div>
+              </div>
+              <span class="status-pill {% if r.status == 'Pending' %}sp-pending{% elif r.status == 'In Progress' %}sp-progress{% else %}sp-resolved{% endif %}">{{ r.status }}</span>
             </div>
-            <div class="report-card">
-              <div><div class="report-type">🔊 Noise Disturbance</div><div class="report-date">March 20, 2026, 2:15 PM</div></div>
-              <span class="status-pill sp-progress">In Progress</span>
-            </div>
-            <div class="report-card">
-              <div><div class="report-type">🚗 Traffic Accident</div><div class="report-date">March 20, 2026, 2:15 PM</div></div>
-              <span class="status-pill sp-resolved">Resolved</span>
-            </div>
+            {% else %}
+            <div class="empty-state">No reports filed yet</div>
+            {% endfor %}
           </div>
         </div>
       </div>

@@ -6,6 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask import session
 from flask import url_for,  flash
 from werkzeug.utils import secure_filename
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "safe_city_secret_123"
@@ -91,7 +92,6 @@ def report():
     is_anonymous = 'anonymous' in request.form
     evidence     = request.files.get('evidence')
 
-    # 2. Basic validation
     errors = []
     if not description:
         errors.append('Description is required.')
@@ -110,9 +110,6 @@ def report():
 
     db = get_db_connection()
     try:
-        # ----------------------------------------------------------
-        # 3. Resolve category_id
-        # ----------------------------------------------------------
         row = db.execute(
             'SELECT category_id FROM CrimeCategories WHERE name = ?',
             (crime_type,)
@@ -127,9 +124,6 @@ def report():
             )
             category_id = cursor.lastrowid
 
-        # ----------------------------------------------------------
-        # 4. Resolve user_id
-        # ----------------------------------------------------------
         user_id = session.get('user_id')
 
         if not is_anonymous:
@@ -151,9 +145,6 @@ def report():
         if is_anonymous:
             user_id = None
 
-        # ----------------------------------------------------------
-        # 5. Insert the complaint
-        # ----------------------------------------------------------
         cursor = db.execute(
             '''INSERT INTO Complaints
                (user_id, category_id, description, location, status)
@@ -162,9 +153,6 @@ def report():
         )
         complaint_id = cursor.lastrowid
 
-        # ----------------------------------------------------------
-        # 6. Set priority based on crime category
-        # ----------------------------------------------------------
         PRIORITY_MAP = {
             'Assault':      'High',
             'Theft':        'Medium',
@@ -188,18 +176,12 @@ def report():
 
         assigned_police_id = officer['personnel_id'] if officer else None
 
-        # ----------------------------------------------------------
-        # 8. Insert into Cases — detective is NULL
-        # ----------------------------------------------------------
         db.execute('''
             INSERT INTO Cases (complaint_id, assigned_police_id, priority, notes)
             VALUES (?, ?, ?, ?)
         ''', (complaint_id, assigned_police_id, priority,
               f'Auto-assigned | Priority: {priority}'))
 
-        # ----------------------------------------------------------
-        # 9. Handle optional evidence upload
-        # ----------------------------------------------------------
         if evidence and evidence.filename:
             safe_name = secure_filename(evidence.filename)
             ext = safe_name.rsplit('.', 1)[-1] if '.' in safe_name else 'bin'
@@ -318,9 +300,61 @@ def police_dashboard():
 
     return render_template('police_dashboard.html')
 
+def time_ago(dt_str):
+    if not dt_str:
+        return ''
+    dt = datetime.strptime(dt_str, '%Y-%m-%d %H:%M:%S')
+    now = datetime.now()
+    diff = now - dt
+    minutes = int(diff.total_seconds() // 60)
+    if minutes < 1:
+        return 'Just now'
+    elif minutes < 60:
+        return f'{minutes}m ago'
+    elif minutes < 1440:
+        return f'{minutes // 60}h ago'
+    else:
+        return f'{minutes // 1440}d ago'
+    
 @app.route('/citizen_dashboard')
 def citizen_dashboard():
-    return render_template('citizen_dashboard.html')
+    db = get_db_connection()
+
+    # Recent 3 generic notifications
+    notifications = db.execute('''
+        SELECT message, created_at
+        FROM Notifications
+        ORDER BY created_at DESC
+        LIMIT 3
+    ''').fetchall()
+
+    now = datetime.now()
+    recent_notifications = []
+    for n in notifications:
+        dt = datetime.strptime(n['created_at'], '%Y-%m-%d %H:%M:%S')
+        hours_ago = (now - dt).total_seconds() / 3600
+        recent_notifications.append({
+            'message': n['message'],
+            'time_ago': time_ago(n['created_at']),
+            'is_new': hours_ago < 24
+        })
+
+    # Recent 3 reports by this citizen (if logged in)
+    reports = db.execute('''
+        SELECT c.complaint_id, cc.name as category_name, c.location, c.status, c.created_at
+        FROM Complaints c
+        JOIN CrimeCategories cc ON c.category_id = cc.category_id
+        ORDER BY c.created_at DESC
+        LIMIT 3
+    ''').fetchall()
+    recent_reports = [dict(r, time_ago=time_ago(r['created_at'])) for r in reports]
+
+    db.close()
+
+    return render_template('citizen_dashboard.html',
+        recent_notifications=recent_notifications,
+        recent_reports=recent_reports
+    )
 
 @app.route('/case_tracking')
 def case_tracking():
