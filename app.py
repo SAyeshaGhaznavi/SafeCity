@@ -361,7 +361,31 @@ def citizen_dashboard():
 
 @app.route('/case_tracking')
 def case_tracking():
-    return render_template('case_tracking.html')
+    db = get_db_connection()
+
+    cases = db.execute('''
+        SELECT c.complaint_id, cc.name as category_name, c.location, c.status, 
+               cs.priority, c.created_at
+        FROM Complaints c
+        JOIN CrimeCategories cc ON c.category_id = cc.category_id
+        LEFT JOIN Cases cs ON c.complaint_id = cs.complaint_id
+        ORDER BY c.created_at DESC
+    ''').fetchall()
+
+    all_cases = []
+    for c in cases:
+        all_cases.append({
+            'complaint_id': c['complaint_id'],
+            'category_name': c['category_name'],
+            'location': c['location'],
+            'status': c['status'],
+            'priority': c['priority'] if c['priority'] else 'Medium',
+            'time_ago': time_ago(c['created_at'])
+        })
+
+    db.close()
+
+    return render_template('case_tracking.html', cases=all_cases)
 
 @app.route('/case_detail/<int:case_id>')
 def case_detail(case_id):

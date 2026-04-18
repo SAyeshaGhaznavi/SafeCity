@@ -20,7 +20,7 @@
     .back-btn:hover{background:rgba(0,200,255,0.1)}
     .header-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:2px;flex:1}
 
-    .content{flex:1;padding:14px;display:flex;flex-direction:column;gap:12px;overflow-y:auto}
+    .content{flex:1;padding:14px;display:flex;flex-direction:column;gap:10px;overflow-y:auto}
     .content::-webkit-scrollbar{width:3px}
     .content::-webkit-scrollbar-thumb{background:rgba(0,200,255,0.3);border-radius:2px}
 
@@ -29,25 +29,24 @@
     .filter-tab.active{background:rgba(0,200,255,0.15);border-color:var(--cyan);color:var(--cyan)}
     .filter-tab:hover{border-color:var(--cyan)}
 
-    .case-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;cursor:pointer;transition:all 0.2s;text-decoration:none;color:inherit;display:block}
-    .case-card:hover{background:rgba(0,200,255,0.06);border-color:var(--cyan);transform:translateY(-2px)}
-    .case-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
-    .case-num{font-weight:700;font-size:0.75rem;color:var(--cyan);margin-bottom:3px}
-    .case-type{font-weight:700;font-size:0.9rem;display:flex;align-items:center;gap:6px}
-    .case-status{font-size:0.65rem;font-weight:700;padding:4px 8px;border-radius:5px;text-transform:uppercase}
+    .case-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;transition:all 0.2s;display:flex;flex-direction:column;gap:10px}
+    .case-card:hover{border-color:rgba(0,200,255,0.3)}
+    .case-top{display:flex;justify-content:space-between;align-items:flex-start}
+    .case-num{font-weight:700;font-size:0.72rem;color:var(--cyan);margin-bottom:3px}
+    .case-type{font-weight:700;font-size:0.88rem;display:flex;align-items:center;gap:6px}
+    .case-status{font-size:0.62rem;font-weight:700;padding:4px 8px;border-radius:5px;text-transform:uppercase;flex-shrink:0}
     .cs-pending{background:rgba(255,184,48,0.2);color:var(--yellow)}
     .cs-progress{background:rgba(0,200,255,0.2);color:var(--cyan)}
     .cs-resolved{background:rgba(0,229,160,0.15);color:var(--green)}
     .case-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.72rem}
-    .meta-label{font-size:0.6rem;text-transform:uppercase;letter-spacing:0.5px;color:var(--cyan);font-weight:700;margin-bottom:2px}
-    .case-loc{font-size:0.72rem;color:var(--muted);margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;align-items:center;gap:5px}
-    .view-btn{margin-top:10px;width:100%;padding:8px;background:rgba(0,200,255,0.08);border:1px solid rgba(0,200,255,0.2);color:var(--cyan);border-radius:7px;font-size:0.72rem;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;text-align:center;text-decoration:none;display:block}
+    .meta-label{font-size:0.58rem;text-transform:uppercase;letter-spacing:0.5px;color:var(--cyan);font-weight:700;margin-bottom:2px}
+    .pr-high{color:var(--red);font-weight:700}
+    .pr-med{color:var(--yellow);font-weight:700}
+    .pr-low{color:var(--green);font-weight:700}
+    .case-loc{font-size:0.7rem;color:var(--muted);padding-top:8px;border-top:1px solid var(--border);display:flex;align-items:center;gap:5px}
+    .view-btn{width:100%;padding:8px;background:rgba(0,200,255,0.08);border:1px solid rgba(0,200,255,0.2);color:var(--cyan);border-radius:7px;font-size:0.72rem;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;text-align:center;text-decoration:none;display:block}
     .view-btn:hover{background:rgba(0,200,255,0.15)}
-
-    .bottom-nav{display:flex;border-top:1px solid var(--border);background:rgba(10,15,30,0.95);flex-shrink:0}
-    .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:9px 6px;font-size:0.55rem;color:var(--muted);text-decoration:none;transition:color 0.2s;cursor:pointer;border:none;background:transparent;font-family:'DM Sans',sans-serif}
-    .nav-btn.active,.nav-btn:hover{color:var(--cyan)}
-    .nav-btn-icon{font-size:1rem}
+    .empty-state{text-align:center;padding:30px 10px;font-size:0.78rem;color:var(--muted)}
   </style>
 </head>
 <body>
@@ -61,70 +60,33 @@
       <div class="content">
         <div class="filter-tabs">
           <button class="filter-tab active" onclick="filterCases(this,'all')">All</button>
-          <button class="filter-tab" onclick="filterCases(this,'pending')">Pending</button>
-          <button class="filter-tab" onclick="filterCases(this,'progress')">In Progress</button>
-          <button class="filter-tab" onclick="filterCases(this,'resolved')">Resolved</button>
+          <button class="filter-tab" onclick="filterCases(this,'Pending')">Pending</button>
+          <button class="filter-tab" onclick="filterCases(this,'In Progress')">In Progress</button>
+          <button class="filter-tab" onclick="filterCases(this,'Resolved')">Resolved</button>
         </div>
 
-        <a href="/case_detail/1" class="case-card" data-status="pending">
-          <div class="case-header">
-            <div><div class="case-num">CASE #2026-001</div><div class="case-type"><span>💰</span> Theft</div></div>
-            <span class="case-status cs-pending">Pending</span>
+        <div id="caseList">
+          {% for c in cases %}
+          <div class="case-card" data-status="{{ c.status }}">
+            <div class="case-top">
+              <div>
+                <div class="case-num">#{{ c.complaint_id }}</div>
+                <div class="case-type">{{ c.category_name }}</div>
+              </div>
+              <span class="case-status {% if c.status == 'Pending' %}cs-pending{% elif c.status == 'In Progress' %}cs-progress{% else %}cs-resolved{% endif %}">{{ c.status }}</span>
+            </div>
+            <div class="case-meta">
+              <div><div class="meta-label">Time</div><div>{{ c.time_ago }}</div></div>
+              <div><div class="meta-label">Priority</div><div class="{% if c.priority == 'High' %}pr-high{% elif c.priority == 'Medium' %}pr-med{% else %}pr-low{% endif %}">{{ c.priority if c.priority else 'Medium' }}</div></div>
+            </div>
+            <div class="case-loc">📍 {{ c.location }}</div>
+            <a href="/case_detail/{{ c.complaint_id }}" class="view-btn">View Details →</a>
           </div>
-          <div class="case-meta">
-            <div><div class="meta-label">Date</div><div>March 20, 2026</div></div>
-            <div><div class="meta-label">Priority</div><div style="color:var(--yellow)">Medium</div></div>
-          </div>
-          <div class="case-loc">📍 Defence Road, Lahore</div>
-          <a href="/case_detail/1" class="view-btn">View Details →</a>
-        </a>
-
-        <a href="/case_detail/2" class="case-card" data-status="progress">
-          <div class="case-header">
-            <div><div class="case-num">CASE #2026-002</div><div class="case-type"><span>🔊</span> Noise Disturbance</div></div>
-            <span class="case-status cs-progress">In Progress</span>
-          </div>
-          <div class="case-meta">
-            <div><div class="meta-label">Date</div><div>March 18, 2026</div></div>
-            <div><div class="meta-label">Officer</div><div>Officer Smith</div></div>
-          </div>
-          <div class="case-loc">📍 Gulberg, Lahore</div>
-          <a href="/case_detail/2" class="view-btn">View Details →</a>
-        </a>
-
-        <a href="/case_detail/3" class="case-card" data-status="resolved">
-          <div class="case-header">
-            <div><div class="case-num">CASE #2026-003</div><div class="case-type"><span>🚗</span> Traffic Accident</div></div>
-            <span class="case-status cs-resolved">Resolved</span>
-          </div>
-          <div class="case-meta">
-            <div><div class="meta-label">Date</div><div>Dec 20, 2025</div></div>
-            <div><div class="meta-label">Resolved</div><div style="color:var(--green)">99 days ago</div></div>
-          </div>
-          <div class="case-loc">📍 GT Road, Lahore</div>
-          <a href="/case_detail/3" class="view-btn">View Details →</a>
-        </a>
-
-        <a href="/case_detail/4" class="case-card" data-status="pending">
-          <div class="case-header">
-            <div><div class="case-num">CASE #2026-004</div><div class="case-type"><span>🏚️</span> Property Damage</div></div>
-            <span class="case-status cs-pending">Pending</span>
-          </div>
-          <div class="case-meta">
-            <div><div class="meta-label">Date</div><div>March 22, 2026</div></div>
-            <div><div class="meta-label">Priority</div><div style="color:var(--red)">High</div></div>
-          </div>
-          <div class="case-loc">📍 Township, Lahore</div>
-          <a href="/case_detail/4" class="view-btn">View Details →</a>
-        </a>
+          {% else %}
+          <div class="empty-state">No cases found</div>
+          {% endfor %}
+        </div>
       </div>
-    </div>
-
-    <div class="bottom-nav">
-      <a href="/portal" class="nav-btn"><span class="nav-btn-icon">🏠</span>Home</a>
-      <a href="/report" class="nav-btn"><span class="nav-btn-icon">🚨</span>Report</a>
-      <a href="/case_tracking" class="nav-btn active"><span class="nav-btn-icon">📋</span>Cases</a>
-      <a href="/citizen_dashboard" class="nav-btn"><span class="nav-btn-icon">👤</span>Profile</a>
     </div>
   </div>
   <script>
@@ -132,7 +94,7 @@
       document.querySelectorAll('.filter-tab').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
       document.querySelectorAll('.case-card').forEach(c=>{
-        c.style.display=(status==='all'||c.dataset.status===status)?'block':'none';
+        c.style.display=(status==='all'||c.dataset.status===status)?'flex':'none';
       });
     }
   </script>
