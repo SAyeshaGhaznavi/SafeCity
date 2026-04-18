@@ -296,7 +296,7 @@ def register_badge():
         conn.close()
 
         flash("Registered Successfully ✅", "success")
-        return redirect(url_for("portal"))
+        return redirect(url_for("splash"))
 
     return render_template("register_badge.html")
 
@@ -386,6 +386,32 @@ def case_tracking():
     db.close()
 
     return render_template('case_tracking.html', cases=all_cases)
+
+@app.route('/notifications')
+def notifications():
+    db = get_db_connection()
+
+    all_notifications = db.execute('''
+        SELECT message, created_at
+        FROM Notifications
+        ORDER BY created_at DESC
+    ''').fetchall()
+
+    now = datetime.utcnow()
+    notifications_list = []
+    for n in all_notifications:
+        dt = datetime.strptime(n['created_at'], '%Y-%m-%d %H:%M:%S')
+        hours_ago = (now - dt).total_seconds() / 3600
+        notifications_list.append({
+            'message': n['message'],
+            'time_ago': time_ago(n['created_at']),
+            'is_new': hours_ago < 24,
+            'date': dt.strftime('%b %d, %Y · %I:%M %p')
+        })
+
+    db.close()
+
+    return render_template('notifications.html', all_notifications=notifications_list)
 
 @app.route('/case_detail/<int:case_id>')
 def case_detail(case_id):
