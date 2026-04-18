@@ -297,6 +297,7 @@ def register_badge():
 
 @app.route('/police_dashboard')
 def police_dashboard():
+
     return render_template('police_dashboard.html')
 
 @app.route('/citizen_dashboard')
@@ -318,6 +319,67 @@ def emergency_tracking():
 @app.route('/statistics_board')
 def statistics_board():
     return render_template('statistics_board.html')
+
+@app.route('/profile')
+def profile():
+    user_id = session.get('user_id')
+    role = session.get('role')
+
+    if not user_id:
+        return redirect(url_for('login'))
+    conn = get_db_connection()
+
+    if role == "personnel":
+        user = conn.execute(
+            "SELECT * FROM AuthorizedPersonnel WHERE personnel_id = ?",
+            (user_id,)
+        ).fetchone()
+
+    elif role == "citizen":
+        user = conn.execute(
+            "SELECT * FROM Citizens WHERE citizen_id = ?",
+            (user_id,)
+        ).fetchone()
+
+    else:
+        conn.close()
+        return redirect(url_for('login'))
+
+    conn.close()
+
+    return render_template("profile.html", user=user, role=role)
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('portal'))
+
+@app.route('/my_complaints')
+def my_complaints():
+    user_id = session.get('user_id')
+
+    conn = get_db_connection()
+    complaints = conn.execute(
+        "SELECT * FROM Complaints WHERE user_id = ?",
+        (user_id,)
+    ).fetchall()
+    conn.close()
+
+    return render_template("my_complaints.html", complaints=complaints)
+
+@app.route('/update_status/<int:id>', methods=['POST'])
+def update_status(id):
+    status = request.form.get('status')
+
+    conn = get_db_connection()
+    conn.execute(
+        "UPDATE Complaints SET status = ? WHERE complaint_id = ?",
+        (status, id)
+    )
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for('police_dashboard'))
 
 if __name__ == '__main__':
     app.run(debug=True)
