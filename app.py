@@ -153,6 +153,11 @@ def report():
         )
         complaint_id = cursor.lastrowid
 
+        db.execute(
+            'INSERT INTO Notifications (message) VALUES (?)',
+            (f'New complaint #{complaint_id} ({crime_type}) reported at {location}.',)
+        )
+
         PRIORITY_MAP = {
             'Assault':      'High',
             'Theft':        'Medium',
@@ -304,7 +309,7 @@ def time_ago(dt_str):
     if not dt_str:
         return ''
     dt = datetime.strptime(dt_str, '%Y-%m-%d %H:%M:%S')
-    now = datetime.now()
+    now = datetime.utcnow()
     diff = now - dt
     minutes = int(diff.total_seconds() // 60)
     if minutes < 1:
@@ -320,7 +325,6 @@ def time_ago(dt_str):
 def citizen_dashboard():
     db = get_db_connection()
 
-    # Recent 3 generic notifications
     notifications = db.execute('''
         SELECT message, created_at
         FROM Notifications
@@ -328,7 +332,7 @@ def citizen_dashboard():
         LIMIT 3
     ''').fetchall()
 
-    now = datetime.now()
+    now = datetime.utcnow()
     recent_notifications = []
     for n in notifications:
         dt = datetime.strptime(n['created_at'], '%Y-%m-%d %H:%M:%S')
@@ -339,7 +343,6 @@ def citizen_dashboard():
             'is_new': hours_ago < 24
         })
 
-    # Recent 3 reports by this citizen (if logged in)
     reports = db.execute('''
         SELECT c.complaint_id, cc.name as category_name, c.location, c.status, c.created_at
         FROM Complaints c

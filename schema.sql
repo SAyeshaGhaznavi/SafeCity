@@ -123,18 +123,20 @@ VALUES
 
 INSERT INTO Complaints (user_id, category_id, description, location, status, created_at)
 VALUES
-(1, 2, 'Armed robbery near bank ATM', 'Gulberg III, Lahore', 'In Progress', '2025-06-20 12:00:00'),
-(3, 4, 'Online fraud through fake marketplace listing', 'DHA Phase 5, Lahore', 'Pending', '2025-06-20 09:45:00'),
-(4, 3, 'Vandalism of public park benches and lights', 'Jilani Park, Lahore', 'Resolved', '2025-06-19 16:30:00'),
-(5, 5, 'Hacked social media account with threats', 'Model Town, Lahore', 'In Progress', '2025-06-20 07:20:00'),
-(2, 1, 'Car side mirror and license plate stolen', 'Cantt Area, Lahore', 'Pending', '2025-06-20 13:15:00'),
-(3, 6, 'Suspicious individuals lurking near school', 'Gulshan-e-Iqbal, Lahore', 'Pending', '2025-06-19 20:00:00'),
-(1, 3, 'Graffiti and property damage on shop shutters', 'Liberty Market, Lahore', 'Resolved', '2025-06-18 14:10:00'),
-(4, 2, 'Physical altercation between shopkeepers', 'Food Street, Lahore', 'In Progress', '2025-06-20 11:30:00'),
-(5, 4, 'Landlord scamming tenants with fake documents', 'Johar Town, Lahore', 'Pending', '2025-06-19 10:00:00'),
-(2, 5, 'Credit card skimming at petrol pump', 'Faisal Town, Lahore', 'In Progress', '2025-06-18 08:30:00'),
-(3, 1, 'Bicycle stolen from outside mosque', 'Iqbal Park, Lahore', 'Resolved', '2025-06-17 18:45:00'),
-(4, 6, 'Trespassing in abandoned building at night', 'Samnabad, Lahore', 'Pending', '2025-06-20 15:00:00');
+(1, 1, 'Mobile phone stolen in market', 'Lahore Mall Road', 'Pending', '2026-03-31 10:00:00'),
+(2, 3, 'Harassment reported near bus stop', 'Gulberg Lahore', 'In Progress', '2026-03-31 09:30:00'),
+(1, 2, 'Armed robbery near bank ATM', 'Gulberg III, Lahore', 'In Progress', '2026-03-31 12:00:00'),
+(3, 4, 'Online fraud through fake marketplace listing', 'DHA Phase 5, Lahore', 'Pending', '2026-03-31 09:45:00'),
+(4, 3, 'Vandalism of public park benches and lights', 'Jilani Park, Lahore', 'Resolved', '2026-03-30 16:30:00'),
+(5, 5, 'Hacked social media account with threats', 'Model Town, Lahore', 'In Progress', '2026-03-31 07:20:00'),
+(2, 1, 'Car side mirror and license plate stolen', 'Cantt Area, Lahore', 'Pending', '2026-03-31 13:15:00'),
+(3, 6, 'Suspicious individuals lurking near school', 'Gulshan-e-Iqbal, Lahore', 'Pending', '2026-03-30 20:00:00'),
+(1, 3, 'Graffiti and property damage on shop shutters', 'Liberty Market, Lahore', 'Resolved', '2026-03-29 14:10:00'),
+(4, 2, 'Physical altercation between shopkeepers', 'Food Street, Lahore', 'In Progress', '2026-03-31 11:30:00'),
+(5, 4, 'Landlord scamming tenants with fake documents', 'Johar Town, Lahore', 'Pending', '2026-03-30 10:00:00'),
+(2, 5, 'Credit card skimming at petrol pump', 'Faisal Town, Lahore', 'In Progress', '2026-03-29 08:30:00'),
+(3, 1, 'Bicycle stolen from outside mosque', 'Iqbal Park, Lahore', 'Resolved', '2026-03-28 18:45:00'),
+(4, 6, 'Trespassing in abandoned building at night', 'Samnabad, Lahore', 'Pending', '2026-03-31 15:00:00');
 
 INSERT INTO Evidence (complaint_id, file_url)
 VALUES
@@ -143,18 +145,20 @@ VALUES
 
 INSERT INTO Cases (complaint_id, assigned_police_id, assigned_detective_id, priority, notes, last_updated)
 VALUES
-(3, 1, NULL, 'High', 'Armed robbery — urgent patrol deployed', '2025-06-20 12:05:00'),
-(4, 3, NULL, 'Medium', 'Online fraud — collecting digital evidence', '2025-06-20 09:50:00'),
-(5, 4, NULL, 'Low', 'Vandalism resolved — area cleaned up', '2025-06-19 17:00:00'),
-(6, 1, 2, 'Medium', 'Cybercrime — forwarded to cyber cell', '2025-06-20 07:30:00'),
-(7, 3, NULL, 'Medium', 'Theft from vehicle — checking CCTV footage', '2025-06-20 13:20:00'),
-(8, 4, NULL, 'Medium', 'Suspicious activity — patrol sent for verification', '2025-06-19 20:10:00'),
-(9, 3, NULL, 'Low', 'Vandalism resolved — shop owners notified', '2025-06-18 14:30:00'),
-(10, 1, NULL, 'High', 'Assault between shopkeepers — mediation in progress', '2025-06-20 11:35:00'),
-(11, 4, NULL, 'Medium', 'Fraud case — documents under verification', '2025-06-19 10:15:00'),
-(12, 3, 2, 'Medium', 'Credit card skimming — forensics team involved', '2025-06-18 08:45:00'),
-(13, 4, NULL, 'Low', 'Bicycle theft resolved — recovered from suspect', '2025-06-17 19:00:00'),
-(14, 1, NULL, 'Medium', 'Trespassing report — area being monitored', '2025-06-20 15:10:00');
+(1, 2, NULL, 'Medium', 'Investigating theft case', '2026-03-31 10:10:00'),
+(2, 3, NULL, 'High', 'Patrol assigned to location', '2026-03-31 09:40:00'),
+(3, 1, NULL, 'High', 'Armed robbery - urgent patrol deployed', '2026-03-31 12:05:00'),
+(4, 3, NULL, 'Medium', 'Online fraud - collecting digital evidence', '2026-03-31 09:50:00'),
+(5, 4, NULL, 'Low', 'Vandalism resolved - area cleaned up', '2026-03-30 17:00:00'),
+(6, 1, 2, 'Medium', 'Cybercrime - forwarded to cyber cell', '2026-03-31 07:30:00'),
+(7, 3, NULL, 'Medium', 'Theft from vehicle - checking CCTV footage', '2026-03-31 13:20:00'),
+(8, 4, NULL, 'Medium', 'Suspicious activity - patrol sent for verification', '2026-03-30 20:10:00'),
+(9, 3, NULL, 'Low', 'Vandalism resolved - shop owners notified', '2026-03-29 14:30:00'),
+(10, 1, NULL, 'High', 'Assault between shopkeepers - mediation in progress', '2026-03-31 11:35:00'),
+(11, 4, NULL, 'Medium', 'Fraud case - documents under verification', '2026-03-30 10:15:00'),
+(12, 3, 2, 'Medium', 'Credit card skimming - forensics team involved', '2026-03-29 08:45:00'),
+(13, 4, NULL, 'Low', 'Bicycle theft resolved - recovered from suspect', '2026-03-28 19:00:00'),
+(14, 1, NULL, 'Medium', 'Trespassing report - area being monitored', '2026-03-31 15:10:00');
 
 INSERT INTO Dispatch (complaint_id, assigned_unit_id, status, eta)
 VALUES
@@ -170,16 +174,23 @@ VALUES
 (1, 2);
 
 INSERT INTO Notifications (message, created_at) VALUES
-('Complaint #1 (Theft - Lahore Mall Road) has been received and is under review.', '2025-06-20 10:30:00'),
-('A police officer has been assigned to complaint #1.', '2025-06-20 10:35:00'),
-('Complaint #2 (Harassment - Gulberg Lahore) status changed to In Progress.', '2025-06-20 11:00:00'),
-('Community alert: Street robbery reported in Gulberg III. Stay cautious.', '2025-06-20 09:00:00'),
-('Report #1040 has been submitted successfully.', '2025-06-19 14:20:00'),
-('Complaint regarding suspicious activity in DHA Phase 5 has been resolved.', '2025-06-18 16:45:00'),
-('Community update: Traffic dispute near Johar Town has been handled. Area is secure.', '2025-06-18 18:00:00'),
-('Complaint #1039 (Noise Complaint) has been logged. A patrol unit will be notified.', '2025-06-20 08:15:00'),
-('A volunteer has been assigned to support complaint #2.', '2025-06-20 10:40:00'),
-('New volunteer registered with skills in First Aid and Rescue Support.', '2025-06-17 12:00:00');
+('Trespassing in Samnabad reported. A patrol unit will be notified.', '2026-03-31 15:05:00'),
+('Car theft reported in Cantt Area. Checking nearby CCTV.', '2026-03-31 13:20:00'),
+('Armed robbery near bank ATM in Gulberg III. High priority.', '2026-03-31 12:05:00'),
+('Complaint #1 (Theft - Lahore Mall Road) has been received and is under review.', '2026-03-31 10:10:00'),
+('A police officer has been assigned to complaint #1.', '2026-03-31 10:15:00'),
+('Complaint #2 (Harassment - Gulberg Lahore) status changed to In Progress.', '2026-03-31 09:40:00'),
+('Community alert: Street robbery reported in Gulberg III. Stay cautious.', '2026-03-31 09:00:00'),
+('Complaint #1039 (Noise Complaint) has been logged. A patrol unit will be notified.', '2026-03-31 08:15:00'),
+('Hacked social media account reported in Model Town. Forwarded to cyber cell.', '2026-03-31 07:30:00'),
+('Report #1040 has been submitted successfully.', '2026-03-30 14:20:00'),
+('Complaint regarding suspicious activity in DHA Phase 5 has been resolved.', '2026-03-30 16:45:00'),
+('Community update: Traffic dispute near Johar Town has been handled. Area is secure.', '2026-03-30 18:00:00'),
+('Vandalism in Jilani Park has been resolved. Area cleaned up.', '2026-03-30 17:00:00'),
+('Suspicious individuals reported near school in Gulshan-e-Iqbal.', '2026-03-30 20:10:00'),
+('New volunteer registered with skills in First Aid and Rescue Support.', '2026-03-30 12:00:00'),
+('Credit card skimming reported at Faisal Town petrol pump.', '2026-03-29 08:45:00'),
+('Bicycle theft in Iqbal Park resolved. Recovered from suspect.', '2026-03-28 19:00:00');
 
 INSERT INTO Logs (user_id, action)
 VALUES
