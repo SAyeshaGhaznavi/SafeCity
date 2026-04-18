@@ -29,26 +29,20 @@
 
     /* CONTENT */
     .content{flex:1;padding:14px;display:flex;flex-direction:column;gap:14px}
-
-    /* PAGE TITLE */
     .page-title{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:2px}
     .page-sub{font-size:0.68rem;color:var(--muted);margin-top:2px}
 
     /* STATS GRID */
-    .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .stat-card{border-radius:12px;padding:14px;position:relative;overflow:hidden;border:1px solid var(--border)}
+    .stats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+    .stat-card{border-radius:12px;padding:12px 10px;position:relative;overflow:hidden;border:1px solid var(--border)}
     .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
-    .stat-card.c-red{border-color:rgba(255,78,106,0.25)}.stat-card.c-red::before{background:linear-gradient(90deg,var(--red),transparent)}
     .stat-card.c-yellow{border-color:rgba(255,184,48,0.25)}.stat-card.c-yellow::before{background:linear-gradient(90deg,var(--yellow),transparent)}
     .stat-card.c-cyan{border-color:rgba(0,200,255,0.25)}.stat-card.c-cyan::before{background:linear-gradient(90deg,var(--cyan),transparent)}
     .stat-card.c-green{border-color:rgba(0,229,160,0.25)}.stat-card.c-green::before{background:linear-gradient(90deg,var(--green),transparent)}
-    .stat-icon{font-size:1.3rem;margin-bottom:8px}
-    .stat-num{font-family:'Bebas Neue',sans-serif;font-size:2rem;line-height:1}
-    .c-red .stat-num{color:var(--red)}.c-yellow .stat-num{color:var(--yellow)}.c-cyan .stat-num{color:var(--cyan)}.c-green .stat-num{color:var(--green)}
-    .stat-lbl{font-size:0.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:4px}
-    .stat-change{font-size:0.62rem;color:var(--muted);margin-top:6px}
-    .stat-action{display:block;margin-top:10px;padding:5px 8px;font-size:0.62rem;border:1px solid var(--border);background:transparent;color:var(--cyan);border-radius:5px;cursor:pointer;text-decoration:none;text-align:center;transition:all 0.2s;font-family:'DM Sans',sans-serif}
-    .stat-action:hover{background:rgba(0,200,255,0.08)}
+    .stat-icon{font-size:1.2rem;margin-bottom:6px}
+    .stat-num{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;line-height:1}
+    .c-yellow .stat-num{color:var(--yellow)}.c-cyan .stat-num{color:var(--cyan)}.c-green .stat-num{color:var(--green)}
+    .stat-lbl{font-size:0.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:3px}
 
     /* HIGH PRIORITY */
     .priority-section{background:rgba(255,78,106,0.06);border:1px solid rgba(255,78,106,0.2);border-radius:12px;padding:12px}
@@ -72,12 +66,12 @@
     .complaints-section{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
     .section-head{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border)}
     .section-head-title{font-size:0.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
-    .section-link{font-size:0.65rem;color:var(--cyan);text-decoration:none;font-weight:600}
+    .section-link{font-size:0.65rem;color:var(--cyan);text-decoration:none;font-weight:600;transition:opacity 0.2s}
+    .section-link:hover{opacity:0.7}
     .complaints-table{width:100%;font-size:0.72rem}
     .complaints-table th{padding:8px 12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;font-size:0.6rem;border-bottom:1px solid var(--border);text-align:left;font-weight:600}
     .complaints-table td{padding:9px 12px;border-bottom:1px solid rgba(0,200,255,0.05)}
     .complaints-table tr:last-child td{border-bottom:none}
-    .complaints-table tr:hover td{background:rgba(0,200,255,0.03)}
     .pr-high{color:var(--red);font-weight:700;font-size:0.6rem}
     .pr-med{color:var(--yellow);font-weight:700;font-size:0.6rem}
     .pr-low{color:var(--green);font-weight:700;font-size:0.6rem}
@@ -114,33 +108,20 @@
 
         <!-- STATS -->
         <div class="stats-grid">
-          <div class="stat-card c-red">
-            <div class="stat-icon">🚨</div>
-            <div class="stat-num">12</div>
-            <div class="stat-lbl">Open Reports</div>
-            <div class="stat-change">↑ 3 from yesterday</div>
-            <a href="/report" class="stat-action">View All</a>
-          </div>
           <div class="stat-card c-yellow">
             <div class="stat-icon">⏳</div>
-            <div class="stat-num">5</div>
-            <div class="stat-lbl">In Progress</div>
-            <div class="stat-change">2 units deployed</div>
-            <button class="stat-action">Assign</button>
+            <div class="stat-num">12</div>
+            <div class="stat-lbl">Pending</div>
           </div>
           <div class="stat-card c-cyan">
-            <div class="stat-icon">📋</div>
-            <div class="stat-num">38</div>
-            <div class="stat-lbl">This Month</div>
-            <div class="stat-change">↓ 8% vs last</div>
-            <a href="/statistics_board" class="stat-action">Stats</a>
+            <div class="stat-icon">🔄</div>
+            <div class="stat-num">5</div>
+            <div class="stat-lbl">In Progress</div>
           </div>
           <div class="stat-card c-green">
             <div class="stat-icon">✅</div>
             <div class="stat-num">21</div>
             <div class="stat-lbl">Resolved</div>
-            <div class="stat-change">55% rate</div>
-            <button class="stat-action">Details</button>
           </div>
         </div>
 

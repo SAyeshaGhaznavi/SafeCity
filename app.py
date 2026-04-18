@@ -60,11 +60,9 @@ def view_db():
     conn = get_db_connection()
     cursor = conn.cursor()
     
-    # 1. Get the names of all tables in the database
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
     tables = cursor.fetchall()
 
-    # 2. Loop through each table and grab all its rows
     table_data = {}
     for table in tables:
         table_name = table['name']
@@ -74,7 +72,6 @@ def view_db():
     
     conn.close()
     
-    # 3. Send the data to the same HTML template you already made
     return render_template("initdb.html", table_data=table_data)
 
 @app.route('/portal')
@@ -83,22 +80,16 @@ def portal():
 
 @app.route('/report', methods=['GET', 'POST'])
 def report():
-    # GET → serve the form
     if request.method == 'GET':
         return render_template('report.html')
 
-    # ------------------------------------------------------------------
-    # POST → handle submission
-    # ------------------------------------------------------------------
-
-    # 1. Pull every field from the form
     crime_type   = request.form.get('crime_type', 'Other').strip()
     description  = request.form.get('description', '').strip()
     location     = request.form.get('location', '').strip()
     full_name    = request.form.get('full_name', '').strip()
     cnic         = request.form.get('cnic', '').strip()
-    is_anonymous = 'anonymous' in request.form        # checkbox
-    evidence     = request.files.get('evidence')       # may be None
+    is_anonymous = 'anonymous' in request.form
+    evidence     = request.files.get('evidence')
 
     # 2. Basic validation
     errors = []
@@ -120,7 +111,7 @@ def report():
     db = get_db_connection()
     try:
         # ----------------------------------------------------------
-        # 3. Resolve category_id  (insert if it doesn't exist yet)
+        # 3. Resolve category_id
         # ----------------------------------------------------------
         row = db.execute(
             'SELECT category_id FROM CrimeCategories WHERE name = ?',
@@ -138,13 +129,10 @@ def report():
 
         # ----------------------------------------------------------
         # 4. Resolve user_id
-        #    - If the user is logged in via session, use that.
-        #    - Otherwise look up (or create) a Citizen by CNIC.
-        #    - Anonymous reports store user_id as NULL.
         # ----------------------------------------------------------
         user_id = session.get('user_id')
 
-        if not user_id and not is_anonymous:
+        if not is_anonymous:
             citizen = db.execute(
                 'SELECT citizen_id FROM Citizens WHERE cnic = ?',
                 (cnic,)
@@ -158,7 +146,6 @@ def report():
                     (full_name, cnic)
                 )
                 user_id = cursor.lastrowid
-                # Auto-log them in so future reports reuse the same record
                 session['user_id'] = user_id
 
         if is_anonymous:
@@ -176,10 +163,44 @@ def report():
         complaint_id = cursor.lastrowid
 
         # ----------------------------------------------------------
-        # 6. Handle optional evidence upload
+        # 6. Set priority based on crime category
+        # ----------------------------------------------------------
+        PRIORITY_MAP = {
+            'Assault':      'High',
+            'Theft':        'Medium',
+            'Fraud':        'Medium',
+            'Cybercrime':   'Medium',
+            'Vandalism':    'Low',
+            'Other':      'Medium',
+        }
+        priority = PRIORITY_MAP.get(crime_type, 'Medium')
+
+        officer = db.execute('''
+            SELECT ap.personnel_id
+            FROM AuthorizedPersonnel ap
+            LEFT JOIN Cases cs ON ap.personnel_id = cs.assigned_police_id
+                               AND cs.priority = 'High'
+            WHERE ap.type = 'Police'
+            GROUP BY ap.personnel_id
+            ORDER BY COUNT(cs.case_id) ASC
+            LIMIT 1
+        ''').fetchone()
+
+        assigned_police_id = officer['personnel_id'] if officer else None
+
+        # ----------------------------------------------------------
+        # 8. Insert into Cases — detective is NULL
+        # ----------------------------------------------------------
+        db.execute('''
+            INSERT INTO Cases (complaint_id, assigned_police_id, priority, notes)
+            VALUES (?, ?, ?, ?)
+        ''', (complaint_id, assigned_police_id, priority,
+              f'Auto-assigned | Priority: {priority}'))
+
+        # ----------------------------------------------------------
+        # 9. Handle optional evidence upload
         # ----------------------------------------------------------
         if evidence and evidence.filename:
-            # Sanitise the filename but keep the original extension
             safe_name = secure_filename(evidence.filename)
             ext = safe_name.rsplit('.', 1)[-1] if '.' in safe_name else 'bin'
             stored_name = f"ev_{complaint_id}_{int(time.time())}.{ext}"
@@ -204,9 +225,6 @@ def report():
     finally:
         db.close()
 
-    # ------------------------------------------------------------------
-    # 7. Success → flash message and redirect to portal
-    # ------------------------------------------------------------------
     flash('Thank you for reporting. Your complaint has been submitted successfully.', 'success')
     return redirect(url_for('report'))
 

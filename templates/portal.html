@@ -40,19 +40,6 @@
     /* SECTION */
     .section-head{display:flex;align-items:center;justify-content:space-between}
     .section-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:1.5px}
-    .section-link{font-size:0.7rem;color:var(--cyan);text-decoration:none;font-weight:600}
-    .section-link:hover{text-decoration:underline}
-
-    /* ALERT ITEMS */
-    .alert-list{display:flex;flex-direction:column;gap:8px}
-    .alert-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px}
-    .alert-dot{width:7px;height:7px;border-radius:50%;margin-top:5px;flex-shrink:0}
-    .alert-dot.red{background:var(--red);box-shadow:0 0 6px var(--red)}
-    .alert-dot.yellow{background:#ffb830}
-    .alert-dot.green{background:var(--green)}
-    .alert-text h4{font-size:0.8rem;font-weight:600;margin-bottom:2px}
-    .alert-text p{font-size:0.7rem;color:var(--muted)}
-    .alert-time{font-size:0.65rem;color:var(--muted);margin-left:auto;white-space:nowrap;padding-top:2px;flex-shrink:0}
 
     /* EMERGENCY CONTACTS */
     .contacts-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px}
@@ -60,12 +47,6 @@
     .contact-item{background:rgba(0,200,255,0.05);border:1px solid rgba(0,200,255,0.1);border-radius:8px;padding:10px;text-align:center}
     .contact-num{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--cyan)}
     .contact-lbl{font-size:0.62rem;color:var(--muted);margin-top:2px}
-
-    /* BOTTOM NAV */
-    .bottom-nav{display:flex;border-top:1px solid var(--border);background:rgba(10,15,30,0.95);flex-shrink:0}
-    .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:10px 6px;font-size:0.58rem;color:var(--muted);text-decoration:none;transition:color 0.2s;cursor:pointer;border:none;background:transparent;font-family:'DM Sans',sans-serif}
-    .nav-btn.active,.nav-btn:hover{color:var(--cyan)}
-    .nav-btn-icon{font-size:1.1rem}
   </style>
 </head>
 <body>
@@ -98,50 +79,11 @@
             <div class="ac-title">SOS Alert</div>
             <div class="ac-desc">Immediate emergency call</div>
           </button>
-          <a href="/case_tracking" class="action-card">
-            <div class="ac-icon">📡</div>
-            <div class="ac-title">Track Case</div>
-            <div class="ac-desc">View your reports & status</div>
-          </a>
           <a href="/citizen_dashboard" class="action-card">
             <div class="ac-icon">📊</div>
             <div class="ac-title">Dashboard</div>
             <div class="ac-desc">Your activity overview</div>
           </a>
-        </div>
-
-        <!-- ALERTS -->
-        <div>
-          <div class="section-head">
-            <div class="section-title">Community Alerts</div>
-            <a href="/case_tracking" class="section-link">View all →</a>
-          </div>
-          <div class="alert-list" style="margin-top:10px">
-            <div class="alert-item">
-              <div class="alert-dot red"></div>
-              <div class="alert-text">
-                <h4>Street Robbery – Gulberg III</h4>
-                <p>Police unit dispatched. Area under watch.</p>
-              </div>
-              <div class="alert-time">2h ago</div>
-            </div>
-            <div class="alert-item">
-              <div class="alert-dot yellow"></div>
-              <div class="alert-text">
-                <h4>Suspicious Activity – DHA 5</h4>
-                <p>Unverified report. Under investigation.</p>
-              </div>
-              <div class="alert-time">5h ago</div>
-            </div>
-            <div class="alert-item">
-              <div class="alert-dot green"></div>
-              <div class="alert-text">
-                <h4>Incident Resolved – Johar Town</h4>
-                <p>Traffic dispute handled. Area secure.</p>
-              </div>
-              <div class="alert-time">Yesterday</div>
-            </div>
-          </div>
         </div>
 
         <!-- EMERGENCY CONTACTS -->
@@ -157,14 +99,6 @@
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- BOTTOM NAV -->
-    <div class="bottom-nav">
-      <a href="/portal" class="nav-btn active"><span class="nav-btn-icon">🏠</span>Home</a>
-      <a href="/report" class="nav-btn"><span class="nav-btn-icon">🚨</span>Report</a>
-      <a href="/case_tracking" class="nav-btn"><span class="nav-btn-icon">📋</span>Cases</a>
-      <a href="/citizen_dashboard" class="nav-btn"><span class="nav-btn-icon">👤</span>Profile</a>
     </div>
   </div>
 </body>
