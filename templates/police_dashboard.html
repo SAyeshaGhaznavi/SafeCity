@@ -528,39 +528,6 @@
 
     .td-action { white-space: nowrap; }
 
-    /* ── BOTTOM NAV ── */
-    .bottom-nav {
-      display: flex;
-      border-top: 1.5px solid var(--border);
-      background: rgba(10,15,30,0.95);
-      backdrop-filter: blur(10px);
-      flex-shrink: 0;
-      padding: 0 clamp(10px, 2vw, 40px);
-    }
-
-    .nav-btn {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: clamp(3px, 0.5vh, 5px);
-      padding: clamp(9px, 1.5vh, 14px) clamp(6px, 1vw, 12px);
-      font-size: clamp(0.55rem, 0.9vw, 0.75rem);
-      color: var(--muted);
-      text-decoration: none;
-      transition: color 0.2s;
-      cursor: pointer;
-      border: none;
-      background: transparent;
-      font-family: 'DM Sans', sans-serif;
-      max-width: 120px;
-      margin: 0 auto;
-    }
-
-    .nav-btn.active, .nav-btn:hover { color: var(--cyan); }
-    .nav-btn-icon { font-size: clamp(1rem, 1.8vw, 1.3rem); }
-
     @keyframes pulse {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.3; }
@@ -644,17 +611,10 @@
                 <div class="incident-right">
                   {% if hp['status'] == 'Pending' %}
                     <span class="status-pill sp-new">New</span>
-                    <form method="POST" action="/assign_case/{{ hp['complaint_id'] }}" class="inline-form">
-                      <button type="submit" class="assign-btn">Assign</button>
-                    </form>
                   {% elif hp['status'] == 'In Progress' %}
                     <span class="status-pill sp-progress">In Progress</span>
-                    <form method="POST" action="/resolve_case/{{ hp['complaint_id'] }}" class="inline-form">
-                      <button type="submit" class="assign-btn btn-resolve">Resolve</button>
-                    </form>
                   {% else %}
                     <span class="status-pill sp-resolved">Resolved</span>
-                    <a href="/case_tracking" class="assign-btn btn-view">View</a>
                   {% endif %}
                 </div>
               </div>
@@ -738,14 +698,6 @@
 
         </div>
       </div>
-    </div>
-
-    <!-- BOTTOM NAV -->
-    <div class="bottom-nav">
-      <a href="/police_dashboard" class="nav-btn active"><span class="nav-btn-icon">📊</span>Dashboard</a>
-      <a href="/case_tracking" class="nav-btn"><span class="nav-btn-icon">📋</span>Cases</a>
-      <a href="/statistics_board" class="nav-btn"><span class="nav-btn-icon">📈</span>Stats</a>
-      <a href="/register_badge" class="nav-btn"><span class="nav-btn-icon">🪪</span>Officers</a>
     </div>
   </div>
 

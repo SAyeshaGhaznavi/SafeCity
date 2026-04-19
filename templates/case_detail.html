@@ -36,7 +36,6 @@
       justify-content: stretch;
     }
     
-    /* FULL SCREEN CONTAINER */
     .app-container {
       width: 100vw;
       height: 100vh;
@@ -51,7 +50,6 @@
       background-size: 50px 50px;
     }
     
-    /* HEADER */
     .header {
       padding: clamp(14px, 2vh, 24px) clamp(16px, 3vw, 60px);
       border-bottom: 1px solid var(--border);
@@ -89,7 +87,6 @@
       flex: 1;
     }
     
-    /* MAIN CONTENT AREA */
     .app-content {
       flex: 1;
       overflow-y: auto;
@@ -109,7 +106,6 @@
       border-radius: 3px;
     }
     
-    /* CONTENT WRAPPER - Fluid width */
     .content {
       flex: 1;
       padding: clamp(16px, 3vh, 40px) clamp(16px, 4vw, 60px);
@@ -119,7 +115,6 @@
       width: 100%;
     }
     
-    /* DESKTOP LAYOUT - Responsive grid */
     .detail-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(min(100%, 450px), 1fr));
@@ -127,7 +122,6 @@
       width: 100%;
     }
     
-    /* Full width items */
     .status-banner {
       grid-column: 1 / -1;
       background: rgba(0,200,255,0.08);
@@ -241,6 +235,18 @@
       flex-shrink: 0;
     }
     
+    .officer-avatar.detective-avatar {
+      background: rgba(255,184,48,0.15);
+      border-color: var(--yellow);
+      color: var(--yellow);
+    }
+    
+    .officer-avatar.volunteer-avatar {
+      background: rgba(0,229,160,0.15);
+      border-color: var(--green);
+      color: var(--green);
+    }
+    
     .officer-name {
       font-weight: 600;
       font-size: clamp(0.85rem, 1.3vw, 1.2rem);
@@ -250,6 +256,13 @@
     .officer-badge {
       font-size: clamp(0.7rem, 1vw, 0.8rem);
       color: var(--muted);
+    }
+    
+    .officer-sub {
+      font-size: clamp(0.65rem, 0.9vw, 0.75rem);
+      color: var(--yellow);
+      margin-top: clamp(2px, 0.3vh, 4px);
+      font-weight: 600;
     }
     
     .evidence-item {
@@ -370,7 +383,6 @@
       grid-column: 1 / -1;
     }
     
-    /* Make blocks span appropriately on larger screens */
     @media (min-width: 1200px) {
       .detail-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -381,7 +393,6 @@
       }
     }
     
-    /* Force two columns on very large screens */
     @media (min-width: 1600px) {
       .detail-grid {
         grid-template-columns: repeat(3, 1fr);
@@ -396,17 +407,16 @@
 </head>
 <body>
   <div class="app-container">
-    <!-- HEADER -->
     <div class="header">
       <button class="back-btn" onclick="window.history.back()">←</button>
       <div class="header-title">CASE DETAILS</div>
     </div>
 
-    <!-- CONTENT -->
     <div class="app-content">
       <div class="content">
         {% if case %}
         <div class="detail-grid">
+
           <!-- Status Banner -->
           <div class="status-banner">
             <div class="status-badge {% if case.status == 'Pending' %}sb-pending{% elif case.status == 'In Progress' %}sb-progress{% elif case.status == 'Resolved' %}sb-resolved{% else %}sb-progress{% endif %}">
@@ -435,7 +445,7 @@
             </div>
           </div>
 
-          <!-- Assigned Officer -->
+          <!-- Assigned Police Officer -->
           <div class="block">
             <div class="block-title">Assigned Officer</div>
             {% if case.officer_name %}
@@ -443,7 +453,7 @@
               <div class="officer-avatar">{{ case.officer_name[:2].upper() if case.officer_name|length >= 2 else case.officer_name[0].upper() }}</div>
               <div>
                 <div class="officer-name">{{ case.officer_name }}</div>
-                <div class="officer-badge">Badge: {{ case.officer_badge if case.officer_badge else 'Not assigned' }}</div>
+                <div class="officer-badge">Badge: {{ case.officer_badge if case.officer_badge else 'N/A' }}</div>
               </div>
             </div>
             {% else %}
@@ -452,6 +462,53 @@
               <div>
                 <div class="officer-name">Not Assigned</div>
                 <div class="officer-badge">Waiting for officer assignment</div>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+
+          <!-- Assigned Detective -->
+          <div class="block">
+            <div class="block-title">Assigned Detective</div>
+            {% if case.detective_name %}
+            <div class="officer-row">
+              <div class="officer-avatar detective-avatar">{{ case.detective_name[:2].upper() if case.detective_name|length >= 2 else case.detective_name[0].upper() }}</div>
+              <div>
+                <div class="officer-name">{{ case.detective_name }}</div>
+                <div class="officer-badge">Badge: {{ case.detective_badge if case.detective_badge else 'N/A' }}</div>
+                {% if case.detective_specialization %}
+                <div class="officer-sub">🔑 {{ case.detective_specialization }}</div>
+                {% endif %}
+              </div>
+            </div>
+            {% else %}
+            <div class="officer-row">
+              <div class="officer-avatar detective-avatar">—</div>
+              <div>
+                <div class="officer-name">Not Assigned</div>
+                <div class="officer-badge">No detective assigned to this case</div>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+
+          <!-- Assigned Volunteer -->
+          <div class="block">
+            <div class="block-title">Assigned Volunteer</div>
+            {% if case.volunteer_name %}
+            <div class="officer-row">
+              <div class="officer-avatar volunteer-avatar">{{ case.volunteer_name[:2].upper() if case.volunteer_name|length >= 2 else case.volunteer_name[0].upper() }}</div>
+              <div>
+                <div class="officer-name">{{ case.volunteer_name }}</div>
+                <div class="officer-badge">Community Volunteer</div>
+              </div>
+            </div>
+            {% else %}
+            <div class="officer-row">
+              <div class="officer-avatar volunteer-avatar">—</div>
+              <div>
+                <div class="officer-name">Not Assigned</div>
+                <div class="officer-badge">No volunteer assigned to this case</div>
               </div>
             </div>
             {% endif %}
@@ -490,7 +547,7 @@
           </div>
 
           <!-- Case Timeline -->
-          <div class="block">
+          <div class="block block-full">
             <div class="block-title">Case Timeline</div>
             <div class="timeline">
               {% if case.timeline %}

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <title>SafeCity – Personnel Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --navy:#0a0f1e;--cyan:#00c8ff;--white:#f0f4ff;--muted:#7a8db0;
+      --yellow:#ffb830;--green:#00e5a0;--purple:#a855f7;
+      --border:rgba(0,200,255,0.15);--card:rgba(255,255,255,0.04);
+    }
+    html, body {
+      height: 100vh; width: 100vw; background: var(--navy);
+      font-family: 'DM Sans', sans-serif; margin: 0; padding: 0; color: var(--white);
+      overflow: hidden;
+      background-image: 
+        linear-gradient(rgba(0,200,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,200,255,0.025) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+    body { display:flex; align-items:center; justify-content:center; }
+    .container { width:100%; max-width:500px; padding:20px; text-align:center; }
+    
+    .back-link { color:var(--muted); text-decoration:none; font-size:0.85rem; margin-bottom:30px; display:inline-block; }
+    .back-link:hover { color:var(--cyan); }
+
+    h1 { font-family:'Bebas Neue',sans-serif; font-size:clamp(2rem,5vw,3rem); letter-spacing:3px; margin-bottom:8px; }
+    p.sub { color:var(--muted); font-size:0.9rem; margin-bottom:40px; }
+
+    .role-cards { display:flex; flex-direction:column; gap:16px; }
+
+    .role-card {
+      display:flex; align-items:center; gap:16px;
+      background:var(--card); border:1.5px solid var(--border);
+      border-radius:14px; padding:20px 24px;
+      text-decoration:none; color:var(--white);
+      transition:all 0.3s ease;
+    }
+    .role-card:hover {
+      border-color:var(--c); transform:translateX(6px);
+      box-shadow:0 4px 20px rgba(0,0,0,0.3);
+      background:color-mix(in srgb, var(--c) 8%, var(--card));
+    }
+    .role-icon { font-size:1.8rem; width:40px; text-align:center; }
+    .role-info { text-align:left; flex:1; }
+    .role-title { font-family:'Bebas Neue',sans-serif; font-size:1.2rem; letter-spacing:1.5px; }
+    .role-desc { font-size:0.75rem; color:var(--muted); margin-top:2px; }
+    .role-arrow { color:var(--muted); transition:all 0.3s; }
+    .role-card:hover .role-arrow { color:var(--c); transform:translateX(4px); }
+
+    /* Role Colors */
+    .role-card[data-c="cyan"]   { --c:var(--cyan); }
+    .role-card[data-c="yellow"] { --c:var(--yellow); }
+    .role-card[data-c="green"]  { --c:var(--green); }
+    .role-card[data-c="purple"] { --c:var(--purple); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/portal" class="back-link">← Back to Portal</a>
+    <h1>PERSONNEL LOGIN</h1>
+    <p class="sub">Select your department to continue</p>
+
+    <div class="role-cards">
+      <a href="/login/Police" class="role-card" data-c="cyan">
+        <div class="role-icon">👮</div>
+        <div class="role-info">
+          <div class="role-title">POLICE</div>
+          <div class="role-desc">Patrol, case assignment & dispatch</div>
+        </div>
+        <div class="role-arrow">→</div>
+      </a>
+
+      <a href="/login/Detective" class="role-card" data-c="yellow">
+        <div class="role-icon">🕵️</div>
+        <div class="role-info">
+          <div class="role-title">DETECTIVE</div>
+          <div class="role-desc">Investigations, forensics & cyber crime</div>
+        </div>
+        <div class="role-arrow">→</div>
+      </a>
+
+      <a href="/login/Operator" class="role-card" data-c="green">
+        <div class="role-icon">🎧</div>
+        <div class="role-info">
+          <div class="role-title">OPERATOR</div>
+          <div class="role-desc">Emergency dispatch & unit tracking</div>
+        </div>
+        <div class="role-arrow">→</div>
+      </a>
+
+      <a href="/login/Admin" class="role-card" data-c="purple">
+        <div class="role-icon">🛡️</div>
+        <div class="role-info">
+          <div class="role-title">ADMIN</div>
+          <div class="role-desc">System management & analytics</div>
+        </div>
+        <div class="role-arrow">→</div>
+      </a>
+    </div>
+  </div>
+</body>
+</html>

@@ -79,6 +79,10 @@ def view_db():
 def portal():
     return render_template('portal.html')
 
+@app.route('/personnel_select')
+def personnel_select():
+    return render_template('personnel_select.html')
+
 @app.route('/report', methods=['GET', 'POST'])
 def report():
     if request.method == 'GET':
@@ -168,24 +172,10 @@ def report():
         }
         priority = PRIORITY_MAP.get(crime_type, 'Medium')
 
-        officer = db.execute('''
-            SELECT ap.personnel_id
-            FROM AuthorizedPersonnel ap
-            LEFT JOIN Cases cs ON ap.personnel_id = cs.assigned_police_id
-                               AND cs.priority = 'High'
-            WHERE ap.type = 'Police'
-            GROUP BY ap.personnel_id
-            ORDER BY COUNT(cs.case_id) ASC
-            LIMIT 1
-        ''').fetchone()
-
-        assigned_police_id = officer['personnel_id'] if officer else None
-
         db.execute('''
-            INSERT INTO Cases (complaint_id, assigned_police_id, priority, notes)
+            INSERT INTO Cases (complaint_id, assigned_police_id, assigned_detective_id, assigned_volunteer_id, priority, notes)
             VALUES (?, ?, ?, ?)
-        ''', (complaint_id, assigned_police_id, priority,
-              f'Auto-assigned | Priority: {priority}'))
+        ''', (complaint_id, None, None, None, priority, f'Priority: {priority}'))
 
         if evidence and evidence.filename:
             safe_name = secure_filename(evidence.filename)
@@ -215,23 +205,23 @@ def report():
     flash('Thank you for reporting. Your complaint has been submitted successfully.', 'success')
     return redirect(url_for('report'))
 
+@app.route('/login/<role>', methods=['GET', 'POST'])
+def login(role):
+    valid_roles = ['Police', 'Detective', 'Operator', 'Admin']
+    if role not in valid_roles:
+        return redirect(url_for('portal'))
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
     if request.method == 'POST':
-
         username = request.form.get('username')
         email = request.form.get('email')
         password = request.form.get('password')
         badge_number = request.form.get('badge_number')
 
         conn = get_db_connection()
-
         user = conn.execute(
             "SELECT * FROM AuthorizedPersonnel WHERE email = ?",
             (email,)
         ).fetchone()
-
         conn.close()
 
         error = False
@@ -241,7 +231,6 @@ def login():
             error = True
 
         if user:
-
             if user['badge_number'] != badge_number:
                 flash("Badge number is incorrect", "badge_error")
                 error = True
@@ -254,15 +243,27 @@ def login():
                 flash("Username is incorrect", "username_error")
                 error = True
 
+            if user['type'] != role:
+                flash(f"This account is registered as '{user['type']}', not '{role}'.", "role_error")
+                error = True
+
         if error:
-            return render_template("login.html")
+            return render_template("login.html", role=role)
 
         session['user_id'] = user['personnel_id']
         session['name'] = user['name']
+        session['role'] = user['type']
 
-        return redirect(url_for('police_dashboard'))
+        if user['type'] == 'Police':
+            return redirect(url_for('police_dashboard'))
+        elif user['type'] == 'Detective':
+            return redirect(url_for('detective_dashboard'))
+        elif user['type'] == 'Operator':
+            return redirect(url_for('admin_dashboard'))
+        elif user['type'] == 'Admin':
+            return redirect(url_for('admin_dashboard'))
 
-    return render_template("login.html")
+    return render_template("login.html", role=role)
 
 @app.route('/register_badge', methods=['GET', 'POST'])
 def register_badge():
@@ -316,7 +317,6 @@ def police_dashboard():
         "SELECT COUNT(*) FROM Complaints WHERE status = 'Resolved'"
     ).fetchone()[0]
 
-    # ── High Priority Alerts (top 4 most recent) ──
     high_priority = conn.execute("""
         SELECT  c.complaint_id,
                 cc.name            AS category,
@@ -546,11 +546,19 @@ def case_detail(case_id):
         SELECT c.complaint_id, cc.name as category_name, c.description, 
                c.location, c.status, c.created_at,
                cs.priority, cs.notes,
-               ap.name as officer_name, ap.badge_number as officer_badge
+               ap_police.name as officer_name, 
+               ap_police.badge_number as officer_badge,
+               ap_detective.name as detective_name,
+               ap_detective.badge_number as detective_badge,
+               det.specialization as detective_specialization,
+               vol.full_name as volunteer_name
         FROM Complaints c
         JOIN CrimeCategories cc ON c.category_id = cc.category_id
         LEFT JOIN Cases cs ON c.complaint_id = cs.complaint_id
-        LEFT JOIN AuthorizedPersonnel ap ON cs.assigned_police_id = ap.personnel_id
+        LEFT JOIN AuthorizedPersonnel ap_police ON cs.assigned_police_id = ap_police.personnel_id
+        LEFT JOIN AuthorizedPersonnel ap_detective ON cs.assigned_detective_id = ap_detective.personnel_id
+        LEFT JOIN Detectives det ON ap_detective.personnel_id = det.personnel_id
+        LEFT JOIN Citizens vol ON cs.assigned_volunteer_id = vol.citizen_id
         WHERE c.complaint_id = ?
     ''', (case_id,)).fetchone()
     
@@ -569,7 +577,6 @@ def case_detail(case_id):
                 'url': e['file_url']
             })
     
-
     timeline = []
     if case:
         timeline.append({
@@ -585,7 +592,19 @@ def case_detail(case_id):
             
         if case['officer_name']:
             timeline.append({
-                'event': 'Officer Assigned',
+                'event': f"Police Officer Assigned: {case['officer_name']}",
+                'date': case['created_at']
+            })
+        
+        if case['detective_name']:
+            timeline.append({
+                'event': f"Detective Assigned: {case['detective_name']}",
+                'date': case['created_at']
+            })
+        
+        if case['volunteer_name']:
+            timeline.append({
+                'event': f"Volunteer Assigned: {case['volunteer_name']}",
                 'date': case['created_at']
             })
     

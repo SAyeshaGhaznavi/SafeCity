@@ -10,7 +10,14 @@ CREATE TABLE IF NOT EXISTS AuthorizedPersonnel (
     email TEXT UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
     badge_number TEXT UNIQUE NOT NULL,
-    type TEXT DEFAULT 'Police' CHECK(type IN ('Police','Detective','Operator'))
+    type TEXT DEFAULT 'Police' CHECK(type IN ('Police','Detective','Operator','Admin'))
+);
+
+CREATE TABLE IF NOT EXISTS Detectives (
+    detective_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    personnel_id INTEGER UNIQUE NOT NULL,
+    specialization TEXT DEFAULT 'General',
+    FOREIGN KEY (personnel_id) REFERENCES AuthorizedPersonnel(personnel_id)
 );
 
 CREATE TABLE IF NOT EXISTS CrimeCategories (
@@ -45,13 +52,15 @@ CREATE TABLE IF NOT EXISTS Cases (
     complaint_id INTEGER UNIQUE,
     assigned_police_id INTEGER,
     assigned_detective_id INTEGER,
+    assigned_volunteer_id INTEGER,
     priority TEXT DEFAULT 'Medium' CHECK(priority IN ('High','Medium','Low')),
     notes TEXT,
     last_updated DATETIME DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (complaint_id) REFERENCES Complaints(complaint_id),
     FOREIGN KEY (assigned_police_id) REFERENCES AuthorizedPersonnel(personnel_id),
-    FOREIGN KEY (assigned_detective_id) REFERENCES AuthorizedPersonnel(personnel_id)
+    FOREIGN KEY (assigned_detective_id) REFERENCES AuthorizedPersonnel(personnel_id),
+    FOREIGN KEY (assigned_volunteer_id) REFERENCES Citizens(citizen_id)
 );
 
 CREATE TABLE IF NOT EXISTS Dispatch (
@@ -65,6 +74,7 @@ CREATE TABLE IF NOT EXISTS Dispatch (
     FOREIGN KEY (complaint_id) REFERENCES Complaints(complaint_id),
     FOREIGN KEY (assigned_unit_id) REFERENCES Citizens(citizen_id)
 );
+
 DROP TABLE IF EXISTS VolunteerDetails;
 CREATE TABLE IF NOT EXISTS VolunteerDetails (
     volunteer_id INTEGER PRIMARY KEY,
@@ -109,8 +119,11 @@ INSERT INTO AuthorizedPersonnel (name, email, password_hash, badge_number, type)
 ('Inspector Ahmed', 'ahmed@safe.com', 'ahmed123', 'BADGE-1001', 'Police'),
 ('Detective Sara', 'sara@safe.com', 'sara456', 'BADGE-1002', 'Detective'),
 ('Officer Bilal', 'bilal@safe.com', 'bilalpass', 'BADGE-1003', 'Police'),
-('Officer Hamza', 'hamza@safe.com', 'hamzapass123', 'BADGE-1004', 'Police'),
+('Admin Hamza', 'hamza@safe.com', 'hamzapass123', 'BADGE-1004', 'Admin'),
 ('Operator Zainab', 'zainab@safe.com', 'zainab789', 'BADGE-1005', 'Operator');
+
+INSERT INTO Detectives (personnel_id, specialization) VALUES
+(2, 'Cyber Crime');
 
 INSERT INTO CrimeCategories (name)
 VALUES
@@ -143,22 +156,22 @@ VALUES
 (1, 'uploads/photo1.jpg'),
 (2, 'uploads/video1.mp4');
 
-INSERT INTO Cases (complaint_id, assigned_police_id, assigned_detective_id, priority, notes, last_updated)
+INSERT INTO Cases (complaint_id, assigned_police_id, assigned_detective_id, assigned_volunteer_id, priority, notes, last_updated)
 VALUES
-(1, 2, NULL, 'Medium', 'Investigating theft case', '2026-03-31 10:10:00'),
-(2, 3, NULL, 'High', 'Patrol assigned to location', '2026-03-31 09:40:00'),
-(3, 1, NULL, 'High', 'Armed robbery - urgent patrol deployed', '2026-03-31 12:05:00'),
-(4, 3, NULL, 'Medium', 'Online fraud - collecting digital evidence', '2026-03-31 09:50:00'),
-(5, 4, NULL, 'Low', 'Vandalism resolved - area cleaned up', '2026-03-30 17:00:00'),
-(6, 1, 2, 'Medium', 'Cybercrime - forwarded to cyber cell', '2026-03-31 07:30:00'),
-(7, 3, NULL, 'Medium', 'Theft from vehicle - checking CCTV footage', '2026-03-31 13:20:00'),
-(8, 4, NULL, 'Medium', 'Suspicious activity - patrol sent for verification', '2026-03-30 20:10:00'),
-(9, 3, NULL, 'Low', 'Vandalism resolved - shop owners notified', '2026-03-29 14:30:00'),
-(10, 1, NULL, 'High', 'Assault between shopkeepers - mediation in progress', '2026-03-31 11:35:00'),
-(11, 4, NULL, 'Medium', 'Fraud case - documents under verification', '2026-03-30 10:15:00'),
-(12, 3, 2, 'Medium', 'Credit card skimming - forensics team involved', '2026-03-29 08:45:00'),
-(13, 4, NULL, 'Low', 'Bicycle theft resolved - recovered from suspect', '2026-03-28 19:00:00'),
-(14, 1, NULL, 'Medium', 'Trespassing report - area being monitored', '2026-03-31 15:10:00');
+(1, 3, NULL, NULL, 'Medium', 'Investigating theft case', '2026-03-31 10:10:00'),
+(2, 1, 2, 1, 'High', 'Patrol assigned + Detective + Volunteer on site', '2026-03-31 09:40:00'),
+(3, 3, NULL, NULL, 'High', 'Armed robbery - urgent patrol deployed', '2026-03-31 12:05:00'),
+(4, NULL, 2, NULL, 'Medium', 'Online fraud - Detective collecting digital evidence', '2026-03-31 09:50:00'),
+(5, 1, NULL, 1, 'Low', 'Vandalism resolved - Volunteer assisted cleanup', '2026-03-30 17:00:00'),
+(6, NULL, 2, NULL, 'Medium', 'Cybercrime - forwarded to cyber cell detective', '2026-03-31 07:30:00'),
+(7, 3, NULL, NULL, 'Medium', 'Theft from vehicle - checking CCTV footage', '2026-03-31 13:20:00'),
+(8, NULL, NULL, NULL, 'Medium', 'Unassigned - awaiting review', '2026-03-30 20:10:00'),
+(9, 1, NULL, NULL, 'Low', 'Vandalism resolved - shop owners notified', '2026-03-29 14:30:00'),
+(10, 3, 2, 1, 'High', 'Assault - Detective mediating, Volunteer crowd control', '2026-03-31 11:35:00'),
+(11, NULL, NULL, NULL, 'Medium', 'Unassigned - awaiting review', '2026-03-30 10:15:00'),
+(12, 1, 2, NULL, 'Medium', 'Credit card skimming - Detective forensics involved', '2026-03-29 08:45:00'),
+(13, 3, NULL, 1, 'Low', 'Bicycle theft resolved - Volunteer helped recovery', '2026-03-28 19:00:00'),
+(14, NULL, NULL, NULL, 'Medium', 'Unassigned - awaiting review', '2026-03-31 15:10:00');
 
 INSERT INTO Dispatch (complaint_id, assigned_unit_id, status, eta)
 VALUES
