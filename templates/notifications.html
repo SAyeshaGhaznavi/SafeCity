@@ -1,76 +1,458 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
   <title>SafeCity – Notifications</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{--navy:#0a0f1e;--cyan:#00c8ff;--white:#f0f4ff;--muted:#7a8db0;--red:#ff4e6a;--yellow:#ffb830;--green:#00e5a0;--border:rgba(0,200,255,0.15);--card:rgba(255,255,255,0.04)}
-    html,body{height:100vh;width:100%;background:#0a0a0a;display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;overflow:hidden;margin:0;padding:0;color:var(--white)}
-    .phone-frame{width:380px;height:92vh;background:var(--navy);border:12px solid #111;border-radius:40px;overflow:hidden;box-shadow:0 0 80px rgba(0,200,255,0.2),0 0 0 1px rgba(0,200,255,0.08);display:flex;flex-direction:column;position:relative;background-image:linear-gradient(rgba(0,200,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,255,0.025) 1px,transparent 1px);background-size:50px 50px}
-    .phone-frame::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:160px;height:28px;background:#111;border-radius:0 0 20px 20px;z-index:100}
-    .phone-frame::after{content:'9:41  ▲  🔋';position:absolute;top:5px;left:0;right:0;text-align:center;font-size:0.62rem;color:rgba(240,244,255,0.6);z-index:101;font-weight:600;letter-spacing:1.5px}
-    .phone-content{flex:1;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;scrollbar-width:thin;scrollbar-color:rgba(0,200,255,0.2) transparent}
-    .phone-content::-webkit-scrollbar{width:3px}
-    .phone-content::-webkit-scrollbar-thumb{background:rgba(0,200,255,0.3);border-radius:2px}
-
-    .header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0;background:rgba(10,15,30,0.92)}
-    .back-btn{background:none;border:none;color:var(--cyan);font-size:1.2rem;cursor:pointer;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;transition:all 0.2s}
-    .back-btn:hover{background:rgba(0,200,255,0.1)}
-    .header-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:2px;flex:1}
-    .notif-count{font-size:0.6rem;background:var(--cyan);color:var(--navy);padding:3px 9px;border-radius:10px;font-weight:800}
-
-    .content{flex:1;padding:14px;display:flex;flex-direction:column;gap:8px}
-    .empty-state{text-align:center;padding:40px 10px;font-size:0.8rem;color:var(--muted)}
-
-    .notif-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 13px;display:flex;gap:10px;align-items:flex-start;transition:all 0.2s}
-    .notif-card:hover{border-color:rgba(0,200,255,0.3)}
-    .notif-card.has-new{border-left:3px solid var(--cyan)}
-    .notif-icon{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.95rem;flex-shrink:0}
-    .ni-bell{background:rgba(0,200,255,0.2)}
-    .ni-person{background:rgba(0,229,160,0.2)}
-    .ni-check{background:rgba(0,229,160,0.2)}
-    .ni-alert{background:rgba(255,184,48,0.2)}
-    .notif-body{flex:1;min-width:0}
-    .notif-top{display:flex;align-items:flex-start;gap:6px}
-    .notif-text{font-size:0.77rem;line-height:1.45;color:var(--white)}
-    .new-badge{font-size:0.5rem;font-weight:800;background:var(--cyan);color:var(--navy);padding:2px 5px;border-radius:3px;letter-spacing:0.5px;flex-shrink:0;animation:badgePulse 2s infinite}
-    .notif-time{font-size:0.62rem;color:var(--muted);margin-top:3px}
-    .notif-date{font-size:0.58rem;color:rgba(122,141,176,0.6);margin-top:1px}
-
-    @keyframes badgePulse{0%,100%{opacity:1}50%{opacity:0.6}}
+    :root{
+      --navy:#0a0f1e;
+      --cyan:#00c8ff;
+      --white:#f0f4ff;
+      --muted:#7a8db0;
+      --red:#ff4e6a;
+      --yellow:#ffb830;
+      --green:#00e5a0;
+      --border:rgba(0,200,255,0.15);
+      --card:rgba(255,255,255,0.04);
+    }
+    
+    html, body {
+      height: 100vh;
+      width: 100vw;
+      background: var(--navy);
+      font-family: 'DM Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+      color: var(--white);
+      overflow: hidden;
+    }
+    
+    body {
+      display: flex;
+      align-items: stretch;
+      justify-content: stretch;
+    }
+    
+    /* FULL SCREEN CONTAINER */
+    .app-container {
+      width: 100vw;
+      height: 100vh;
+      background: var(--navy);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      background-image: 
+        linear-gradient(rgba(0,200,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,200,255,0.025) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+    
+    /* HEADER */
+    .header {
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-shrink: 0;
+      background: rgba(10,15,30,0.95);
+      backdrop-filter: blur(10px);
+    }
+    
+    .back-btn {
+      background: none;
+      border: none;
+      color: var(--cyan);
+      font-size: 1.5rem;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    
+    .back-btn:hover {
+      background: rgba(0,200,255,0.1);
+    }
+    
+    .header-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: 3px;
+      flex: 1;
+    }
+    
+    .notif-count {
+      font-size: 0.9rem;
+      background: var(--cyan);
+      color: var(--navy);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 800;
+    }
+    
+    /* MAIN CONTENT AREA */
+    .app-content {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,200,255,0.2) transparent;
+    }
+    
+    .app-content::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .app-content::-webkit-scrollbar-thumb {
+      background: rgba(0,200,255,0.3);
+      border-radius: 3px;
+    }
+    
+    /* CONTENT WRAPPER */
+    .content {
+      flex: 1;
+      padding: 32px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    
+    /* Notifications Grid for Desktop */
+    .notifications-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      font-size: 1rem;
+      color: var(--muted);
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      grid-column: span 2;
+    }
+    
+    .notif-card {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      transition: all 0.3s ease;
+      height: fit-content;
+    }
+    
+    .notif-card:hover {
+      border-color: rgba(0,200,255,0.4);
+      background: rgba(0,200,255,0.05);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,200,255,0.1);
+    }
+    
+    .notif-card.has-new {
+      border-left: 4px solid var(--cyan);
+    }
+    
+    .notif-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+    
+    .ni-bell {
+      background: rgba(0,200,255,0.15);
+    }
+    
+    .ni-person {
+      background: rgba(0,229,160,0.15);
+    }
+    
+    .ni-check {
+      background: rgba(0,229,160,0.15);
+    }
+    
+    .ni-alert {
+      background: rgba(255,184,48,0.15);
+    }
+    
+    .notif-body {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .notif-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    
+    .notif-text {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: var(--white);
+      flex: 1;
+    }
+    
+    .new-badge {
+      font-size: 0.65rem;
+      font-weight: 800;
+      background: var(--cyan);
+      color: var(--navy);
+      padding: 3px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
+      animation: badgePulse 2s infinite;
+    }
+    
+    .notif-time {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    
+    .notif-date {
+      font-size: 0.7rem;
+      color: rgba(122,141,176,0.6);
+    }
+    
+    @keyframes badgePulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+    
+    /* RESPONSIVE BREAKPOINTS */
+    @media (max-width: 968px) {
+      .notifications-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      
+      .empty-state {
+        grid-column: span 1;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .header {
+        padding: 16px 24px;
+      }
+      
+      .header-title {
+        font-size: 1.5rem;
+      }
+      
+      .notif-count {
+        font-size: 0.8rem;
+        padding: 5px 12px;
+      }
+      
+      .content {
+        padding: 24px 20px;
+      }
+      
+      .notif-card {
+        padding: 18px;
+      }
+      
+      .notif-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 1.3rem;
+      }
+      
+      .notif-text {
+        font-size: 0.9rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .header {
+        padding: 14px 16px;
+      }
+      
+      .back-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 1.3rem;
+      }
+      
+      .header-title {
+        font-size: 1.3rem;
+      }
+      
+      .notif-count {
+        font-size: 0.75rem;
+        padding: 4px 10px;
+      }
+      
+      .content {
+        padding: 20px 16px;
+        gap: 12px;
+      }
+      
+      .notifications-grid {
+        gap: 12px;
+      }
+      
+      .notif-card {
+        padding: 16px;
+        gap: 12px;
+      }
+      
+      .notif-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+        border-radius: 12px;
+      }
+      
+      .notif-text {
+        font-size: 0.85rem;
+      }
+      
+      .new-badge {
+        font-size: 0.6rem;
+        padding: 2px 6px;
+      }
+      
+      .notif-time {
+        font-size: 0.75rem;
+      }
+      
+      .notif-date {
+        font-size: 0.65rem;
+      }
+      
+      .empty-state {
+        padding: 40px 20px;
+        font-size: 0.9rem;
+      }
+    }
+    
+    /* Desktop Large Screens */
+    @media (min-width: 1200px) {
+      .content {
+        padding: 40px 60px;
+        max-width: 1400px;
+      }
+      
+      .header {
+        padding: 24px 60px;
+      }
+      
+      .header-title {
+        font-size: 2rem;
+      }
+      
+      .notifications-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+      }
+      
+      .empty-state {
+        grid-column: span 3;
+      }
+      
+      .notif-card {
+        padding: 24px;
+      }
+      
+      .notif-icon {
+        width: 55px;
+        height: 55px;
+        font-size: 1.8rem;
+      }
+      
+      .notif-text {
+        font-size: 1rem;
+      }
+    }
+    
+    /* Ultra-wide screens */
+    @media (min-width: 1600px) {
+      .content {
+        max-width: 1600px;
+      }
+      
+      .notifications-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      
+      .empty-state {
+        grid-column: span 4;
+      }
+    }
+    
+    /* Small screen height fix */
+    @media (max-height: 700px) {
+      .content {
+        padding: 20px 30px;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="phone-frame">
+  <div class="app-container">
+    <!-- HEADER -->
     <div class="header">
       <button class="back-btn" onclick="window.history.back()">←</button>
       <div class="header-title">NOTIFICATIONS</div>
       <span class="notif-count">{{ all_notifications|length }}</span>
     </div>
 
-    <div class="phone-content">
+    <!-- CONTENT -->
+    <div class="app-content">
       <div class="content">
-        {% for n in all_notifications %}
-        <div class="notif-card {% if n.is_new %}has-new{% endif %}">
-          <div class="notif-icon {% if 'assigned' in n.message|lower %}ni-person{% elif 'resolved' in n.message|lower %}ni-check{% elif 'alert' in n.message|lower %}ni-alert{% else %}ni-bell{% endif %}">
-            {% if 'assigned' in n.message|lower %}👤{% elif 'resolved' in n.message|lower %}✓{% elif 'alert' in n.message|lower %}⚠{% else %}🔔{% endif %}
-          </div>
-          <div class="notif-body">
-            <div class="notif-top">
-              <div class="notif-text">{{ n.message }}</div>
-              {% if n.is_new %}
-              <span class="new-badge">NEW</span>
-              {% endif %}
+        <div class="notifications-grid">
+          {% for n in all_notifications %}
+          <div class="notif-card {% if n.is_new %}has-new{% endif %}">
+            <div class="notif-icon {% if 'assigned' in n.message|lower %}ni-person{% elif 'resolved' in n.message|lower %}ni-check{% elif 'alert' in n.message|lower %}ni-alert{% else %}ni-bell{% endif %}">
+              {% if 'assigned' in n.message|lower %}👤{% elif 'resolved' in n.message|lower %}✓{% elif 'alert' in n.message|lower %}⚠{% else %}🔔{% endif %}
             </div>
-            <div class="notif-time">{{ n.time_ago }}</div>
-            <div class="notif-date">{{ n.date }}</div>
+            <div class="notif-body">
+              <div class="notif-top">
+                <div class="notif-text">{{ n.message }}</div>
+                {% if n.is_new %}
+                <span class="new-badge">NEW</span>
+                {% endif %}
+              </div>
+              <div class="notif-time">{{ n.time_ago }}</div>
+              <div class="notif-date">{{ n.date }}</div>
+            </div>
           </div>
+          {% else %}
+          <div class="empty-state">
+            <div style="font-size:2rem;margin-bottom:16px;">🔔</div>
+            No notifications yet<br>
+            <span style="font-size:0.8rem;opacity:0.7;">We'll notify you when there are updates on your reports</span>
+          </div>
+          {% endfor %}
         </div>
-        {% else %}
-        <div class="empty-state">No notifications yet</div>
-        {% endfor %}
       </div>
     </div>
   </div>

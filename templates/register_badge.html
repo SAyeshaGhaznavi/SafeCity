@@ -1,90 +1,841 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
   <title>SafeCity – Register Badge</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{--navy:#0a0f1e;--cyan:#00c8ff;--white:#f0f4ff;--muted:#7a8db0;--red:#ff4e6a;--green:#00e5a0;--border:rgba(0,200,255,0.15)}
-    html,body{height:100vh;width:100%;background:#0a0a0a;display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;overflow:hidden;margin:0;padding:0;color:var(--white)}
-    .phone-frame{width:380px;height:92vh;background:var(--navy);border:12px solid #111;border-radius:40px;overflow:hidden;box-shadow:0 0 80px rgba(0,200,255,0.2),0 0 0 1px rgba(0,200,255,0.08);display:flex;flex-direction:column;position:relative;background-image:linear-gradient(rgba(0,200,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,255,0.025) 1px,transparent 1px);background-size:50px 50px}
-    .phone-frame::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:160px;height:28px;background:#111;border-radius:0 0 20px 20px;z-index:100}
-    .phone-frame::after{content:'9:41  ▲  🔋';position:absolute;top:5px;left:0;right:0;text-align:center;font-size:0.62rem;color:rgba(240,244,255,0.6);z-index:101;font-weight:600;letter-spacing:1.5px}
-    .phone-content{flex:1;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;padding:32px 20px 20px;scrollbar-width:thin}
-    .phone-content::-webkit-scrollbar{width:3px}
-    .phone-content::-webkit-scrollbar-thumb{background:rgba(0,200,255,0.3);border-radius:2px}
-    .form-card{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:16px;padding:28px 22px;width:100%}
-    .logo{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:4px;text-align:center;margin-bottom:4px}
-    .logo span{color:var(--cyan)}
-    .sub{text-align:center;font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:20px}
-    .card-icon{text-align:center;font-size:2.2rem;margin-bottom:12px}
-    .card-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:1.5px;text-align:center;margin-bottom:6px}
-    .card-desc{text-align:center;font-size:0.73rem;color:var(--muted);margin-bottom:20px;line-height:1.55}
-    .flash-msg{padding:9px 12px;border-radius:7px;font-size:0.75rem;margin-bottom:14px;border:1px solid;font-weight:500}
-    .flash-msg.error{background:rgba(255,78,106,0.1);border-color:rgba(255,78,106,0.3);color:var(--red)}
-    .flash-msg.success{background:rgba(0,229,160,0.1);border-color:rgba(0,229,160,0.3);color:var(--green)}
-    .form-group{margin-bottom:13px}
-    label{display:block;font-size:0.65rem;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px}
-    input{width:100%;padding:10px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:0.88rem;font-family:'DM Sans',sans-serif;transition:all 0.2s;outline:none}
-    input:focus{border-color:var(--cyan);background:rgba(0,200,255,0.07)}
-    input::placeholder{color:var(--muted);opacity:0.6}
-    .btn{width:100%;padding:11px 16px;border:none;border-radius:8px;font-size:0.88rem;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;text-decoration:none;display:block;text-align:center}
-    .btn-primary{background:linear-gradient(135deg,var(--cyan),#0088ff);color:var(--navy);margin-top:8px}
-    .btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,200,255,0.3)}
-    .divider{height:1px;background:var(--border);margin:16px 0}
-    .req-box{background:rgba(0,200,255,0.05);border:1px solid rgba(0,200,255,0.12);border-radius:8px;padding:12px;font-size:0.72rem;color:var(--muted);line-height:1.7}
-    .req-box strong{color:var(--cyan);display:block;margin-bottom:4px}
-    .footer-links{text-align:center;font-size:0.72rem;color:var(--muted);margin-top:14px;line-height:1.8}
-    .footer-links a{color:var(--cyan);text-decoration:none;font-weight:600}
-    .footer-links a:hover{text-decoration:underline}
+    :root{
+      --navy:#0a0f1e;
+      --cyan:#00c8ff;
+      --white:#f0f4ff;
+      --muted:#7a8db0;
+      --red:#ff4e6a;
+      --green:#00e5a0;
+      --border:rgba(0,200,255,0.15);
+      --card:rgba(255,255,255,0.04);
+    }
+    
+    html, body {
+      height: 100vh;
+      width: 100vw;
+      background: var(--navy);
+      font-family: 'DM Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+      color: var(--white);
+      overflow: hidden;
+    }
+    
+    body {
+      display: flex;
+      align-items: stretch;
+      justify-content: stretch;
+    }
+    
+    /* FULL SCREEN CONTAINER */
+    .app-container {
+      width: 100vw;
+      height: 100vh;
+      background: var(--navy);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      background-image: 
+        linear-gradient(rgba(0,200,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,200,255,0.025) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+    
+    /* MAIN CONTENT AREA */
+    .app-content {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 40px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,200,255,0.2) transparent;
+    }
+    
+    .app-content::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .app-content::-webkit-scrollbar-thumb {
+      background: rgba(0,200,255,0.3);
+      border-radius: 3px;
+    }
+    
+    /* DESKTOP LAYOUT - Two columns */
+    .register-wrapper {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: center;
+      width: 100%;
+      max-width: 1300px;
+      margin: 0 auto;
+      gap: 60px;
+      min-height: min-content;
+      padding: 20px 0;
+    }
+    
+    /* Left Column - Info Section */
+    .info-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      max-width: 480px;
+      position: sticky;
+      top: 20px;
+    }
+    
+    .logo-large {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3.5rem;
+      letter-spacing: 6px;
+      margin-bottom: 8px;
+    }
+    
+    .logo-large span {
+      color: var(--cyan);
+    }
+    
+    .badge-icon-large {
+      font-size: 4rem;
+      margin-bottom: 24px;
+    }
+    
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.8rem;
+      letter-spacing: 3px;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    
+    h1 span {
+      color: var(--cyan);
+    }
+    
+    .info-text {
+      font-size: 1rem;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 32px;
+    }
+    
+    .feature-list {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    
+    .feature-icon {
+      font-size: 1.5rem;
+      min-width: 40px;
+      text-align: center;
+    }
+    
+    .feature-content h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+      color: var(--cyan);
+      margin-bottom: 4px;
+    }
+    
+    .feature-content p {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    
+    .verification-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      background: rgba(0,200,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      width: 100%;
+    }
+    
+    .verification-icon {
+      font-size: 1.8rem;
+    }
+    
+    .verification-text {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    
+    .verification-text strong {
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 4px;
+      font-size: 0.95rem;
+    }
+    
+    /* Right Column - Form Card */
+    .form-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 44px 40px;
+      width: 100%;
+      max-width: 520px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: 4px;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    
+    .logo span {
+      color: var(--cyan);
+    }
+    
+    .sub {
+      text-align: center;
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+    }
+    
+    .card-icon {
+      text-align: center;
+      font-size: 2.8rem;
+      margin-bottom: 16px;
+    }
+    
+    .card-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: 2px;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    
+    .card-desc {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+    
+    .flash-msg {
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      margin-bottom: 20px;
+      border: 1px solid;
+      font-weight: 500;
+    }
+    
+    .flash-msg.error {
+      background: rgba(255,78,106,0.1);
+      border-color: rgba(255,78,106,0.3);
+      color: var(--red);
+    }
+    
+    .flash-msg.success {
+      background: rgba(0,229,160,0.1);
+      border-color: rgba(0,229,160,0.3);
+      color: var(--green);
+    }
+    
+    /* Two-column form layout for desktop */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px 20px;
+      margin-bottom: 8px;
+    }
+    
+    .form-group {
+      margin-bottom: 0;
+    }
+    
+    .form-group-full {
+      grid-column: span 2;
+    }
+    
+    label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--cyan);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 6px;
+    }
+    
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      color: var(--white);
+      font-size: 0.9rem;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.3s ease;
+      outline: none;
+    }
+    
+    input:focus {
+      border-color: var(--cyan);
+      background: rgba(0,200,255,0.07);
+      box-shadow: 0 0 0 3px rgba(0,200,255,0.1);
+    }
+    
+    input::placeholder {
+      color: var(--muted);
+      opacity: 0.6;
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 14px 20px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'DM Sans', sans-serif;
+      text-decoration: none;
+      display: block;
+      text-align: center;
+      margin-top: 16px;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, var(--cyan), #0088ff);
+      color: var(--navy);
+      box-shadow: 0 4px 15px rgba(0,200,255,0.2);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(0,200,255,0.3);
+    }
+    
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 24px 0 20px;
+    }
+    
+    .req-box {
+      background: rgba(0,200,255,0.05);
+      border: 1px solid rgba(0,200,255,0.12);
+      border-radius: 10px;
+      padding: 16px 18px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    
+    .req-box strong {
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+    }
+    
+    .footer-links {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 20px;
+      line-height: 1.8;
+    }
+    
+    .footer-links a {
+      color: var(--cyan);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    
+    .footer-links a:hover {
+      text-decoration: underline;
+    }
+    
+    /* Decorative elements */
+    .info-section {
+      position: relative;
+    }
+    
+    .info-section::before {
+      content: '';
+      position: absolute;
+      top: -40px;
+      left: -40px;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(0,200,255,0.08) 0%, transparent 70%);
+      border-radius: 50%;
+      z-index: -1;
+    }
+    
+    .form-card {
+      position: relative;
+    }
+    
+    .form-card::after {
+      content: '';
+      position: absolute;
+      bottom: -30px;
+      right: -30px;
+      width: 250px;
+      height: 250px;
+      background: radial-gradient(circle, rgba(0,200,255,0.05) 0%, transparent 70%);
+      border-radius: 50%;
+      z-index: -1;
+    }
+    
+    /* RESPONSIVE BREAKPOINTS */
+    @media (max-width: 968px) {
+      .app-content {
+        align-items: flex-start;
+        padding: 24px 20px;
+      }
+      
+      .register-wrapper {
+        flex-direction: column;
+        gap: 40px;
+        padding: 10px 0 20px;
+      }
+      
+      .info-section {
+        align-items: center;
+        text-align: center;
+        max-width: 520px;
+        position: static;
+        margin: 0 auto;
+      }
+      
+      .feature-item {
+        text-align: left;
+      }
+      
+      .form-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+      
+      .form-group-full {
+        grid-column: span 1;
+      }
+      
+      .form-card {
+        padding: 36px 28px;
+        margin: 0 auto;
+      }
+      
+      .info-section::before {
+        display: none;
+      }
+      
+      .form-card::after {
+        display: none;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .app-content {
+        padding: 20px 16px;
+      }
+      
+      .register-wrapper {
+        gap: 32px;
+      }
+      
+      .logo-large {
+        font-size: 2.8rem;
+        letter-spacing: 5px;
+      }
+      
+      .badge-icon-large {
+        font-size: 3.5rem;
+        margin-bottom: 20px;
+      }
+      
+      h1 {
+        font-size: 2.2rem;
+      }
+      
+      .info-text {
+        font-size: 0.9rem;
+        margin-bottom: 24px;
+      }
+      
+      .feature-list {
+        gap: 14px;
+      }
+      
+      .feature-icon {
+        font-size: 1.3rem;
+        min-width: 36px;
+      }
+      
+      .feature-content h3 {
+        font-size: 1rem;
+      }
+      
+      .feature-content p {
+        font-size: 0.8rem;
+      }
+      
+      .form-card {
+        padding: 32px 24px;
+      }
+      
+      .logo {
+        font-size: 1.6rem;
+      }
+      
+      .card-icon {
+        font-size: 2.5rem;
+      }
+      
+      .card-title {
+        font-size: 1.6rem;
+      }
+      
+      .card-desc {
+        font-size: 0.8rem;
+      }
+      
+      .footer-links {
+        font-size: 0.75rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .app-content {
+        padding: 16px 12px;
+      }
+      
+      .register-wrapper {
+        gap: 24px;
+      }
+      
+      .logo-large {
+        font-size: 2.2rem;
+        letter-spacing: 4px;
+      }
+      
+      .badge-icon-large {
+        font-size: 3rem;
+        margin-bottom: 16px;
+      }
+      
+      h1 {
+        font-size: 1.8rem;
+        margin-bottom: 12px;
+      }
+      
+      .info-text {
+        font-size: 0.8rem;
+        margin-bottom: 20px;
+      }
+      
+      .feature-item {
+        gap: 12px;
+      }
+      
+      .feature-icon {
+        font-size: 1.2rem;
+        min-width: 32px;
+      }
+      
+      .feature-content h3 {
+        font-size: 0.95rem;
+      }
+      
+      .feature-content p {
+        font-size: 0.75rem;
+      }
+      
+      .verification-badge {
+        padding: 12px 14px;
+      }
+      
+      .verification-icon {
+        font-size: 1.5rem;
+      }
+      
+      .verification-text {
+        font-size: 0.75rem;
+      }
+      
+      .form-card {
+        padding: 28px 18px;
+        border-radius: 20px;
+      }
+      
+      .logo {
+        font-size: 1.4rem;
+      }
+      
+      .sub {
+        font-size: 0.65rem;
+        margin-bottom: 16px;
+      }
+      
+      .card-icon {
+        font-size: 2.2rem;
+        margin-bottom: 12px;
+      }
+      
+      .card-title {
+        font-size: 1.4rem;
+      }
+      
+      .card-desc {
+        font-size: 0.75rem;
+        margin-bottom: 24px;
+      }
+      
+      .flash-msg {
+        padding: 10px 12px;
+        font-size: 0.75rem;
+      }
+      
+      label {
+        font-size: 0.65rem;
+      }
+      
+      input {
+        padding: 10px 12px;
+        font-size: 0.85rem;
+      }
+      
+      .btn {
+        padding: 12px 16px;
+        font-size: 0.9rem;
+        margin-top: 12px;
+      }
+      
+      .req-box {
+        padding: 14px;
+        font-size: 0.75rem;
+      }
+      
+      .req-box strong {
+        font-size: 0.85rem;
+      }
+      
+      .footer-links {
+        font-size: 0.7rem;
+        margin-top: 16px;
+      }
+    }
+    
+    /* Desktop Large Screens */
+    @media (min-width: 1200px) {
+      .register-wrapper {
+        gap: 80px;
+      }
+      
+      .logo-large {
+        font-size: 4rem;
+        letter-spacing: 8px;
+      }
+      
+      .badge-icon-large {
+        font-size: 4.5rem;
+      }
+      
+      h1 {
+        font-size: 3.2rem;
+      }
+      
+      .info-text {
+        font-size: 1.1rem;
+      }
+      
+      .form-card {
+        padding: 52px 44px;
+      }
+      
+      .form-grid {
+        gap: 20px 24px;
+      }
+    }
+    
+    /* Ultra-wide screens */
+    @media (min-width: 1600px) {
+      .register-wrapper {
+        max-width: 1500px;
+        gap: 100px;
+      }
+      
+      .info-section {
+        max-width: 550px;
+      }
+      
+      .form-card {
+        max-width: 580px;
+      }
+    }
+    
+    /* Small screen height fix */
+    @media (max-height: 700px) {
+      .app-content {
+        padding: 20px;
+      }
+      
+      .register-wrapper {
+        padding: 0;
+      }
+      
+      .form-card {
+        padding: 30px 24px;
+      }
+      
+      .logo-large {
+        font-size: 2.5rem;
+      }
+      
+      .badge-icon-large {
+        font-size: 2.5rem;
+        margin-bottom: 16px;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .info-text {
+        margin-bottom: 20px;
+      }
+      
+      .feature-list {
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="phone-frame">
-    <div class="phone-content">
-      <div class="form-card">
-        <div class="logo">SAFE<span>CITY</span></div>
-        <p class="sub">Law Enforcement</p>
-        <div class="card-icon">🪪</div>
-        <h2 class="card-title">Officer Registration</h2>
-        <p class="card-desc">Register your official credentials to access the SafeCity law enforcement portal</p>
-
-        {% with messages=get_flashed_messages(with_categories=true) %}
-          {% if messages %}{% for category,message in messages %}
-            <div class="flash-msg {{ 'success' if category=='success' else 'error' }}">{{ message }}</div>
-          {% endfor %}{% endif %}
-        {% endwith %}
-        {% if msg %}<div class="flash-msg error">{{ msg }}</div>{% endif %}
-
-        <form method="POST" action="/register_badge">
-          <div class="form-group">
-            <label>Full Name</label>
-            <input type="text" name="name" placeholder="Officer Full Name" required autocomplete="off">
+  <div class="app-container">
+    <div class="app-content">
+      <div class="register-wrapper">
+        <!-- Left Column - Info Section (Visible on desktop) -->
+        <div class="info-section">
+          <div class="logo-large">SAFE<span>CITY</span></div>
+          <div class="badge-icon-large">🛡️</div>
+          <h1>OFFICER<br><span>REGISTRATION</span></h1>
+          <p class="info-text">Join the SafeCity law enforcement network. Register your credentials to access real-time incident data, coordinate responses, and protect your community.</p>
+          
+          <div class="feature-list">
+            <div class="feature-item">
+              <div class="feature-icon">✓</div>
+              <div class="feature-content">
+                <h3>Verified Access</h3>
+                <p>All registrations are manually verified by administrators</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">🔒</div>
+              <div class="feature-content">
+                <h3>Secure Platform</h3>
+                <p>End-to-end encryption for all communications</p>
+              </div>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">📊</div>
+              <div class="feature-content">
+                <h3>Real-time Dashboard</h3>
+                <p>Access live incident maps and analytics</p>
+              </div>
+            </div>
           </div>
-          <div class="form-group">
-            <label>Department Email</label>
-            <input type="email" name="email" placeholder="official@police.gov.pk" required autocomplete="off">
+          
+          <div class="verification-badge">
+            <div class="verification-icon">⚡</div>
+            <div class="verification-text">
+              <strong>Admin Verification Required</strong>
+              Your registration will be reviewed within 24-48 hours. You'll receive email confirmation once approved.
+            </div>
           </div>
-          <div class="form-group">
-            <label>Badge Number</label>
-            <input type="text" name="badgenumber" placeholder="e.g. LHR-1042" required autocomplete="off" style="letter-spacing:2px;font-weight:600;text-transform:uppercase">
-          </div>
-          <div class="form-group">
-            <label>Password</label>
-            <input type="password" name="password" placeholder="Create a strong password" required>
-          </div>
-          <button type="submit" class="btn btn-primary">Register Badge →</button>
-        </form>
-
-        <div class="divider"></div>
-        <div class="req-box">
-          <strong>✓ Registration Requirements</strong>
-          Valid government-issued badge number · Official department email · Admin verification required
         </div>
-        <div class="footer-links">
-          Already registered? <a href="/login">Login here →</a><br>
-          Back to <a href="/">Home</a> · <a href="/portal">Citizen Portal</a>
+        
+        <!-- Right Column - Registration Form -->
+        <div class="form-card">
+          <div class="logo">SAFE<span>CITY</span></div>
+          <p class="sub">Law Enforcement</p>
+          <div class="card-icon">🪪</div>
+          <h2 class="card-title">Officer Registration</h2>
+          <p class="card-desc">Register your official credentials to access the SafeCity law enforcement portal</p>
+
+          {% with messages=get_flashed_messages(with_categories=true) %}
+            {% if messages %}{% for category,message in messages %}
+              <div class="flash-msg {{ 'success' if category=='success' else 'error' }}">{{ message }}</div>
+            {% endfor %}{% endif %}
+          {% endwith %}
+          {% if msg %}<div class="flash-msg error">{{ msg }}</div>{% endif %}
+
+          <form method="POST" action="/register_badge">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" name="name" placeholder="Officer Full Name" required autocomplete="off">
+              </div>
+              <div class="form-group">
+                <label>Department Email</label>
+                <input type="email" name="email" placeholder="official@police.gov.pk" required autocomplete="off">
+              </div>
+              <div class="form-group">
+                <label>Badge Number</label>
+                <input type="text" name="badgenumber" placeholder="e.g. LHR-1042" required autocomplete="off" style="letter-spacing:2px;font-weight:600;text-transform:uppercase">
+              </div>
+              <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Create a strong password" required>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Register Badge →</button>
+          </form>
+
+          <div class="divider"></div>
+          <div class="req-box">
+            <strong>✓ Registration Requirements</strong>
+            Valid government-issued badge number · Official department email · Admin verification required
+          </div>
+          <div class="footer-links">
+            Already registered? <a href="/login">Login here →</a><br>
+            Back to <a href="/">Home</a> · <a href="/portal">Citizen Portal</a>
+          </div>
         </div>
       </div>
     </div>

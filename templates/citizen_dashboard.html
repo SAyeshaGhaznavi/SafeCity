@@ -1,72 +1,614 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
   <title>SafeCity – Citizen Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{--navy:#0a0f1e;--cyan:#00c8ff;--white:#f0f4ff;--muted:#7a8db0;--red:#ff4e6a;--yellow:#ffb830;--green:#00e5a0;--border:rgba(0,200,255,0.15);--card:rgba(255,255,255,0.04)}
-    html,body{height:100vh;width:100%;background:#0a0a0a;display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;overflow:hidden;margin:0;padding:0;color:var(--white)}
-    .phone-frame{width:380px;height:92vh;background:var(--navy);border:12px solid #111;border-radius:40px;overflow:hidden;box-shadow:0 0 80px rgba(0,200,255,0.2),0 0 0 1px rgba(0,200,255,0.08);display:flex;flex-direction:column;position:relative;background-image:linear-gradient(rgba(0,200,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,255,0.025) 1px,transparent 1px);background-size:50px 50px}
-    .phone-frame::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:160px;height:28px;background:#111;border-radius:0 0 20px 20px;z-index:100}
-    .phone-frame::after{content:'9:41  ▲  🔋';position:absolute;top:5px;left:0;right:0;text-align:center;font-size:0.62rem;color:rgba(240,244,255,0.6);z-index:101;font-weight:600;letter-spacing:1.5px}
-    .phone-content{flex:1;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;scrollbar-width:thin;scrollbar-color:rgba(0,200,255,0.2) transparent}
-    .phone-content::-webkit-scrollbar{width:3px}
-    .phone-content::-webkit-scrollbar-thumb{background:rgba(0,200,255,0.3);border-radius:2px}
-
-    .header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:rgba(10,15,30,0.92)}
-    .logo{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:3px}
-    .logo span{color:var(--cyan)}
-    .header-right{display:flex;align-items:center;gap:10px}
-    .user-avatar{width:30px;height:30px;border-radius:50%;background:rgba(0,200,255,0.15);border:1.5px solid var(--cyan);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--cyan);font-size:0.7rem}
-    .logout-link{font-size:0.65rem;color:var(--muted);text-decoration:none;border:1px solid var(--border);padding:4px 8px;border-radius:5px;transition:all 0.2s}
-    .logout-link:hover{color:var(--red);border-color:var(--red)}
-
-    .content{flex:1;padding:14px;display:flex;flex-direction:column;gap:14px}
-    .page-title{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:2px}
-    .page-sub{font-size:0.72rem;color:var(--muted);margin-top:2px}
-
-    .action-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .action-btn{padding:14px 12px;border:none;border-radius:10px;font-size:0.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.2s;text-decoration:none;font-family:'DM Sans',sans-serif}
-    .btn-report{background:linear-gradient(135deg,var(--cyan),#0088ff);color:var(--navy)}
-    .btn-report:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,200,255,0.3)}
-    .btn-sos{background:linear-gradient(135deg,var(--red),#ff2d5e);color:#fff}
-    .btn-sos:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,78,106,0.3)}
-
-    .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-    .section-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:1.5px}
-    .section-link{font-size:0.68rem;color:var(--cyan);text-decoration:none;font-weight:600}
-    .section-link:hover{text-decoration:underline}
-
-    .notif-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px 13px;display:flex;gap:10px;align-items:flex-start}
-    .notif-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0}
-    .ni-bell{background:rgba(0,200,255,0.2)}
-    .ni-person{background:rgba(0,229,160,0.2)}
-    .ni-check{background:rgba(0,229,160,0.2)}
-    .notif-body{flex:1;min-width:0}
-    .notif-top{display:flex;align-items:center;gap:6px}
-    .notif-text{font-size:0.77rem;line-height:1.4;color:var(--white)}
-    .new-badge{font-size:0.5rem;font-weight:800;background:var(--cyan);color:var(--navy);padding:2px 5px;border-radius:3px;letter-spacing:0.5px;flex-shrink:0;animation:badgePulse 2s infinite}
-    .notif-time{font-size:0.65rem;color:var(--muted);margin-top:3px}
-    .notif-list{display:flex;flex-direction:column;gap:8px}
-    .empty-state{text-align:center;padding:10px;font-size:0.72rem;color:var(--muted)}
-
-    .report-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 13px;display:flex;align-items:center;justify-content:space-between}
-    .report-list{display:flex;flex-direction:column;gap:8px}
-    .report-type{font-size:0.82rem;font-weight:600}
-    .report-loc{font-size:0.62rem;color:var(--muted);margin-top:2px}
-    .report-date{font-size:0.65rem;color:var(--muted);margin-top:1px}
-    .status-pill{font-size:0.6rem;font-weight:700;padding:3px 7px;border-radius:4px;text-transform:uppercase;flex-shrink:0}
-    .sp-pending{background:rgba(255,184,48,0.2);color:var(--yellow)}
-    .sp-progress{background:rgba(0,200,255,0.2);color:var(--cyan)}
-    .sp-resolved{background:rgba(0,229,160,0.15);color:var(--green)}
-
-    @keyframes badgePulse{0%,100%{opacity:1}50%{opacity:0.6}}
+    :root{
+      --navy:#0a0f1e;
+      --cyan:#00c8ff;
+      --white:#f0f4ff;
+      --muted:#7a8db0;
+      --red:#ff4e6a;
+      --yellow:#ffb830;
+      --green:#00e5a0;
+      --border:rgba(0,200,255,0.15);
+      --card:rgba(255,255,255,0.04);
+    }
+    
+    html, body {
+      height: 100vh;
+      width: 100vw;
+      background: var(--navy);
+      font-family: 'DM Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+      color: var(--white);
+      overflow: hidden;
+    }
+    
+    body {
+      display: flex;
+      align-items: stretch;
+      justify-content: stretch;
+    }
+    
+    /* FULL SCREEN CONTAINER */
+    .app-container {
+      width: 100vw;
+      height: 100vh;
+      background: var(--navy);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      background-image: 
+        linear-gradient(rgba(0,200,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,200,255,0.025) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+    
+    /* HEADER */
+    .header {
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      background: rgba(10,15,30,0.95);
+      backdrop-filter: blur(10px);
+    }
+    
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: 4px;
+    }
+    
+    .logo span {
+      color: var(--cyan);
+    }
+    
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    
+    .user-avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: rgba(0,200,255,0.15);
+      border: 2px solid var(--cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: var(--cyan);
+      font-size: 1rem;
+    }
+    
+    .logout-link {
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-decoration: none;
+      border: 1.5px solid var(--border);
+      padding: 8px 16px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+    
+    .logout-link:hover {
+      color: var(--red);
+      border-color: var(--red);
+      background: rgba(255,78,106,0.05);
+    }
+    
+    /* MAIN CONTENT AREA */
+    .app-content {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,200,255,0.2) transparent;
+    }
+    
+    .app-content::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .app-content::-webkit-scrollbar-thumb {
+      background: rgba(0,200,255,0.3);
+      border-radius: 3px;
+    }
+    
+    /* CONTENT WRAPPER */
+    .content {
+      flex: 1;
+      padding: 32px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      max-width: 1600px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    
+    /* Welcome Section */
+    .welcome-section {
+      margin-bottom: 8px;
+    }
+    
+    .page-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.5rem;
+      letter-spacing: 3px;
+      line-height: 1.2;
+    }
+    
+    .page-sub {
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    
+    /* Action Buttons */
+    .action-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-bottom: 8px;
+    }
+    
+    .action-btn {
+      padding: 20px 24px;
+      border: none;
+      border-radius: 14px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      font-family: 'DM Sans', sans-serif;
+    }
+    
+    .btn-report {
+      background: linear-gradient(135deg, var(--cyan), #0088ff);
+      color: var(--navy);
+      box-shadow: 0 4px 15px rgba(0,200,255,0.2);
+    }
+    
+    .btn-report:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(0,200,255,0.3);
+    }
+    
+    .btn-sos {
+      background: linear-gradient(135deg, var(--red), #ff2d5e);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(255,78,106,0.2);
+    }
+    
+    .btn-sos:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(255,78,106,0.3);
+    }
+    
+    /* Dashboard Grid - Two Columns for Desktop */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+    }
+    
+    /* Section Cards */
+    .section-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+    }
+    
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 2px;
+    }
+    
+    .section-link {
+      font-size: 0.8rem;
+      color: var(--cyan);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    
+    .section-link:hover {
+      text-decoration: underline;
+    }
+    
+    /* Notifications List */
+    .notif-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .notif-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      transition: all 0.2s ease;
+    }
+    
+    .notif-card:hover {
+      border-color: rgba(0,200,255,0.3);
+      background: rgba(0,200,255,0.05);
+    }
+    
+    .notif-icon {
+      width: 45px;
+      height: 45px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    
+    .ni-bell {
+      background: rgba(0,200,255,0.15);
+    }
+    
+    .ni-person {
+      background: rgba(0,229,160,0.15);
+    }
+    
+    .ni-check {
+      background: rgba(0,229,160,0.15);
+    }
+    
+    .notif-body {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .notif-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+    
+    .notif-text {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--white);
+      flex: 1;
+    }
+    
+    .new-badge {
+      font-size: 0.6rem;
+      font-weight: 800;
+      background: var(--cyan);
+      color: var(--navy);
+      padding: 3px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
+      animation: badgePulse 2s infinite;
+    }
+    
+    .notif-time {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    
+    /* Reports List */
+    .report-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .report-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+    }
+    
+    .report-card:hover {
+      border-color: rgba(0,200,255,0.3);
+      background: rgba(0,200,255,0.05);
+    }
+    
+    .report-type {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    
+    .report-loc {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    
+    .report-date {
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+    
+    .status-pill {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      flex-shrink: 0;
+      letter-spacing: 0.5px;
+    }
+    
+    .sp-pending {
+      background: rgba(255,184,48,0.2);
+      color: var(--yellow);
+    }
+    
+    .sp-progress {
+      background: rgba(0,200,255,0.2);
+      color: var(--cyan);
+    }
+    
+    .sp-resolved {
+      background: rgba(0,229,160,0.15);
+      color: var(--green);
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      background: rgba(255,255,255,0.02);
+      border-radius: 12px;
+    }
+    
+    @keyframes badgePulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+    
+    /* RESPONSIVE BREAKPOINTS */
+    @media (max-width: 1024px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+      
+      .content {
+        padding: 28px 32px;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .header {
+        padding: 16px 24px;
+      }
+      
+      .logo {
+        font-size: 1.4rem;
+      }
+      
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 0.9rem;
+      }
+      
+      .logout-link {
+        padding: 6px 12px;
+        font-size: 0.75rem;
+      }
+      
+      .content {
+        padding: 24px 20px;
+        gap: 24px;
+      }
+      
+      .page-title {
+        font-size: 2rem;
+      }
+      
+      .page-sub {
+        font-size: 0.85rem;
+      }
+      
+      .action-grid {
+        gap: 16px;
+      }
+      
+      .action-btn {
+        padding: 16px 20px;
+        font-size: 1rem;
+      }
+      
+      .section-card {
+        padding: 24px 20px;
+      }
+      
+      .section-title {
+        font-size: 1.2rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .header {
+        padding: 14px 16px;
+      }
+      
+      .logo {
+        font-size: 1.2rem;
+        letter-spacing: 3px;
+      }
+      
+      .header-right {
+        gap: 12px;
+      }
+      
+      .user-avatar {
+        width: 36px;
+        height: 36px;
+        font-size: 0.8rem;
+      }
+      
+      .logout-link {
+        padding: 5px 10px;
+        font-size: 0.7rem;
+      }
+      
+      .content {
+        padding: 20px 16px;
+        gap: 20px;
+      }
+      
+      .page-title {
+        font-size: 1.8rem;
+      }
+      
+      .page-sub {
+        font-size: 0.8rem;
+      }
+      
+      .action-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      
+      .action-btn {
+        padding: 14px 18px;
+        font-size: 0.95rem;
+      }
+      
+      .section-card {
+        padding: 20px 16px;
+      }
+      
+      .section-title {
+        font-size: 1.1rem;
+      }
+      
+      .section-link {
+        font-size: 0.75rem;
+      }
+      
+      .notif-card {
+        padding: 14px;
+        gap: 12px;
+      }
+      
+      .notif-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+      }
+      
+      .notif-text {
+        font-size: 0.85rem;
+      }
+      
+      .report-card {
+        padding: 14px;
+      }
+      
+      .report-type {
+        font-size: 0.85rem;
+      }
+      
+      .status-pill {
+        font-size: 0.65rem;
+        padding: 4px 8px;
+      }
+    }
+    
+    /* Desktop Large Screens */
+    @media (min-width: 1200px) {
+      .content {
+        padding: 40px 60px;
+      }
+      
+      .header {
+        padding: 24px 60px;
+      }
+      
+      .logo {
+        font-size: 1.8rem;
+      }
+      
+      .page-title {
+        font-size: 3rem;
+      }
+      
+      .action-grid {
+        max-width: 800px;
+      }
+      
+      .section-card {
+        padding: 32px;
+      }
+    }
+    
+    /* Ultra-wide screens */
+    @media (min-width: 1600px) {
+      .dashboard-grid {
+        gap: 40px;
+      }
+    }
+    
+    /* Small screen height fix */
+    @media (max-height: 700px) {
+      .content {
+        padding: 20px 30px;
+        gap: 20px;
+      }
+      
+      .section-card {
+        padding: 20px;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="phone-frame">
+  <div class="app-container">
+    <!-- HEADER -->
     <div class="header">
       <div class="logo">SAFE<span>CITY</span></div>
       <div class="header-right">
@@ -75,65 +617,70 @@
       </div>
     </div>
 
-    <div class="phone-content">
+    <!-- CONTENT -->
+    <div class="app-content">
       <div class="content">
-        <div>
+        <div class="welcome-section">
           <div class="page-title">Citizen Dashboard</div>
           <div class="page-sub">Welcome, {{ session.name if session.name else 'User' }}. Stay safe and report any incident.</div>
         </div>
 
+        <!-- Action Buttons -->
         <div class="action-grid">
           <a href="/report" class="action-btn btn-report">👮 Report Crime</a>
           <button onclick="alert('Emergency services notified!')" class="action-btn btn-sos">🚨 SOS Alert</button>
         </div>
 
-        <!-- NOTIFICATIONS -->
-        <div>
-          <div class="section-head">
-            <div class="section-title">Notifications</div>
-            <a href="/notifications" class="section-link">View all →</a>
-          </div>
-          <div class="notif-list">
-            {% for n in recent_notifications %}
-            <div class="notif-card">
-              <div class="notif-icon {% if 'assigned' in n.message|lower %}ni-person{% elif 'resolved' in n.message|lower %}ni-check{% else %}ni-bell{% endif %}">
-                {% if 'assigned' in n.message|lower %}👤{% elif 'resolved' in n.message|lower %}✓{% else %}🔔{% endif %}
-              </div>
-              <div class="notif-body">
-                <div class="notif-top">
-                  <div class="notif-text">{{ n.message }}</div>
-                  {% if n.is_new %}
-                  <span class="new-badge">NEW</span>
-                  {% endif %}
+        <!-- Dashboard Grid - Notifications and Reports -->
+        <div class="dashboard-grid">
+          <!-- Left Column - Notifications -->
+          <div class="section-card">
+            <div class="section-head">
+              <div class="section-title">Notifications</div>
+              <a href="/notifications" class="section-link">View all →</a>
+            </div>
+            <div class="notif-list">
+              {% for n in recent_notifications %}
+              <div class="notif-card">
+                <div class="notif-icon {% if 'assigned' in n.message|lower %}ni-person{% elif 'resolved' in n.message|lower %}ni-check{% else %}ni-bell{% endif %}">
+                  {% if 'assigned' in n.message|lower %}👤{% elif 'resolved' in n.message|lower %}✓{% else %}🔔{% endif %}
                 </div>
-                <div class="notif-time">{{ n.time_ago }}</div>
+                <div class="notif-body">
+                  <div class="notif-top">
+                    <div class="notif-text">{{ n.message }}</div>
+                    {% if n.is_new %}
+                    <span class="new-badge">NEW</span>
+                    {% endif %}
+                  </div>
+                  <div class="notif-time">{{ n.time_ago }}</div>
+                </div>
               </div>
+              {% else %}
+              <div class="empty-state">No notifications yet</div>
+              {% endfor %}
             </div>
-            {% else %}
-            <div class="empty-state">No notifications yet</div>
-            {% endfor %}
           </div>
-        </div>
 
-        <!-- RECENT REPORTS -->
-        <div>
-          <div class="section-head">
-            <div class="section-title">Recent Reports</div>
-            <a href="/case_tracking" class="section-link">View all →</a>
-          </div>
-          <div class="report-list">
-            {% for r in recent_reports %}
-            <div class="report-card">
-              <div>
-                <div class="report-type">{{ r.category_name }}</div>
-                <div class="report-loc">📍 {{ r.location }}</div>
-                <div class="report-date">{{ r.time_ago }}</div>
-              </div>
-              <span class="status-pill {% if r.status == 'Pending' %}sp-pending{% elif r.status == 'In Progress' %}sp-progress{% else %}sp-resolved{% endif %}">{{ r.status }}</span>
+          <!-- Right Column - Recent Reports -->
+          <div class="section-card">
+            <div class="section-head">
+              <div class="section-title">Recent Reports</div>
+              <a href="/case_tracking" class="section-link">View all →</a>
             </div>
-            {% else %}
-            <div class="empty-state">No reports filed yet</div>
-            {% endfor %}
+            <div class="report-list">
+              {% for r in recent_reports %}
+              <div class="report-card">
+                <div>
+                  <div class="report-type">{{ r.category_name }}</div>
+                  <div class="report-loc">📍 {{ r.location }}</div>
+                  <div class="report-date">{{ r.time_ago }}</div>
+                </div>
+                <span class="status-pill {% if r.status == 'Pending' %}sp-pending{% elif r.status == 'In Progress' %}sp-progress{% else %}sp-resolved{% endif %}">{{ r.status }}</span>
+              </div>
+              {% else %}
+              <div class="empty-state">No reports filed yet</div>
+              {% endfor %}
+            </div>
           </div>
         </div>
       </div>

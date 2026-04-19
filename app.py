@@ -415,7 +415,73 @@ def notifications():
 
 @app.route('/case_detail/<int:case_id>')
 def case_detail(case_id):
-    return render_template('case_detail.html')
+    db = get_db_connection()
+    
+    case = db.execute('''
+        SELECT c.complaint_id, cc.name as category_name, c.description, 
+               c.location, c.status, c.created_at,
+               cs.priority, cs.notes,
+               ap.name as officer_name, ap.badge_number as officer_badge
+        FROM Complaints c
+        JOIN CrimeCategories cc ON c.category_id = cc.category_id
+        LEFT JOIN Cases cs ON c.complaint_id = cs.complaint_id
+        LEFT JOIN AuthorizedPersonnel ap ON cs.assigned_police_id = ap.personnel_id
+        WHERE c.complaint_id = ?
+    ''', (case_id,)).fetchone()
+    
+    evidence_files = []
+    if case:
+        evidence = db.execute('''
+            SELECT file_url
+            FROM Evidence
+            WHERE complaint_id = ?
+        ''', (case_id,)).fetchall()
+        
+        for e in evidence:
+            filename = e['file_url'].split('/')[-1] if e['file_url'] else 'Unknown file'
+            evidence_files.append({
+                'name': filename,
+                'url': e['file_url']
+            })
+    
+
+    timeline = []
+    if case:
+        timeline.append({
+            'event': 'Case Filed',
+            'date': case['created_at']
+        })
+        
+        if case['status'] != 'Pending' and case['status']:
+            timeline.append({
+                'event': f"Status: {case['status']}",
+                'date': case['created_at']
+            })
+            
+        if case['officer_name']:
+            timeline.append({
+                'event': 'Officer Assigned',
+                'date': case['created_at']
+            })
+    
+    db.close()
+    
+    if not case:
+        flash('Case not found', 'error')
+        return redirect(url_for('case_tracking'))
+    
+    case_dict = dict(case)
+    case_dict['evidence_files'] = evidence_files
+    case_dict['timeline'] = timeline
+    
+    if case_dict['created_at']:
+        try:
+            dt = datetime.strptime(case_dict['created_at'], '%Y-%m-%d %H:%M:%S')
+            case_dict['date_filed'] = dt.strftime('%B %d, %Y')
+        except:
+            case_dict['date_filed'] = case_dict['created_at']
+    
+    return render_template('case_detail.html', case=case_dict)
 
 @app.route('/emergency_tracking')
 def emergency_tracking():

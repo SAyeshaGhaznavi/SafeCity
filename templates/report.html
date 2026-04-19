@@ -1,81 +1,657 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
   <title>SafeCity – Report Incident</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{--navy:#0a0f1e;--cyan:#00c8ff;--white:#f0f4ff;--muted:#7a8db0;--red:#ff4e6a;--green:#00e5a0;--yellow:#ffb830;--border:rgba(0,200,255,0.15)}
-    html,body{height:100vh;width:100%;background:#0a0a0a;display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;overflow:hidden;margin:0;padding:0;color:var(--white)}
-    .phone-frame{width:380px;height:92vh;background:var(--navy);border:12px solid #111;border-radius:40px;overflow:hidden;box-shadow:0 0 80px rgba(0,200,255,0.2),0 0 0 1px rgba(0,200,255,0.08);display:flex;flex-direction:column;position:relative;background-image:linear-gradient(rgba(0,200,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,255,0.025) 1px,transparent 1px);background-size:50px 50px}
-    .phone-frame::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:160px;height:28px;background:#111;border-radius:0 0 20px 20px;z-index:100}
-    .phone-frame::after{content:'9:41  ▲  🔋';position:absolute;top:5px;left:0;right:0;text-align:center;font-size:0.62rem;color:rgba(240,244,255,0.6);z-index:101;font-weight:600;letter-spacing:1.5px}
-    .phone-content{flex:1;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;scrollbar-width:thin}
-    .phone-content::-webkit-scrollbar{width:3px}
-    .phone-content::-webkit-scrollbar-thumb{background:rgba(0,200,255,0.3);border-radius:2px}
-
-    .header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0;background:rgba(10,15,30,0.9)}
-    .back-btn{background:none;border:none;color:var(--cyan);font-size:1.2rem;cursor:pointer;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;transition:all 0.2s}
-    .back-btn:hover{background:rgba(0,200,255,0.1)}
-    .header-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:2px;flex:1}
-
-    .content{flex:1;padding:16px;display:flex;flex-direction:column;gap:14px}
-
-    .section-label{font-size:0.65rem;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px}
-    .crime-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-    .crime-btn{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:12px 6px 10px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;color:var(--muted);position:relative;overflow:hidden}
-    .crime-btn::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;opacity:0;transition:opacity 0.2s}
-    .crime-btn[data-priority="High"]::after{background:var(--red)}
-    .crime-btn[data-priority="Medium"]::after{background:var(--yellow)}
-    .crime-btn[data-priority="Low"]::after{background:var(--green)}
-    .crime-btn.active::after{opacity:1}
-    .crime-btn.active,.crime-btn:hover{border-color:var(--cyan);background:rgba(0,200,255,0.08);color:var(--cyan)}
-    .crime-btn-img{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.6rem}
-    .crime-btn-label{font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
-    .crime-btn-priority{font-size:0.5rem;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;padding:2px 6px;border-radius:3px}
-    .p-high{color:var(--red);background:rgba(255,78,106,0.12)}
-    .p-med{color:var(--yellow);background:rgba(255,184,48,0.12)}
-    .p-low{color:var(--green);background:rgba(0,229,160,0.12)}
-
-    .form-group{display:flex;flex-direction:column;gap:6px}
-    label{font-size:0.65rem;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:1.5px}
-    input,select,textarea{width:100%;padding:10px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:0.85rem;font-family:'DM Sans',sans-serif;transition:all 0.2s;outline:none}
-    input:focus,select:focus,textarea:focus{border-color:var(--cyan);background:rgba(0,200,255,0.07)}
-    input::placeholder,textarea::placeholder{color:var(--muted);opacity:0.6}
-    select option{background:var(--navy)}
-    textarea{resize:none;min-height:70px;line-height:1.5}
-
-    .checkbox-row{display:flex;align-items:center;gap:10px;font-size:0.8rem;color:var(--muted)}
-    input[type="checkbox"]{width:16px;height:16px;accent-color:var(--cyan);flex-shrink:0}
-
-    .upload-area{border:1px dashed var(--border);border-radius:8px;padding:14px;text-align:center;cursor:pointer;transition:all 0.2s}
-    .upload-area:hover{border-color:var(--cyan);background:rgba(0,200,255,0.04)}
-    .upload-icon{font-size:1.5rem;margin-bottom:4px}
-    .upload-text{font-size:0.72rem;color:var(--muted)}
-
-    .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .btn{padding:11px 14px;border:none;border-radius:8px;font-size:0.85rem;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px}
-    .btn-danger{background:linear-gradient(135deg,var(--red),#ff2d5e);color:#fff}
-    .btn-danger:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,78,106,0.3)}
-    .btn-outline{background:transparent;border:1px solid var(--border);color:var(--white)}
-    .btn-outline:hover{border-color:var(--muted)}
-    .hotline{text-align:center;font-size:0.75rem;color:var(--muted);padding:8px;border-top:1px solid var(--border)}
-    .hotline strong{color:var(--cyan)}
-
-    .flash-msg{padding:10px 14px;border-radius:8px;font-size:0.82rem;font-weight:600;border:1px solid}
-    .flash-success{background:rgba(0,229,160,0.12);color:#00e5a0;border-color:rgba(0,229,160,0.25)}
-    .flash-error{background:rgba(255,78,106,0.12);color:#ff4e6a;border-color:rgba(255,78,106,0.25)}
+    :root{
+      --navy:#0a0f1e;
+      --cyan:#00c8ff;
+      --white:#f0f4ff;
+      --muted:#7a8db0;
+      --red:#ff4e6a;
+      --green:#00e5a0;
+      --yellow:#ffb830;
+      --border:rgba(0,200,255,0.15);
+    }
+    
+    html, body {
+      height: 100vh;
+      width: 100vw;
+      background: var(--navy);
+      font-family: 'DM Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+      color: var(--white);
+      overflow: hidden;
+    }
+    
+    body {
+      display: flex;
+      align-items: stretch;
+      justify-content: stretch;
+    }
+    
+    /* FULL SCREEN CONTAINER */
+    .app-container {
+      width: 100vw;
+      height: 100vh;
+      background: var(--navy);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      background-image: 
+        linear-gradient(rgba(0,200,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,200,255,0.025) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+    
+    /* HEADER */
+    .header {
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-shrink: 0;
+      background: rgba(10,15,30,0.95);
+      backdrop-filter: blur(10px);
+    }
+    
+    .back-btn {
+      background: none;
+      border: none;
+      color: var(--cyan);
+      font-size: 1.5rem;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    
+    .back-btn:hover {
+      background: rgba(0,200,255,0.1);
+    }
+    
+    .header-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: 3px;
+      flex: 1;
+    }
+    
+    /* MAIN CONTENT AREA */
+    .app-content {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,200,255,0.2) transparent;
+    }
+    
+    .app-content::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .app-content::-webkit-scrollbar-thumb {
+      background: rgba(0,200,255,0.3);
+      border-radius: 3px;
+    }
+    
+    /* CONTENT WRAPPER */
+    .content {
+      flex: 1;
+      padding: 32px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    
+    /* DESKTOP LAYOUT - Two columns */
+    .report-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 40px;
+      align-items: start;
+    }
+    
+    /* Left Column - Crime Types */
+    .crime-section {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+    }
+    
+    .section-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--cyan);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+    }
+    
+    .crime-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    
+    .crime-btn {
+      background: rgba(255,255,255,0.04);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 12px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--muted);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .crime-btn::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .crime-btn[data-priority="High"]::after {
+      background: var(--red);
+    }
+    
+    .crime-btn[data-priority="Medium"]::after {
+      background: var(--yellow);
+    }
+    
+    .crime-btn[data-priority="Low"]::after {
+      background: var(--green);
+    }
+    
+    .crime-btn.active::after {
+      opacity: 1;
+    }
+    
+    .crime-btn.active, .crime-btn:hover {
+      border-color: var(--cyan);
+      background: rgba(0,200,255,0.08);
+      color: var(--cyan);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,200,255,0.1);
+    }
+    
+    .crime-btn-img {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      background: rgba(0,200,255,0.05);
+    }
+    
+    .crime-btn-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .crime-btn-priority {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    
+    .p-high {
+      color: var(--red);
+      background: rgba(255,78,106,0.12);
+    }
+    
+    .p-med {
+      color: var(--yellow);
+      background: rgba(255,184,48,0.12);
+    }
+    
+    .p-low {
+      color: var(--green);
+      background: rgba(0,229,160,0.12);
+    }
+    
+    /* Right Column - Form */
+    .form-section {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+    }
+    
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    
+    label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--cyan);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+    
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      color: var(--white);
+      font-size: 0.9rem;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.3s ease;
+      outline: none;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--cyan);
+      background: rgba(0,200,255,0.07);
+      box-shadow: 0 0 0 3px rgba(0,200,255,0.1);
+    }
+    
+    input::placeholder, textarea::placeholder {
+      color: var(--muted);
+      opacity: 0.6;
+    }
+    
+    select option {
+      background: var(--navy);
+    }
+    
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+      line-height: 1.5;
+    }
+    
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+    
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--cyan);
+      flex-shrink: 0;
+    }
+    
+    .upload-area {
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 24px;
+    }
+    
+    .upload-area:hover {
+      border-color: var(--cyan);
+      background: rgba(0,200,255,0.04);
+      transform: scale(1.02);
+    }
+    
+    .upload-icon {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+    
+    .upload-text {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    
+    .btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    
+    .btn {
+      padding: 14px 20px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'DM Sans', sans-serif;
+      text-align: center;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .btn-danger {
+      background: linear-gradient(135deg, var(--red), #ff2d5e);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(255,78,106,0.2);
+    }
+    
+    .btn-danger:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(255,78,106,0.3);
+    }
+    
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid var(--border);
+      color: var(--white);
+    }
+    
+    .btn-outline:hover {
+      border-color: var(--muted);
+      background: rgba(255,255,255,0.05);
+    }
+    
+    .hotline {
+      text-align: center;
+      font-size: 0.9rem;
+      color: var(--muted);
+      padding: 20px 0 0;
+      border-top: 1px solid var(--border);
+    }
+    
+    .hotline strong {
+      color: var(--cyan);
+      font-size: 1.1rem;
+    }
+    
+    .flash-msg {
+      padding: 14px 18px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border: 1px solid;
+      margin-bottom: 20px;
+    }
+    
+    .flash-success {
+      background: rgba(0,229,160,0.12);
+      color: #00e5a0;
+      border-color: rgba(0,229,160,0.25);
+    }
+    
+    .flash-error {
+      background: rgba(255,78,106,0.12);
+      color: #ff4e6a;
+      border-color: rgba(255,78,106,0.25);
+    }
+    
+    /* RESPONSIVE BREAKPOINTS */
+    @media (max-width: 1024px) {
+      .report-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+      
+      .crime-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .header {
+        padding: 16px 24px;
+      }
+      
+      .header-title {
+        font-size: 1.5rem;
+      }
+      
+      .content {
+        padding: 24px 20px;
+      }
+      
+      .crime-section, .form-section {
+        padding: 24px 20px;
+      }
+      
+      .crime-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+      
+      .crime-btn {
+        padding: 16px 10px 14px;
+      }
+      
+      .crime-btn-img {
+        width: 50px;
+        height: 50px;
+        font-size: 1.8rem;
+      }
+      
+      .crime-btn-label {
+        font-size: 0.75rem;
+      }
+      
+      .btn-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .header {
+        padding: 14px 16px;
+      }
+      
+      .back-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 1.3rem;
+      }
+      
+      .header-title {
+        font-size: 1.3rem;
+      }
+      
+      .content {
+        padding: 20px 16px;
+        gap: 20px;
+      }
+      
+      .crime-section, .form-section {
+        padding: 20px 16px;
+      }
+      
+      .section-label {
+        font-size: 0.75rem;
+        margin-bottom: 16px;
+      }
+      
+      .crime-grid {
+        gap: 10px;
+      }
+      
+      .crime-btn {
+        padding: 14px 8px 12px;
+      }
+      
+      .crime-btn-img {
+        width: 45px;
+        height: 45px;
+        font-size: 1.6rem;
+      }
+      
+      .crime-btn-label {
+        font-size: 0.7rem;
+      }
+      
+      .crime-btn-priority {
+        font-size: 0.6rem;
+      }
+      
+      .form-group {
+        margin-bottom: 14px;
+      }
+      
+      label {
+        font-size: 0.7rem;
+      }
+      
+      input, select, textarea {
+        padding: 10px 12px;
+        font-size: 0.85rem;
+      }
+      
+      .checkbox-row {
+        font-size: 0.85rem;
+      }
+      
+      .upload-area {
+        padding: 20px;
+      }
+      
+      .upload-icon {
+        font-size: 1.8rem;
+      }
+      
+      .upload-text {
+        font-size: 0.8rem;
+      }
+      
+      .btn {
+        padding: 12px 16px;
+        font-size: 0.9rem;
+      }
+      
+      .hotline {
+        font-size: 0.8rem;
+      }
+      
+      .hotline strong {
+        font-size: 1rem;
+      }
+      
+      .flash-msg {
+        padding: 12px 14px;
+        font-size: 0.85rem;
+      }
+    }
+    
+    /* Desktop Large Screens */
+    @media (min-width: 1200px) {
+      .content {
+        padding: 40px 60px;
+      }
+      
+      .header {
+        padding: 24px 60px;
+      }
+      
+      .header-title {
+        font-size: 2rem;
+      }
+      
+      .crime-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      
+      .crime-btn {
+        padding: 24px 16px 20px;
+      }
+      
+      .crime-btn-img {
+        width: 70px;
+        height: 70px;
+        font-size: 2.5rem;
+      }
+      
+      .crime-btn-label {
+        font-size: 0.95rem;
+      }
+    }
+    
+    /* Ultra-wide screens */
+    @media (min-width: 1600px) {
+      .content {
+        max-width: 1600px;
+      }
+      
+      .report-grid {
+        gap: 60px;
+      }
+    }
+    
+    /* Small screen height fix */
+    @media (max-height: 700px) {
+      .content {
+        padding: 20px 30px;
+        gap: 20px;
+      }
+      
+      .crime-section, .form-section {
+        padding: 20px;
+      }
+    }
   </style>
+  <script>
+    function selectCrime(btn){
+      document.querySelectorAll('.crime-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('crimeTypeInput').value = btn.querySelector('.crime-btn-label').textContent;
+      document.getElementById('priorityInput').value = btn.dataset.priority;
+    }
+  </script>
 </head>
 <body>
-  <div class="phone-frame">
+  <div class="app-container">
+    <!-- HEADER -->
     <div class="header">
       <button class="back-btn" onclick="window.history.back()">←</button>
       <div class="header-title">REPORT CRIME</div>
     </div>
 
-    <div class="phone-content">
+    <!-- CONTENT -->
+    <div class="app-content">
       <div class="content">
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
@@ -87,90 +663,92 @@
           {% endif %}
         {% endwith %}
 
-        <!-- CRIME TYPE -->
-        <div>
-          <div class="section-label">Crime Type</div>
-          <div class="crime-grid">
-            <button class="crime-btn active" data-priority="Medium" onclick="selectCrime(this)">
-              <span class="crime-btn-img">💰</span>
-              <span class="crime-btn-label">Theft</span>
-              <span class="crime-btn-priority p-med">Medium</span>
-            </button>
-            <button class="crime-btn" data-priority="High" onclick="selectCrime(this)">
-              <span class="crime-btn-img">👊</span>
-              <span class="crime-btn-label">Assault</span>
-              <span class="crime-btn-priority p-high">High</span>
-            </button>
-            <button class="crime-btn" data-priority="Low" onclick="selectCrime(this)">
-              <span class="crime-btn-img">🏚️</span>
-              <span class="crime-btn-label">Vandalism</span>
-              <span class="crime-btn-priority p-low">Low</span>
-            </button>
-            <button class="crime-btn" data-priority="Medium" onclick="selectCrime(this)">
-              <span class="crime-btn-img">📋</span>
-              <span class="crime-btn-label">Fraud</span>
-              <span class="crime-btn-priority p-med">Medium</span>
-            </button>
-            <button class="crime-btn" data-priority="Medium" onclick="selectCrime(this)">
-              <span class="crime-btn-img">💻</span>
-              <span class="crime-btn-label">Cybercrime</span>
-              <span class="crime-btn-priority p-med">Medium</span>
-            </button>
-            <button class="crime-btn" data-priority="Medium" onclick="selectCrime(this)">
-              <span class="crime-btn-img">•••</span>
-              <span class="crime-btn-label">Other</span>
-              <span class="crime-btn-priority p-med">Medium</span>
-            </button>
+        <div class="report-grid">
+          <!-- Left Column - Crime Types -->
+          <div class="crime-section">
+            <div class="section-label">Select Crime Type</div>
+            <div class="crime-grid">
+              <button class="crime-btn active" data-priority="Medium" onclick="selectCrime(this)">
+                <span class="crime-btn-img">💰</span>
+                <span class="crime-btn-label">Theft</span>
+                <span class="crime-btn-priority p-med">Medium</span>
+              </button>
+              <button class="crime-btn" data-priority="High" onclick="selectCrime(this)">
+                <span class="crime-btn-img">👊</span>
+                <span class="crime-btn-label">Assault</span>
+                <span class="crime-btn-priority p-high">High</span>
+              </button>
+              <button class="crime-btn" data-priority="Low" onclick="selectCrime(this)">
+                <span class="crime-btn-img">🏚️</span>
+                <span class="crime-btn-label">Vandalism</span>
+                <span class="crime-btn-priority p-low">Low</span>
+              </button>
+              <button class="crime-btn" data-priority="Medium" onclick="selectCrime(this)">
+                <span class="crime-btn-img">📋</span>
+                <span class="crime-btn-label">Fraud</span>
+                <span class="crime-btn-priority p-med">Medium</span>
+              </button>
+              <button class="crime-btn" data-priority="Medium" onclick="selectCrime(this)">
+                <span class="crime-btn-img">💻</span>
+                <span class="crime-btn-label">Cybercrime</span>
+                <span class="crime-btn-priority p-med">Medium</span>
+              </button>
+              <button class="crime-btn" data-priority="Medium" onclick="selectCrime(this)">
+                <span class="crime-btn-img">•••</span>
+                <span class="crime-btn-label">Other</span>
+                <span class="crime-btn-priority p-med">Medium</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Right Column - Form -->
+          <div class="form-section">
+            <form method="POST" action="/report" enctype="multipart/form-data">
+              <input type="hidden" name="crime_type" id="crimeTypeInput" value="Theft">
+              <input type="hidden" name="priority" id="priorityInput" value="Medium">
+              
+              <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" placeholder="Describe what happened in detail..."></textarea>
+              </div>
+              
+              <div class="form-group">
+                <label>Location</label>
+                <input type="text" name="location" placeholder="e.g. Gulberg III, Lahore">
+              </div>
+              
+              <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" name="full_name" placeholder="Your full name">
+              </div>
+              
+              <div class="form-group">
+                <label>CNIC Number</label>
+                <input type="text" name="cnic" placeholder="12345-6789123-1">
+              </div>
+              
+              <div class="checkbox-row">
+                <input type="checkbox" id="anon" name="anonymous">
+                <label for="anon" style="font-size:0.9rem;text-transform:none;letter-spacing:0;color:var(--muted);font-weight:400;cursor:pointer;">Report Anonymously (Your identity will be hidden)</label>
+              </div>
+              
+              <input type="file" id="fileInput" style="display:none" accept="image/*,video/*" name="evidence" onchange="document.querySelector('.upload-text').textContent = this.files[0] ? this.files[0].name : 'Tap to upload evidence (Images/Video)'">
+              <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon">📎</div>
+                <div class="upload-text">Tap to upload evidence (Images/Video)</div>
+              </div>
+              
+              <div class="btn-row">
+                <button type="submit" class="btn btn-danger">🚨 Submit Report</button>
+                <a href="/portal" class="btn btn-outline">Cancel</a>
+              </div>
+            </form>
           </div>
         </div>
-
-        <!-- FORM -->
-        <form method="POST" action="/report" enctype="multipart/form-data">
-          <input type="hidden" name="crime_type" id="crimeTypeInput" value="Theft">
-          <input type="hidden" name="priority" id="priorityInput" value="Medium">
-          <div style="display:flex;flex-direction:column;gap:12px">
-            <div class="form-group">
-              <label>Description</label>
-              <textarea name="description" placeholder="Describe what happened..."></textarea>
-            </div>
-            <div class="form-group">
-              <label>Location</label>
-              <input type="text" name="location" placeholder="e.g. Gulberg III, Lahore">
-            </div>
-            <div class="form-group">
-              <label>Full Name</label>
-              <input type="text" name="full_name" placeholder="Your full name">
-            </div>
-            <div class="form-group">
-              <label>CNIC Number</label>
-              <input type="text" name="cnic" placeholder="12345-6789123-1">
-            </div>
-            <div class="checkbox-row">
-              <input type="checkbox" id="anon" name="anonymous">
-              <label for="anon" style="font-size:0.8rem;text-transform:none;letter-spacing:0;color:var(--muted);font-weight:400">Report Anonymously</label>
-            </div>
-            <input type="file" id="fileInput" style="display:none" accept="image/*,video/*" name="evidence" onchange="document.querySelector('.upload-text').textContent = this.files[0] ? this.files[0].name : 'Tap to upload evidence (Images/Video)'">
-            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
-              <div class="upload-icon">📎</div>
-              <div class="upload-text">Tap to upload evidence (Images/Video)</div>
-            </div>
-            <div class="btn-row">
-              <button type="submit" class="btn btn-danger">🚨 Submit Report</button>
-              <a href="/portal" class="btn btn-outline">Cancel</a>
-            </div>
-          </div>
-        </form>
-        <div class="hotline">📞 Hotline: <strong>1800-SAFE</strong> · Available 24/7</div>
+        
+        <div class="hotline">📞 Emergency Hotline: <strong>1800-SAFE</strong> · Available 24/7 · All reports are confidential</div>
       </div>
     </div>
   </div>
-  <script>
-    function selectCrime(btn){
-      document.querySelectorAll('.crime-btn').forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById('crimeTypeInput').value = btn.querySelector('.crime-btn-label').textContent;
-      document.getElementById('priorityInput').value = btn.dataset.priority;
-    }
-  </script>
 </body>
 </html>

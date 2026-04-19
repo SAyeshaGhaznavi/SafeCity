@@ -1,92 +1,530 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
   <title>SafeCity – Police Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{--navy:#0a0f1e;--cyan:#00c8ff;--white:#f0f4ff;--muted:#7a8db0;--red:#ff4e6a;--yellow:#ffb830;--green:#00e5a0;--border:rgba(0,200,255,0.15);--card:rgba(255,255,255,0.04)}
-    html,body{height:100vh;width:100%;background:#0a0a0a;display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;overflow:hidden;margin:0;padding:0;color:var(--white)}
-    .phone-frame{width:380px;height:92vh;background:var(--navy);border:12px solid #111;border-radius:40px;overflow:hidden;box-shadow:0 0 80px rgba(0,200,255,0.2),0 0 0 1px rgba(0,200,255,0.08);display:flex;flex-direction:column;position:relative;background-image:linear-gradient(rgba(0,200,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,255,0.025) 1px,transparent 1px);background-size:50px 50px}
-    .phone-frame::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:160px;height:28px;background:#111;border-radius:0 0 20px 20px;z-index:100}
-    .phone-frame::after{content:'9:41  ▲  🔋';position:absolute;top:5px;left:0;right:0;text-align:center;font-size:0.62rem;color:rgba(240,244,255,0.6);z-index:101;font-weight:600;letter-spacing:1.5px}
-    .phone-content{flex:1;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;scrollbar-width:thin;scrollbar-color:rgba(0,200,255,0.2) transparent}
-    .phone-content::-webkit-scrollbar{width:3px}
-    .phone-content::-webkit-scrollbar-thumb{background:rgba(0,200,255,0.3);border-radius:2px}
-
+    :root{
+      --navy:#0a0f1e;
+      --cyan:#00c8ff;
+      --white:#f0f4ff;
+      --muted:#7a8db0;
+      --red:#ff4e6a;
+      --yellow:#ffb830;
+      --green:#00e5a0;
+      --border:rgba(0,200,255,0.15);
+      --card:rgba(255,255,255,0.04);
+    }
+    
+    html, body {
+      height: 100vh;
+      width: 100vw;
+      background: var(--navy);
+      font-family: 'DM Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+      color: var(--white);
+      overflow: hidden;
+    }
+    
+    body {
+      display: flex;
+      align-items: stretch;
+      justify-content: stretch;
+    }
+    
+    /* FULL SCREEN CONTAINER */
+    .app-container {
+      width: 100vw;
+      height: 100vh;
+      background: var(--navy);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      background-image: 
+        linear-gradient(rgba(0,200,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,200,255,0.025) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+    
     /* HEADER */
-    .header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:rgba(10,15,30,0.92)}
-    .header-left{display:flex;align-items:center;gap:10px}
-    .logo{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:3px}
-    .logo span{color:var(--cyan)}
-    .online-badge{display:flex;align-items:center;gap:5px;font-size:0.62rem;color:var(--green);font-weight:600}
-    .online-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 1.5s infinite}
-    .header-right{display:flex;align-items:center;gap:8px}
-    .officer-avatar{width:30px;height:30px;border-radius:50%;background:rgba(0,200,255,0.15);border:1.5px solid var(--cyan);display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:var(--cyan)}
-    .logout-link{font-size:0.65rem;color:var(--muted);text-decoration:none;border:1px solid var(--border);padding:4px 8px;border-radius:5px;transition:all 0.2s}
-    .logout-link:hover{color:var(--red);border-color:var(--red)}
-
-    /* CONTENT */
-    .content{flex:1;padding:14px;display:flex;flex-direction:column;gap:14px}
-    .page-title{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:2px}
-    .page-sub{font-size:0.68rem;color:var(--muted);margin-top:2px}
-
+    .header {
+      padding: clamp(14px, 2vh, 24px) clamp(16px, 3vw, 40px);
+      border-bottom: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      background: rgba(10,15,30,0.95);
+      backdrop-filter: blur(10px);
+    }
+    
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: clamp(10px, 1.5vw, 16px);
+    }
+    
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.1rem, 2.5vw, 1.8rem);
+      letter-spacing: clamp(3px, 0.5vw, 5px);
+    }
+    
+    .logo span {
+      color: var(--cyan);
+    }
+    
+    .online-badge {
+      display: flex;
+      align-items: center;
+      gap: clamp(5px, 0.8vw, 8px);
+      font-size: clamp(0.62rem, 1vw, 0.8rem);
+      color: var(--green);
+      font-weight: 600;
+    }
+    
+    .online-dot {
+      width: clamp(6px, 1vw, 8px);
+      height: clamp(6px, 1vw, 8px);
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+    
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: clamp(8px, 1.5vw, 16px);
+    }
+    
+    .officer-avatar {
+      width: clamp(30px, 5vw, 45px);
+      height: clamp(30px, 5vw, 45px);
+      border-radius: 50%;
+      background: rgba(0,200,255,0.15);
+      border: 2px solid var(--cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(0.7rem, 1.2vw, 1rem);
+      font-weight: 700;
+      color: var(--cyan);
+    }
+    
+    .logout-link {
+      font-size: clamp(0.65rem, 1vw, 0.8rem);
+      color: var(--muted);
+      text-decoration: none;
+      border: 1.5px solid var(--border);
+      padding: clamp(4px, 0.8vh, 8px) clamp(8px, 1.5vw, 16px);
+      border-radius: clamp(5px, 0.8vw, 8px);
+      transition: all 0.2s;
+      font-weight: 600;
+    }
+    
+    .logout-link:hover {
+      color: var(--red);
+      border-color: var(--red);
+    }
+    
+    /* MAIN CONTENT AREA */
+    .app-content {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,200,255,0.2) transparent;
+    }
+    
+    .app-content::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .app-content::-webkit-scrollbar-thumb {
+      background: rgba(0,200,255,0.3);
+      border-radius: 3px;
+    }
+    
+    /* CONTENT WRAPPER */
+    .content {
+      flex: 1;
+      padding: clamp(14px, 2.5vh, 32px) clamp(14px, 3vw, 40px);
+      display: flex;
+      flex-direction: column;
+      gap: clamp(14px, 2vh, 24px);
+      width: 100%;
+    }
+    
+    .page-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.5rem, 3vw, 2.5rem);
+      letter-spacing: clamp(2px, 0.4vw, 3px);
+    }
+    
+    .page-sub {
+      font-size: clamp(0.68rem, 1.1vw, 0.9rem);
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    
     /* STATS GRID */
-    .stats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-    .stat-card{border-radius:12px;padding:12px 10px;position:relative;overflow:hidden;border:1px solid var(--border)}
-    .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
-    .stat-card.c-yellow{border-color:rgba(255,184,48,0.25)}.stat-card.c-yellow::before{background:linear-gradient(90deg,var(--yellow),transparent)}
-    .stat-card.c-cyan{border-color:rgba(0,200,255,0.25)}.stat-card.c-cyan::before{background:linear-gradient(90deg,var(--cyan),transparent)}
-    .stat-card.c-green{border-color:rgba(0,229,160,0.25)}.stat-card.c-green::before{background:linear-gradient(90deg,var(--green),transparent)}
-    .stat-icon{font-size:1.2rem;margin-bottom:6px}
-    .stat-num{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;line-height:1}
-    .c-yellow .stat-num{color:var(--yellow)}.c-cyan .stat-num{color:var(--cyan)}.c-green .stat-num{color:var(--green)}
-    .stat-lbl{font-size:0.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:3px}
-
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(8px, 1.5vw, 20px);
+      margin-bottom: clamp(14px, 2vh, 24px);
+    }
+    
+    .stat-card {
+      border-radius: clamp(12px, 1.5vw, 16px);
+      padding: clamp(12px, 2vh, 20px) clamp(10px, 1.5vw, 18px);
+      position: relative;
+      overflow: hidden;
+      border: 1.5px solid var(--border);
+      transition: transform 0.2s ease;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-2px);
+    }
+    
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+    }
+    
+    .stat-card.c-yellow {
+      border-color: rgba(255,184,48,0.25);
+    }
+    .stat-card.c-yellow::before {
+      background: linear-gradient(90deg, var(--yellow), transparent);
+    }
+    
+    .stat-card.c-cyan {
+      border-color: rgba(0,200,255,0.25);
+    }
+    .stat-card.c-cyan::before {
+      background: linear-gradient(90deg, var(--cyan), transparent);
+    }
+    
+    .stat-card.c-green {
+      border-color: rgba(0,229,160,0.25);
+    }
+    .stat-card.c-green::before {
+      background: linear-gradient(90deg, var(--green), transparent);
+    }
+    
+    .stat-icon {
+      font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+      margin-bottom: clamp(6px, 1vh, 10px);
+    }
+    
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+      line-height: 1;
+    }
+    
+    .c-yellow .stat-num { color: var(--yellow); }
+    .c-cyan .stat-num { color: var(--cyan); }
+    .c-green .stat-num { color: var(--green); }
+    
+    .stat-lbl {
+      font-size: clamp(0.58rem, 1vw, 0.75rem);
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: clamp(3px, 0.5vh, 6px);
+    }
+    
+    /* TWO COLUMN LAYOUT FOR DESKTOP */
+    .two-column-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: clamp(14px, 2vh, 24px);
+    }
+    
+    @media (min-width: 1200px) {
+      .two-column-layout {
+        grid-template-columns: 1fr 1.5fr;
+        align-items: stretch;
+      }
+    }
+    
     /* HIGH PRIORITY */
-    .priority-section{background:rgba(255,78,106,0.06);border:1px solid rgba(255,78,106,0.2);border-radius:12px;padding:12px}
-    .priority-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-    .priority-title{font-size:0.72rem;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:1px}
-    .priority-link{font-size:0.65rem;color:var(--cyan);text-decoration:none;font-weight:600}
-    .incident-item{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px;display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
-    .incident-item:last-child{margin-bottom:0}
-    .incident-info .incident-type{font-size:0.8rem;font-weight:600;margin-bottom:2px}
-    .incident-info .incident-loc{font-size:0.68rem;color:var(--muted)}
-    .incident-info .incident-id{font-size:0.62rem;color:var(--cyan);font-weight:600;margin-bottom:3px}
-    .incident-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
-    .status-pill{font-size:0.6rem;font-weight:700;padding:3px 7px;border-radius:4px;text-transform:uppercase}
-    .sp-new{background:rgba(78,168,255,0.2);color:#4ea8ff}
-    .sp-progress{background:rgba(255,184,48,0.2);color:var(--yellow)}
-    .sp-resolved{background:rgba(0,229,160,0.15);color:var(--green)}
-    .assign-btn{font-size:0.6rem;background:rgba(0,200,255,0.1);border:1px solid rgba(0,200,255,0.2);color:var(--cyan);border-radius:4px;padding:3px 7px;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif}
-    .assign-btn:hover{background:rgba(0,200,255,0.2)}
-
+    .priority-section {
+      background: rgba(255,78,106,0.06);
+      border: 1.5px solid rgba(255,78,106,0.2);
+      border-radius: clamp(12px, 1.5vw, 16px);
+      padding: clamp(12px, 2vh, 20px);
+      height: fit-content;
+    }
+    
+    .priority-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: clamp(10px, 1.5vh, 16px);
+    }
+    
+    .priority-title {
+      font-size: clamp(0.72rem, 1.2vw, 0.9rem);
+      font-weight: 700;
+      color: var(--red);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .priority-link {
+      font-size: clamp(0.65rem, 1vw, 0.8rem);
+      color: var(--cyan);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    
+    .incident-item {
+      background: rgba(255,255,255,0.03);
+      border: 1.5px solid var(--border);
+      border-radius: clamp(8px, 1vw, 12px);
+      padding: clamp(10px, 1.5vh, 16px) clamp(12px, 1.5vw, 20px);
+      margin-bottom: clamp(8px, 1vh, 12px);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: clamp(8px, 1.5vw, 16px);
+      transition: all 0.2s ease;
+    }
+    
+    .incident-item:hover {
+      border-color: rgba(255,78,106,0.3);
+      background: rgba(255,78,106,0.03);
+    }
+    
+    .incident-item:last-child {
+      margin-bottom: 0;
+    }
+    
+    .incident-info .incident-type {
+      font-size: clamp(0.8rem, 1.3vw, 1rem);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    
+    .incident-info .incident-loc {
+      font-size: clamp(0.68rem, 1vw, 0.85rem);
+      color: var(--muted);
+    }
+    
+    .incident-info .incident-id {
+      font-size: clamp(0.62rem, 1vw, 0.75rem);
+      color: var(--cyan);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    
+    .incident-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: clamp(4px, 0.8vh, 8px);
+      flex-shrink: 0;
+    }
+    
+    .status-pill {
+      font-size: clamp(0.6rem, 0.9vw, 0.7rem);
+      font-weight: 700;
+      padding: clamp(3px, 0.5vh, 5px) clamp(7px, 1vw, 10px);
+      border-radius: clamp(4px, 0.6vw, 6px);
+      text-transform: uppercase;
+    }
+    
+    .sp-new {
+      background: rgba(78,168,255,0.2);
+      color: #4ea8ff;
+    }
+    
+    .sp-progress {
+      background: rgba(255,184,48,0.2);
+      color: var(--yellow);
+    }
+    
+    .sp-resolved {
+      background: rgba(0,229,160,0.15);
+      color: var(--green);
+    }
+    
+    .assign-btn {
+      font-size: clamp(0.6rem, 0.9vw, 0.7rem);
+      background: rgba(0,200,255,0.1);
+      border: 1.5px solid rgba(0,200,255,0.2);
+      color: var(--cyan);
+      border-radius: clamp(4px, 0.6vw, 6px);
+      padding: clamp(3px, 0.5vh, 6px) clamp(7px, 1vw, 12px);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+    }
+    
+    .assign-btn:hover {
+      background: rgba(0,200,255,0.2);
+      transform: translateY(-1px);
+    }
+    
     /* ALL COMPLAINTS */
-    .complaints-section{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
-    .section-head{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border)}
-    .section-head-title{font-size:0.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
-    .section-link{font-size:0.65rem;color:var(--cyan);text-decoration:none;font-weight:600;transition:opacity 0.2s}
-    .section-link:hover{opacity:0.7}
-    .complaints-table{width:100%;font-size:0.72rem}
-    .complaints-table th{padding:8px 12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;font-size:0.6rem;border-bottom:1px solid var(--border);text-align:left;font-weight:600}
-    .complaints-table td{padding:9px 12px;border-bottom:1px solid rgba(0,200,255,0.05)}
-    .complaints-table tr:last-child td{border-bottom:none}
-    .pr-high{color:var(--red);font-weight:700;font-size:0.6rem}
-    .pr-med{color:var(--yellow);font-weight:700;font-size:0.6rem}
-    .pr-low{color:var(--green);font-weight:700;font-size:0.6rem}
-
+    .complaints-section {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: clamp(12px, 1.5vw, 16px);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: clamp(12px, 2vh, 18px) clamp(14px, 2vw, 24px);
+      border-bottom: 1.5px solid var(--border);
+      flex-shrink: 0;
+    }
+    
+    .section-head-title {
+      font-size: clamp(0.72rem, 1.2vw, 0.9rem);
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .section-link {
+      font-size: clamp(0.65rem, 1vw, 0.8rem);
+      color: var(--cyan);
+      text-decoration: none;
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+    
+    .section-link:hover {
+      opacity: 0.7;
+    }
+    
+    .table-wrapper {
+      overflow-x: auto;
+      overflow-y: auto;
+      flex: 1;
+    }
+    
+    .complaints-table {
+      width: 100%;
+      font-size: clamp(0.72rem, 1.1vw, 0.85rem);
+      min-width: 600px;
+    }
+    
+    .complaints-table th {
+      padding: clamp(8px, 1.5vh, 12px) clamp(12px, 1.5vw, 16px);
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      font-size: clamp(0.6rem, 0.9vw, 0.7rem);
+      border-bottom: 1.5px solid var(--border);
+      text-align: left;
+      font-weight: 600;
+      background: rgba(10,15,30,0.5);
+      position: sticky;
+      top: 0;
+    }
+    
+    .complaints-table td {
+      padding: clamp(9px, 1.5vh, 14px) clamp(12px, 1.5vw, 16px);
+      border-bottom: 1px solid rgba(0,200,255,0.05);
+    }
+    
+    .complaints-table tr:hover {
+      background: rgba(0,200,255,0.03);
+    }
+    
+    .complaints-table tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .pr-high {
+      color: var(--red);
+      font-weight: 700;
+      font-size: clamp(0.6rem, 0.9vw, 0.7rem);
+    }
+    
+    .pr-med {
+      color: var(--yellow);
+      font-weight: 700;
+      font-size: clamp(0.6rem, 0.9vw, 0.7rem);
+    }
+    
+    .pr-low {
+      color: var(--green);
+      font-weight: 700;
+      font-size: clamp(0.6rem, 0.9vw, 0.7rem);
+    }
+    
     /* BOTTOM NAV */
-    .bottom-nav{display:flex;border-top:1px solid var(--border);background:rgba(10,15,30,0.95);flex-shrink:0}
-    .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:9px 6px;font-size:0.55rem;color:var(--muted);text-decoration:none;transition:color 0.2s;cursor:pointer;border:none;background:transparent;font-family:'DM Sans',sans-serif}
-    .nav-btn.active,.nav-btn:hover{color:var(--cyan)}
-    .nav-btn-icon{font-size:1rem}
-
-    @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+    .bottom-nav {
+      display: flex;
+      border-top: 1.5px solid var(--border);
+      background: rgba(10,15,30,0.95);
+      backdrop-filter: blur(10px);
+      flex-shrink: 0;
+      padding: 0 clamp(10px, 2vw, 40px);
+    }
+    
+    .nav-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(3px, 0.5vh, 5px);
+      padding: clamp(9px, 1.5vh, 14px) clamp(6px, 1vw, 12px);
+      font-size: clamp(0.55rem, 0.9vw, 0.75rem);
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      font-family: 'DM Sans', sans-serif;
+      max-width: 120px;
+      margin: 0 auto;
+    }
+    
+    .nav-btn.active, .nav-btn:hover {
+      color: var(--cyan);
+    }
+    
+    .nav-btn-icon {
+      font-size: clamp(1rem, 1.8vw, 1.3rem);
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
   </style>
 </head>
 <body>
-  <div class="phone-frame">
+  <div class="app-container">
     <!-- HEADER -->
     <div class="header">
       <div class="header-left">
@@ -99,7 +537,8 @@
       </div>
     </div>
 
-    <div class="phone-content">
+    <!-- CONTENT -->
+    <div class="app-content">
       <div class="content">
         <div>
           <div class="page-title">Police Dashboard</div>
@@ -125,79 +564,147 @@
           </div>
         </div>
 
-        <!-- HIGH PRIORITY -->
-        <div class="priority-section">
-          <div class="priority-header">
-            <span class="priority-title">🔴 High Priority Alerts</span>
-            <a href="/report" class="priority-link">View all →</a>
+        <!-- TWO COLUMN LAYOUT -->
+        <div class="two-column-layout">
+          <!-- Left Column - High Priority -->
+          <div class="priority-section">
+            <div class="priority-header">
+              <span class="priority-title">🔴 High Priority Alerts</span>
+              <a href="/report" class="priority-link">View all →</a>
+            </div>
+            <div class="incident-item">
+              <div class="incident-info">
+                <div class="incident-id">#1042</div>
+                <div class="incident-type">Street Robbery</div>
+                <div class="incident-loc">📍 Gulberg III, Lahore</div>
+              </div>
+              <div class="incident-right">
+                <span class="status-pill sp-new">New</span>
+                <button class="assign-btn" onclick="alert('Assigning case #1042')">Assign</button>
+              </div>
+            </div>
+            <div class="incident-item">
+              <div class="incident-info">
+                <div class="incident-id">#1041</div>
+                <div class="incident-type">Vehicle Theft</div>
+                <div class="incident-loc">📍 Model Town, Lahore</div>
+              </div>
+              <div class="incident-right">
+                <span class="status-pill sp-progress">In Progress</span>
+                <button class="assign-btn" onclick="alert('Updating case #1041')">Update</button>
+              </div>
+            </div>
+            <div class="incident-item">
+              <div class="incident-info">
+                <div class="incident-id">#1040</div>
+                <div class="incident-type">Assault</div>
+                <div class="incident-loc">📍 Johar Town, Lahore</div>
+              </div>
+              <div class="incident-right">
+                <span class="status-pill sp-new">New</span>
+                <button class="assign-btn" onclick="alert('Assigning case #1040')">Assign</button>
+              </div>
+            </div>
+            <div class="incident-item">
+              <div class="incident-info">
+                <div class="incident-id">#1039</div>
+                <div class="incident-type">Armed Robbery</div>
+                <div class="incident-loc">📍 DHA Phase 5, Lahore</div>
+              </div>
+              <div class="incident-right">
+                <span class="status-pill sp-new">New</span>
+                <button class="assign-btn" onclick="alert('Assigning case #1039')">Assign</button>
+              </div>
+            </div>
           </div>
-          <div class="incident-item">
-            <div class="incident-info">
-              <div class="incident-id">#1042</div>
-              <div class="incident-type">Street Robbery</div>
-              <div class="incident-loc">📍 Gulberg III, Lahore</div>
-            </div>
-            <div class="incident-right">
-              <span class="status-pill sp-new">New</span>
-              <button class="assign-btn">Assign</button>
-            </div>
-          </div>
-          <div class="incident-item">
-            <div class="incident-info">
-              <div class="incident-id">#1041</div>
-              <div class="incident-type">Vehicle Theft</div>
-              <div class="incident-loc">📍 Model Town, Lahore</div>
-            </div>
-            <div class="incident-right">
-              <span class="status-pill sp-progress">In Progress</span>
-              <button class="assign-btn">Update</button>
-            </div>
-          </div>
-        </div>
 
-        <!-- ALL COMPLAINTS TABLE -->
-        <div class="complaints-section">
-          <div class="section-head">
-            <span class="section-head-title">All Complaints</span>
-            <a href="/case_tracking" class="section-link">View all →</a>
+          <!-- Right Column - All Complaints -->
+          <div class="complaints-section">
+            <div class="section-head">
+              <span class="section-head-title">All Complaints</span>
+              <a href="/case_tracking" class="section-link">View all →</a>
+            </div>
+            <div class="table-wrapper">
+              <table class="complaints-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Type</th>
+                    <th>Location</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="color:var(--cyan)">#1042</td>
+                    <td>Robbery</td>
+                    <td>Gulberg III</td>
+                    <td><span class="status-pill sp-new">New</span></td>
+                    <td><span class="pr-high">● High</span></td>
+                    <td><button class="assign-btn" onclick="alert('Assigning case #1042')" style="padding:2px 8px;">Assign</button></td>
+                  </tr>
+                  <tr>
+                    <td style="color:var(--cyan)">#1041</td>
+                    <td>Theft</td>
+                    <td>Model Town</td>
+                    <td><span class="status-pill sp-progress">In Prog</span></td>
+                    <td><span class="pr-high">● High</span></td>
+                    <td><button class="assign-btn" onclick="alert('Updating case #1041')" style="padding:2px 8px;">Update</button></td>
+                  </tr>
+                  <tr>
+                    <td style="color:var(--cyan)">#1040</td>
+                    <td>Assault</td>
+                    <td>Johar Town</td>
+                    <td><span class="status-pill sp-new">New</span></td>
+                    <td><span class="pr-high">● High</span></td>
+                    <td><button class="assign-btn" onclick="alert('Assigning case #1040')" style="padding:2px 8px;">Assign</button></td>
+                  </tr>
+                  <tr>
+                    <td style="color:var(--cyan)">#1039</td>
+                    <td>Armed Robbery</td>
+                    <td>DHA Phase 5</td>
+                    <td><span class="status-pill sp-new">New</span></td>
+                    <td><span class="pr-high">● High</span></td>
+                    <td><button class="assign-btn" onclick="alert('Assigning case #1039')" style="padding:2px 8px;">Assign</button></td>
+                  </tr>
+                  <tr>
+                    <td style="color:var(--cyan)">#1038</td>
+                    <td>Traffic</td>
+                    <td>Mall Road</td>
+                    <td><span class="status-pill sp-progress">In Prog</span></td>
+                    <td><span class="pr-med">● Med</span></td>
+                    <td><button class="assign-btn" onclick="alert('Updating case #1038')" style="padding:2px 8px;">Update</button></td>
+                  </tr>
+                  <tr>
+                    <td style="color:var(--cyan)">#1037</td>
+                    <td>Vandalism</td>
+                    <td>Garden Town</td>
+                    <td><span class="status-pill sp-resolved">Done</span></td>
+                    <td><span class="pr-low">● Low</span></td>
+                    <td><button class="assign-btn" onclick="alert('Viewing case #1037')" style="padding:2px 8px;">View</button></td>
+                  </tr>
+                  <tr>
+                    <td style="color:var(--cyan)">#1036</td>
+                    <td>Fraud</td>
+                    <td>Faisal Town</td>
+                    <td><span class="status-pill sp-progress">In Prog</span></td>
+                    <td><span class="pr-med">● Med</span></td>
+                    <td><button class="assign-btn" onclick="alert('Updating case #1036')" style="padding:2px 8px;">Update</button></td>
+                  </tr>
+                  <tr>
+                    <td style="color:var(--cyan)">#1035</td>
+                    <td>Noise</td>
+                    <td>Valencia Town</td>
+                    <td><span class="status-pill sp-resolved">Done</span></td>
+                    <td><span class="pr-low">● Low</span></td>
+                    <td><button class="assign-btn" onclick="alert('Viewing case #1035')" style="padding:2px 8px;">View</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
-          <table class="complaints-table">
-            <thead>
-              <tr><th>ID</th><th>Type</th><th>Status</th><th>Priority</th></tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td style="color:var(--cyan)">#1042</td>
-                <td>Robbery</td>
-                <td><span class="status-pill sp-new">New</span></td>
-                <td><span class="pr-high">● High</span></td>
-              </tr>
-              <tr>
-                <td style="color:var(--cyan)">#1041</td>
-                <td>Theft</td>
-                <td><span class="status-pill sp-progress">In Prog</span></td>
-                <td><span class="pr-high">● High</span></td>
-              </tr>
-              <tr>
-                <td style="color:var(--cyan)">#1040</td>
-                <td>Suspicious</td>
-                <td><span class="status-pill sp-new">New</span></td>
-                <td><span class="pr-med">● Med</span></td>
-              </tr>
-              <tr>
-                <td style="color:var(--cyan)">#1039</td>
-                <td>Noise</td>
-                <td><span class="status-pill sp-progress">In Prog</span></td>
-                <td><span class="pr-med">● Med</span></td>
-              </tr>
-              <tr>
-                <td style="color:var(--cyan)">#1038</td>
-                <td>Traffic</td>
-                <td><span class="status-pill sp-resolved">Done</span></td>
-                <td><span class="pr-low">● Low</span></td>
-              </tr>
-            </tbody>
-          </table>
         </div>
       </div>
     </div>

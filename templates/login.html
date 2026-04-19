@@ -1,86 +1,644 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
   <title>SafeCity – Police Login</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{--navy:#0a0f1e;--cyan:#00c8ff;--white:#f0f4ff;--muted:#7a8db0;--red:#ff4e6a;--border:rgba(0,200,255,0.15)}
-    html,body{height:100vh;width:100%;background:#0a0a0a;display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;overflow:hidden;margin:0;padding:0;color:var(--white)}
-    .phone-frame{width:380px;height:92vh;background:var(--navy);border:12px solid #111;border-radius:40px;overflow:hidden;box-shadow:0 0 80px rgba(0,200,255,0.2),0 0 0 1px rgba(0,200,255,0.08);display:flex;flex-direction:column;position:relative;background-image:linear-gradient(rgba(0,200,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,255,0.025) 1px,transparent 1px);background-size:50px 50px}
-    .phone-frame::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:160px;height:28px;background:#111;border-radius:0 0 20px 20px;z-index:100}
-    .phone-frame::after{content:'9:41  ▲  🔋';position:absolute;top:5px;left:0;right:0;text-align:center;font-size:0.62rem;color:rgba(240,244,255,0.6);z-index:101;font-weight:600;letter-spacing:1.5px}
-    .phone-content{flex:1;overflow-y:auto;overflow-x:hidden;display:flex;align-items:center;justify-content:center;padding:32px 20px;scrollbar-width:thin}
-    .phone-content::-webkit-scrollbar{width:3px}
-    .phone-content::-webkit-scrollbar-thumb{background:rgba(0,200,255,0.3);border-radius:2px}
-    .form-card{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:16px;padding:32px 24px;width:100%;max-width:320px}
-    .logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:4px;text-align:center;margin-bottom:4px}
-    .logo span{color:var(--cyan)}
-    .subtitle{text-align:center;font-size:0.65rem;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:24px}
-    .form-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:2px;text-align:center;margin-bottom:4px}
-    .form-sub{font-size:0.72rem;color:var(--muted);text-align:center;margin-bottom:22px}
-    .form-group{margin-bottom:14px}
-    label{display:block;font-size:0.65rem;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px}
-    input{width:100%;padding:10px 12px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:0.88rem;font-family:'DM Sans',sans-serif;transition:all 0.2s;outline:none}
-    input:focus{border-color:var(--cyan);background:rgba(0,200,255,0.07)}
-    input::placeholder{color:var(--muted);opacity:0.6}
-    .input-wrap{position:relative}
-    .pwd-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.9rem;padding:4px;transition:color 0.2s}
-    .pwd-toggle:hover{color:var(--cyan)}
-    .error-text{color:var(--red);font-size:0.65rem;margin-top:4px;font-weight:500;min-height:14px}
-    .btn{width:100%;padding:11px 16px;border:none;border-radius:8px;font-size:0.88rem;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif}
-    .btn-primary{background:linear-gradient(135deg,var(--cyan),#0088ff);color:var(--navy);margin-top:20px}
-    .btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,200,255,0.3)}
-    .form-footer{margin-top:20px;padding-top:16px;border-top:1px solid var(--border);text-align:center;display:flex;flex-direction:column;gap:6px}
-    .footer-link{color:var(--cyan);text-decoration:none;font-size:0.75rem;font-weight:600;transition:all 0.2s}
-    .footer-link:hover{text-decoration:underline}
+    :root{
+      --navy:#0a0f1e;
+      --cyan:#00c8ff;
+      --white:#f0f4ff;
+      --muted:#7a8db0;
+      --red:#ff4e6a;
+      --border:rgba(0,200,255,0.15);
+      --card:rgba(255,255,255,0.04);
+    }
+    
+    html, body {
+      height: 100vh;
+      width: 100vw;
+      background: var(--navy);
+      font-family: 'DM Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+      color: var(--white);
+      overflow: hidden;
+    }
+    
+    body {
+      display: flex;
+      align-items: stretch;
+      justify-content: stretch;
+    }
+    
+    /* FULL SCREEN CONTAINER */
+    .app-container {
+      width: 100vw;
+      height: 100vh;
+      background: var(--navy);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      background-image: 
+        linear-gradient(rgba(0,200,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,200,255,0.025) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+    
+    /* MAIN CONTENT AREA */
+    .app-content {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,200,255,0.2) transparent;
+    }
+    
+    .app-content::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .app-content::-webkit-scrollbar-thumb {
+      background: rgba(0,200,255,0.3);
+      border-radius: 3px;
+    }
+    
+    /* DESKTOP LAYOUT - Two columns */
+    .login-wrapper {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      gap: 60px;
+    }
+    
+    /* Left Column - Info Section */
+    .info-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      max-width: 450px;
+    }
+    
+    .logo-large {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3.5rem;
+      letter-spacing: 6px;
+      margin-bottom: 8px;
+    }
+    
+    .logo-large span {
+      color: var(--cyan);
+    }
+    
+    .badge-icon {
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+    
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.5rem;
+      letter-spacing: 3px;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    
+    h1 span {
+      color: var(--cyan);
+    }
+    
+    .info-text {
+      font-size: 1rem;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 32px;
+    }
+    
+    .security-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      background: rgba(0,200,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      width: 100%;
+    }
+    
+    .security-icon {
+      font-size: 1.5rem;
+    }
+    
+    .security-text {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    
+    .security-text strong {
+      color: var(--cyan);
+      display: block;
+      margin-bottom: 4px;
+    }
+    
+    /* Right Column - Form Card */
+    .form-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 480px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: 4px;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    
+    .logo span {
+      color: var(--cyan);
+    }
+    
+    .subtitle {
+      text-align: center;
+      font-size: 0.7rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 24px;
+    }
+    
+    .form-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: 2px;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    
+    .form-sub {
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    
+    /* Two-column form layout for desktop */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px 20px;
+    }
+    
+    .form-group {
+      margin-bottom: 0;
+    }
+    
+    .form-group-full {
+      grid-column: span 2;
+    }
+    
+    label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--cyan);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 6px;
+    }
+    
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      color: var(--white);
+      font-size: 0.9rem;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.3s ease;
+      outline: none;
+    }
+    
+    input:focus {
+      border-color: var(--cyan);
+      background: rgba(0,200,255,0.07);
+      box-shadow: 0 0 0 3px rgba(0,200,255,0.1);
+    }
+    
+    input::placeholder {
+      color: var(--muted);
+      opacity: 0.6;
+    }
+    
+    .input-wrap {
+      position: relative;
+    }
+    
+    .pwd-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 4px;
+      transition: color 0.2s;
+    }
+    
+    .pwd-toggle:hover {
+      color: var(--cyan);
+    }
+    
+    .error-text {
+      color: var(--red);
+      font-size: 0.7rem;
+      margin-top: 4px;
+      font-weight: 500;
+      min-height: 18px;
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 14px 20px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'DM Sans', sans-serif;
+      margin-top: 24px;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, var(--cyan), #0088ff);
+      color: var(--navy);
+      box-shadow: 0 4px 15px rgba(0,200,255,0.2);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(0,200,255,0.3);
+    }
+    
+    .form-footer {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      gap: 24px;
+    }
+    
+    .footer-link {
+      color: var(--cyan);
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    
+    .footer-link:hover {
+      text-decoration: underline;
+    }
+    
+    /* Decorative elements */
+    .info-section {
+      position: relative;
+    }
+    
+    .info-section::before {
+      content: '';
+      position: absolute;
+      top: -40px;
+      left: -40px;
+      width: 250px;
+      height: 250px;
+      background: radial-gradient(circle, rgba(0,200,255,0.08) 0%, transparent 70%);
+      border-radius: 50%;
+      z-index: -1;
+    }
+    
+    .form-card {
+      position: relative;
+    }
+    
+    .form-card::after {
+      content: '';
+      position: absolute;
+      bottom: -30px;
+      right: -30px;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(0,200,255,0.05) 0%, transparent 70%);
+      border-radius: 50%;
+      z-index: -1;
+    }
+    
+    /* RESPONSIVE BREAKPOINTS */
+    @media (max-width: 968px) {
+      .login-wrapper {
+        flex-direction: column;
+        gap: 40px;
+      }
+      
+      .info-section {
+        align-items: center;
+        text-align: center;
+        max-width: 480px;
+      }
+      
+      .form-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+      
+      .form-group-full {
+        grid-column: span 1;
+      }
+      
+      .form-card {
+        padding: 36px 28px;
+      }
+      
+      .info-section::before {
+        display: none;
+      }
+      
+      .form-card::after {
+        display: none;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .app-content {
+        padding: 24px 20px;
+      }
+      
+      .login-wrapper {
+        gap: 32px;
+      }
+      
+      .logo-large {
+        font-size: 2.8rem;
+        letter-spacing: 5px;
+      }
+      
+      .badge-icon {
+        font-size: 2.5rem;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .info-text {
+        font-size: 0.9rem;
+        margin-bottom: 24px;
+      }
+      
+      .form-card {
+        padding: 32px 24px;
+      }
+      
+      .logo {
+        font-size: 1.6rem;
+      }
+      
+      .form-title {
+        font-size: 1.6rem;
+      }
+      
+      .form-footer {
+        flex-direction: column;
+        gap: 12px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .app-content {
+        padding: 16px 12px;
+      }
+      
+      .login-wrapper {
+        gap: 24px;
+      }
+      
+      .logo-large {
+        font-size: 2.2rem;
+        letter-spacing: 4px;
+      }
+      
+      .badge-icon {
+        font-size: 2rem;
+        margin-bottom: 12px;
+      }
+      
+      h1 {
+        font-size: 1.6rem;
+        margin-bottom: 12px;
+      }
+      
+      .info-text {
+        font-size: 0.8rem;
+        margin-bottom: 20px;
+      }
+      
+      .security-badge {
+        padding: 12px;
+      }
+      
+      .security-icon {
+        font-size: 1.2rem;
+      }
+      
+      .security-text {
+        font-size: 0.75rem;
+      }
+      
+      .form-card {
+        padding: 24px 16px;
+        border-radius: 20px;
+      }
+      
+      .logo {
+        font-size: 1.4rem;
+      }
+      
+      .subtitle {
+        font-size: 0.65rem;
+        margin-bottom: 20px;
+      }
+      
+      .form-title {
+        font-size: 1.4rem;
+      }
+      
+      .form-sub {
+        font-size: 0.75rem;
+        margin-bottom: 24px;
+      }
+      
+      label {
+        font-size: 0.65rem;
+      }
+      
+      input {
+        padding: 10px 12px;
+        font-size: 0.85rem;
+      }
+      
+      .btn {
+        padding: 12px 16px;
+        font-size: 0.9rem;
+        margin-top: 20px;
+      }
+      
+      .footer-link {
+        font-size: 0.75rem;
+      }
+    }
+    
+    /* Desktop Large Screens */
+    @media (min-width: 1200px) {
+      .login-wrapper {
+        gap: 80px;
+      }
+      
+      .logo-large {
+        font-size: 4rem;
+        letter-spacing: 8px;
+      }
+      
+      .badge-icon {
+        font-size: 3.5rem;
+      }
+      
+      h1 {
+        font-size: 3rem;
+      }
+      
+      .info-text {
+        font-size: 1.1rem;
+      }
+      
+      .form-card {
+        padding: 56px 48px;
+      }
+      
+      .form-grid {
+        gap: 20px 24px;
+      }
+    }
+    
+    /* Ultra-wide screens */
+    @media (min-width: 1600px) {
+      .login-wrapper {
+        max-width: 1400px;
+        gap: 100px;
+      }
+      
+      .info-section {
+        max-width: 550px;
+      }
+      
+      .form-card {
+        max-width: 550px;
+      }
+    }
   </style>
   <script>
     function togglePassword(){
-      const p=document.getElementById('password');const b=document.querySelector('.pwd-toggle');
-      p.type=p.type==='password'?'text':'password';b.textContent=p.type==='password'?'👁':'🙈';
+      const p = document.getElementById('password');
+      const b = document.querySelector('.pwd-toggle');
+      p.type = p.type === 'password' ? 'text' : 'password';
+      b.textContent = p.type === 'password' ? '👁' : '🙈';
     }
   </script>
 </head>
 <body>
-  <div class="phone-frame">
-    <div class="phone-content">
-      <div class="form-card">
-        <div class="logo">SAFE<span>CITY</span></div>
-        <p class="subtitle">Authorized Personnel</p>
-        <h2 class="form-title">Police Login</h2>
-        <p class="form-sub">Access your officer portal</p>
-        <form method="POST" action="/login">
-          <div class="form-group">
-            <label>Username</label>
-            <input type="text" name="username" placeholder="your.username" value="{{ request.form.get('username','') }}">
-            <div class="error-text">{% with m=get_flashed_messages(category_filter=['username_error']) %}{% if m %}{{ m[0] }}{% endif %}{% endwith %}</div>
-          </div>
-          <div class="form-group">
-            <label>Email</label>
-            <input type="email" name="email" placeholder="you@agency.gov" value="{{ request.form.get('email','') }}" required>
-            <div class="error-text">{% with m=get_flashed_messages(category_filter=['email_error']) %}{% if m %}{{ m[0] }}{% endif %}{% endwith %}</div>
-          </div>
-          <div class="form-group">
-            <label>Password</label>
-            <div class="input-wrap">
-              <input id="password" type="password" name="password" placeholder="••••••••" required>
-              <button type="button" class="pwd-toggle" onclick="togglePassword()">👁</button>
+  <div class="app-container">
+    <div class="app-content">
+      <div class="login-wrapper">
+        <!-- Left Column - Info Section (Visible on desktop) -->
+        <div class="info-section">
+          <div class="logo-large">SAFE<span>CITY</span></div>
+          <div class="badge-icon">🚔</div>
+          <h1>AUTHORIZED<br><span>PERSONNEL</span></h1>
+          <p class="info-text">Secure access portal for law enforcement officers. Monitor incidents, respond to emergencies, and keep your community safe.</p>
+          <div class="security-badge">
+            <div class="security-icon">🔒</div>
+            <div class="security-text">
+              <strong>End-to-End Encrypted</strong>
+              All communications are secured with military-grade encryption.
             </div>
-            <div class="error-text">{% with m=get_flashed_messages(category_filter=['password_error']) %}{% if m %}{{ m[0] }}{% endif %}{% endwith %}</div>
           </div>
-          <div class="form-group">
-            <label>Badge #</label>
-            <input type="text" name="badge_number" placeholder="e.g. LHR-1042" value="{{ request.form.get('badge_number','') }}" required>
-            <div class="error-text">{% with m=get_flashed_messages(category_filter=['badge_error']) %}{% if m %}{{ m[0] }}{% endif %}{% endwith %}</div>
-          </div>
-          <button type="submit" class="btn btn-primary">🚔 Access Dashboard</button>
-          <div class="form-footer">
-            <a href="{{ url_for('register_badge') }}" class="footer-link">Register Badge →</a>
-            <a href="/" class="footer-link" style="color:var(--muted)">← Back to Home</a>
-          </div>
-        </form>
+        </div>
+        
+        <!-- Right Column - Login Form -->
+        <div class="form-card">
+          <div class="logo">SAFE<span>CITY</span></div>
+          <p class="subtitle">Authorized Personnel</p>
+          <h2 class="form-title">Police Login</h2>
+          <p class="form-sub">Access your officer portal</p>
+          <form method="POST" action="/login">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Username</label>
+                <input type="text" name="username" placeholder="your.username" value="{{ request.form.get('username','') }}">
+                <div class="error-text">{% with m=get_flashed_messages(category_filter=['username_error']) %}{% if m %}{{ m[0] }}{% endif %}{% endwith %}</div>
+              </div>
+              <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" placeholder="you@agency.gov" value="{{ request.form.get('email','') }}" required>
+                <div class="error-text">{% with m=get_flashed_messages(category_filter=['email_error']) %}{% if m %}{{ m[0] }}{% endif %}{% endwith %}</div>
+              </div>
+              <div class="form-group">
+                <label>Password</label>
+                <div class="input-wrap">
+                  <input id="password" type="password" name="password" placeholder="••••••••" required>
+                  <button type="button" class="pwd-toggle" onclick="togglePassword()">👁</button>
+                </div>
+                <div class="error-text">{% with m=get_flashed_messages(category_filter=['password_error']) %}{% if m %}{{ m[0] }}{% endif %}{% endwith %}</div>
+              </div>
+              <div class="form-group">
+                <label>Badge #</label>
+                <input type="text" name="badge_number" placeholder="e.g. LHR-1042" value="{{ request.form.get('badge_number','') }}" required>
+                <div class="error-text">{% with m=get_flashed_messages(category_filter=['badge_error']) %}{% if m %}{{ m[0] }}{% endif %}{% endwith %}</div>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">🚔 Access Dashboard</button>
+            <div class="form-footer">
+              <a href="{{ url_for('register_badge') }}" class="footer-link">Register Badge →</a>
+              <a href="/" class="footer-link" style="color:var(--muted)">← Back to Home</a>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>

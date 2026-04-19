@@ -1,105 +1,469 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
   <title>SafeCity – Emergency Tracking</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{--navy:#0a0f1e;--cyan:#00c8ff;--white:#f0f4ff;--muted:#7a8db0;--red:#ff4e6a;--yellow:#ffb830;--green:#00e5a0;--border:rgba(0,200,255,0.15);--card:rgba(255,255,255,0.04)}
-    html,body{height:100vh;width:100%;background:#0a0a0a;display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;overflow:hidden;margin:0;padding:0;color:var(--white)}
-    .phone-frame{width:380px;height:92vh;background:var(--navy);border:12px solid #111;border-radius:40px;overflow:hidden;box-shadow:0 0 80px rgba(0,200,255,0.2),0 0 0 1px rgba(0,200,255,0.08);display:flex;flex-direction:column;position:relative;background-image:linear-gradient(rgba(0,200,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,255,0.025) 1px,transparent 1px);background-size:50px 50px}
-    .phone-frame::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:160px;height:28px;background:#111;border-radius:0 0 20px 20px;z-index:100}
-    .phone-frame::after{content:'9:41  ▲  🔋';position:absolute;top:5px;left:0;right:0;text-align:center;font-size:0.62rem;color:rgba(240,244,255,0.6);z-index:101;font-weight:600;letter-spacing:1.5px}
-
-    .header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0;background:rgba(10,15,30,0.92);z-index:10;position:relative}
-    .back-btn{background:none;border:none;color:var(--cyan);font-size:1.2rem;cursor:pointer;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;transition:all 0.2s}
-    .back-btn:hover{background:rgba(0,200,255,0.1)}
-    .header-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:2px;flex:1}
-    .live-dot{width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulse 1.5s infinite}
-
-    /* MAP */
-    .map-area{flex:1;position:relative;overflow:hidden;background:linear-gradient(160deg,rgba(0,20,60,0.9),rgba(0,10,30,0.95));min-height:220px}
-    .map-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,200,255,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,255,0.06) 1px,transparent 1px);background-size:30px 30px}
-    .map-label{position:absolute;top:12px;left:12px;font-size:0.65rem;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:1.5px;background:rgba(10,15,30,0.8);padding:4px 10px;border-radius:5px;border:1px solid var(--border)}
-    .map-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
-    .my-loc{width:16px;height:16px;border-radius:50%;background:var(--red);border:2px solid #fff;box-shadow:0 0 0 8px rgba(255,78,106,0.2),0 0 20px rgba(255,78,106,0.4)}
-    .unit-marker{position:absolute;width:26px;height:26px;border-radius:50%;background:var(--cyan);border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.6rem;color:var(--navy)}
-    .unit1{top:25%;left:28%;animation:bounce 2s infinite}
-    .unit2{top:60%;left:65%}
-    .ambu{top:38%;left:72%;background:var(--green)}
-    @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
-    .eta-badge{position:absolute;bottom:12px;right:12px;background:rgba(10,15,30,0.9);border:1px solid var(--cyan);border-radius:8px;padding:8px 12px;text-align:center}
-    .eta-num{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--cyan)}
-    .eta-label{font-size:0.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px}
-
+    :root{
+      --navy:#0a0f1e;
+      --cyan:#00c8ff;
+      --white:#f0f4ff;
+      --muted:#7a8db0;
+      --red:#ff4e6a;
+      --yellow:#ffb830;
+      --green:#00e5a0;
+      --border:rgba(0,200,255,0.15);
+      --card:rgba(255,255,255,0.04);
+    }
+    
+    html, body {
+      height: 100vh;
+      width: 100vw;
+      background: var(--navy);
+      font-family: 'DM Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+      color: var(--white);
+      overflow: hidden;
+    }
+    
+    body {
+      display: flex;
+      align-items: stretch;
+      justify-content: stretch;
+    }
+    
+    /* FULL SCREEN CONTAINER */
+    .app-container {
+      width: 100vw;
+      height: 100vh;
+      background: var(--navy);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      background-image: 
+        linear-gradient(rgba(0,200,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,200,255,0.025) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+    
+    /* HEADER */
+    .header {
+      padding: clamp(14px, 2vh, 24px) clamp(16px, 3vw, 40px);
+      border-bottom: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: clamp(12px, 2vw, 16px);
+      flex-shrink: 0;
+      background: rgba(10,15,30,0.95);
+      backdrop-filter: blur(10px);
+      z-index: 10;
+      position: relative;
+    }
+    
+    .back-btn {
+      background: none;
+      border: none;
+      color: var(--cyan);
+      font-size: clamp(1.2rem, 2vw, 1.5rem);
+      cursor: pointer;
+      width: clamp(28px, 4vw, 40px);
+      height: clamp(28px, 4vw, 40px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    
+    .back-btn:hover {
+      background: rgba(0,200,255,0.1);
+    }
+    
+    .header-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.1rem, 3vw, 2rem);
+      letter-spacing: clamp(2px, 0.5vw, 3px);
+      flex: 1;
+    }
+    
+    .live-dot {
+      width: clamp(8px, 1.5vw, 12px);
+      height: clamp(8px, 1.5vw, 12px);
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+    
+    /* DESKTOP LAYOUT - Two columns for map and info */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    
+    @media (min-width: 1024px) {
+      .main-content {
+        flex-direction: row;
+      }
+    }
+    
+    /* MAP AREA */
+    .map-area {
+      flex: 2;
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(160deg, rgba(0,20,60,0.9), rgba(0,10,30,0.95));
+      min-height: 250px;
+    }
+    
+    @media (min-width: 1024px) {
+      .map-area {
+        min-height: auto;
+      }
+    }
+    
+    .map-grid {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(0,200,255,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,200,255,0.06) 1px, transparent 1px);
+      background-size: clamp(20px, 3vw, 40px) clamp(20px, 3vw, 40px);
+    }
+    
+    .map-label {
+      position: absolute;
+      top: clamp(12px, 2vh, 20px);
+      left: clamp(12px, 2vw, 20px);
+      font-size: clamp(0.65rem, 1vw, 0.85rem);
+      font-weight: 700;
+      color: var(--cyan);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      background: rgba(10,15,30,0.8);
+      padding: clamp(4px, 1vh, 8px) clamp(10px, 1.5vw, 16px);
+      border-radius: clamp(5px, 0.8vw, 8px);
+      border: 1.5px solid var(--border);
+      backdrop-filter: blur(5px);
+    }
+    
+    .map-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    
+    .my-loc {
+      width: clamp(16px, 2.5vw, 24px);
+      height: clamp(16px, 2.5vw, 24px);
+      border-radius: 50%;
+      background: var(--red);
+      border: 3px solid #fff;
+      box-shadow: 0 0 0 8px rgba(255,78,106,0.2), 0 0 30px rgba(255,78,106,0.4);
+    }
+    
+    .unit-marker {
+      position: absolute;
+      width: clamp(26px, 3.5vw, 40px);
+      height: clamp(26px, 3.5vw, 40px);
+      border-radius: 50%;
+      background: var(--cyan);
+      border: 3px solid #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: clamp(0.6rem, 1vw, 0.9rem);
+      color: var(--navy);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+    
+    .unit1 { top: 25%; left: 28%; animation: bounce 2s infinite; }
+    .unit2 { top: 60%; left: 65%; }
+    .ambu { top: 38%; left: 72%; background: var(--green); }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+    
+    .eta-badge {
+      position: absolute;
+      bottom: clamp(12px, 2vh, 20px);
+      right: clamp(12px, 2vw, 20px);
+      background: rgba(10,15,30,0.9);
+      border: 1.5px solid var(--cyan);
+      border-radius: clamp(8px, 1.2vw, 12px);
+      padding: clamp(8px, 1.5vh, 16px) clamp(12px, 2vw, 20px);
+      text-align: center;
+      backdrop-filter: blur(5px);
+    }
+    
+    .eta-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(1.4rem, 2.5vw, 2.5rem);
+      color: var(--cyan);
+      line-height: 1;
+    }
+    
+    .eta-label {
+      font-size: clamp(0.6rem, 0.9vw, 0.8rem);
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
     /* INFO PANEL */
-    .info-panel{background:rgba(10,15,30,0.95);border-top:1px solid var(--border);padding:14px;overflow-y:auto;max-height:250px;scrollbar-width:thin;flex-shrink:0}
-    .info-panel::-webkit-scrollbar{width:3px}
-    .info-panel::-webkit-scrollbar-thumb{background:rgba(0,200,255,0.3);border-radius:2px}
-
-    .sos-alert{background:rgba(255,78,106,0.1);border:1px solid rgba(255,78,106,0.3);border-radius:9px;padding:11px 13px;display:flex;align-items:center;gap:10px;margin-bottom:12px}
-    .sos-icon{font-size:1.4rem}
-    .sos-title{font-weight:700;font-size:0.82rem;color:var(--white)}
-    .sos-time{font-size:0.68rem;color:var(--muted);margin-top:2px}
-
-    .panel-title{font-family:'Bebas Neue',sans-serif;font-size:0.95rem;letter-spacing:1.5px;margin-bottom:8px}
-    .unit-card{background:rgba(0,200,255,0.06);border:1px solid rgba(0,200,255,0.2);border-radius:8px;padding:10px 12px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
-    .unit-card:last-child{margin-bottom:0}
-    .unit-badge{width:30px;height:30px;border-radius:50%;background:var(--cyan);color:var(--navy);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.65rem;flex-shrink:0}
-    .unit-badge.ambu-badge{background:var(--green)}
-    .unit-name{font-weight:600;font-size:0.8rem}
-    .unit-eta{font-size:0.68rem;color:var(--cyan);margin-top:1px}
-    .unit-dist{font-size:0.65rem;color:var(--muted)}
-
+    .info-panel {
+      flex: 1;
+      background: rgba(10,15,30,0.95);
+      border-top: 1.5px solid var(--border);
+      padding: clamp(14px, 2.5vh, 24px) clamp(14px, 2vw, 24px);
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,200,255,0.2) transparent;
+    }
+    
+    @media (min-width: 1024px) {
+      .info-panel {
+        border-top: none;
+        border-left: 1.5px solid var(--border);
+        max-width: 400px;
+      }
+    }
+    
+    @media (min-width: 1400px) {
+      .info-panel {
+        max-width: 450px;
+      }
+    }
+    
+    .info-panel::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .info-panel::-webkit-scrollbar-thumb {
+      background: rgba(0,200,255,0.3);
+      border-radius: 3px;
+    }
+    
+    .sos-alert {
+      background: rgba(255,78,106,0.1);
+      border: 1.5px solid rgba(255,78,106,0.3);
+      border-radius: clamp(9px, 1.2vw, 14px);
+      padding: clamp(11px, 2vh, 18px) clamp(13px, 2vw, 20px);
+      display: flex;
+      align-items: center;
+      gap: clamp(10px, 1.5vw, 16px);
+      margin-bottom: clamp(12px, 2vh, 20px);
+    }
+    
+    .sos-icon {
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+    }
+    
+    .sos-title {
+      font-weight: 700;
+      font-size: clamp(0.82rem, 1.3vw, 1rem);
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+    
+    .sos-time {
+      font-size: clamp(0.68rem, 1vw, 0.8rem);
+      color: var(--muted);
+    }
+    
+    .panel-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(0.95rem, 1.8vw, 1.3rem);
+      letter-spacing: 1.5px;
+      margin-bottom: clamp(8px, 1.5vh, 14px);
+    }
+    
+    .unit-card {
+      background: rgba(0,200,255,0.06);
+      border: 1.5px solid rgba(0,200,255,0.2);
+      border-radius: clamp(8px, 1vw, 12px);
+      padding: clamp(10px, 1.8vh, 16px) clamp(12px, 1.5vw, 18px);
+      margin-bottom: clamp(8px, 1.2vh, 12px);
+      display: flex;
+      align-items: center;
+      gap: clamp(10px, 1.5vw, 16px);
+      transition: all 0.2s ease;
+    }
+    
+    .unit-card:hover {
+      background: rgba(0,200,255,0.1);
+      border-color: rgba(0,200,255,0.3);
+    }
+    
+    .unit-card:last-child {
+      margin-bottom: 0;
+    }
+    
+    .unit-badge {
+      width: clamp(30px, 5vw, 45px);
+      height: clamp(30px, 5vw, 45px);
+      border-radius: 50%;
+      background: var(--cyan);
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: clamp(0.65rem, 1vw, 0.9rem);
+      flex-shrink: 0;
+    }
+    
+    .unit-badge.ambu-badge {
+      background: var(--green);
+    }
+    
+    .unit-name {
+      font-weight: 600;
+      font-size: clamp(0.8rem, 1.2vw, 1rem);
+      margin-bottom: 4px;
+    }
+    
+    .unit-eta {
+      font-size: clamp(0.68rem, 1vw, 0.8rem);
+      color: var(--cyan);
+    }
+    
+    .unit-dist {
+      font-size: clamp(0.65rem, 0.9vw, 0.75rem);
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    
     /* ACTION BUTTONS */
-    .action-row{display:flex;gap:10px;padding:12px 14px;border-top:1px solid var(--border);background:rgba(10,15,30,0.95);flex-shrink:0}
-    .btn{flex:1;padding:10px 12px;border:none;border-radius:8px;font-weight:700;cursor:pointer;transition:all 0.2s;font-size:0.78rem;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:6px}
-    .btn-outline{background:transparent;border:1px solid var(--border);color:var(--white)}
-    .btn-outline:hover{border-color:var(--cyan);color:var(--cyan)}
-    .btn-danger{background:linear-gradient(135deg,var(--red),#ff2d5e);color:#fff}
-    .btn-danger:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,78,106,0.3)}
-    @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+    .action-row {
+      display: flex;
+      gap: clamp(10px, 1.5vw, 16px);
+      padding: clamp(12px, 2vh, 18px) clamp(14px, 2vw, 24px);
+      border-top: 1.5px solid var(--border);
+      background: rgba(10,15,30,0.95);
+      backdrop-filter: blur(10px);
+      flex-shrink: 0;
+    }
+    
+    .btn {
+      flex: 1;
+      padding: clamp(10px, 1.8vh, 16px) clamp(12px, 2vw, 20px);
+      border: none;
+      border-radius: clamp(8px, 1vw, 12px);
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: clamp(0.78rem, 1.2vw, 1rem);
+      font-family: 'DM Sans', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(6px, 1vw, 10px);
+    }
+    
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid var(--border);
+      color: var(--white);
+    }
+    
+    .btn-outline:hover {
+      border-color: var(--cyan);
+      color: var(--cyan);
+      background: rgba(0,200,255,0.05);
+      transform: translateY(-2px);
+    }
+    
+    .btn-danger {
+      background: linear-gradient(135deg, var(--red), #ff2d5e);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(255,78,106,0.2);
+    }
+    
+    .btn-danger:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(255,78,106,0.3);
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
   </style>
 </head>
 <body>
-  <div class="phone-frame">
+  <div class="app-container">
+    <!-- HEADER -->
     <div class="header">
       <button class="back-btn" onclick="window.history.back()">←</button>
       <div class="header-title">EMERGENCY</div>
       <div class="live-dot"></div>
     </div>
 
-    <div class="map-area">
-      <div class="map-grid"></div>
-      <div class="map-label">Live Tracking</div>
-      <div class="unit-marker unit1">U1</div>
-      <div class="unit-marker unit2">U2</div>
-      <div class="unit-marker ambu">A1</div>
-      <div class="map-center"><div class="my-loc"></div></div>
-      <div class="eta-badge"><div class="eta-num">3 min</div><div class="eta-label">ETA</div></div>
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+      <!-- MAP AREA -->
+      <div class="map-area">
+        <div class="map-grid"></div>
+        <div class="map-label">Live Tracking</div>
+        <div class="unit-marker unit1">U1</div>
+        <div class="unit-marker unit2">U2</div>
+        <div class="unit-marker ambu">A1</div>
+        <div class="map-center"><div class="my-loc"></div></div>
+        <div class="eta-badge">
+          <div class="eta-num">3 min</div>
+          <div class="eta-label">ETA</div>
+        </div>
+      </div>
+
+      <!-- INFO PANEL -->
+      <div class="info-panel">
+        <div class="sos-alert">
+          <div class="sos-icon">🚨</div>
+          <div>
+            <div class="sos-title">SOS Alert Active</div>
+            <div class="sos-time">Called at 2:45 PM · Location shared</div>
+          </div>
+        </div>
+        <div class="panel-title">Responding Units</div>
+        <div class="unit-card">
+          <div class="unit-badge">U1</div>
+          <div>
+            <div class="unit-name">Police Unit 1</div>
+            <div class="unit-eta">🚗 ETA: 3 minutes</div>
+            <div class="unit-dist">1.2 km away</div>
+          </div>
+        </div>
+        <div class="unit-card">
+          <div class="unit-badge">U2</div>
+          <div>
+            <div class="unit-name">Police Unit 2</div>
+            <div class="unit-eta">🚗 ETA: 5 minutes</div>
+            <div class="unit-dist">2.1 km away</div>
+          </div>
+        </div>
+        <div class="unit-card">
+          <div class="unit-badge ambu-badge">A1</div>
+          <div>
+            <div class="unit-name">Ambulance 1</div>
+            <div class="unit-eta">🚑 ETA: 4 minutes</div>
+            <div class="unit-dist">1.8 km away</div>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="info-panel">
-      <div class="sos-alert">
-        <div class="sos-icon">🚨</div>
-        <div><div class="sos-title">SOS Alert Active</div><div class="sos-time">Called at 2:45 PM · Location shared</div></div>
-      </div>
-      <div class="panel-title">Responding Units</div>
-      <div class="unit-card">
-        <div class="unit-badge">U1</div>
-        <div><div class="unit-name">Police Unit 1</div><div class="unit-eta">🚗 ETA: 3 minutes</div><div class="unit-dist">1.2 km away</div></div>
-      </div>
-      <div class="unit-card">
-        <div class="unit-badge">U2</div>
-        <div><div class="unit-name">Police Unit 2</div><div class="unit-eta">🚗 ETA: 5 minutes</div><div class="unit-dist">2.1 km away</div></div>
-      </div>
-      <div class="unit-card">
-        <div class="unit-badge ambu-badge">A1</div>
-        <div><div class="unit-name">Ambulance 1</div><div class="unit-eta">🚑 ETA: 4 minutes</div><div class="unit-dist">1.8 km away</div></div>
-      </div>
-    </div>
-
+    <!-- ACTION BUTTONS -->
     <div class="action-row">
       <button class="btn btn-outline" onclick="alert('Location shared')">📍 Share Location</button>
       <button class="btn btn-danger" onclick="alert('Calling 15...')">📞 Call 15</button>
