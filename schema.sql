@@ -65,13 +65,13 @@ CREATE TABLE IF NOT EXISTS Dispatch (
     FOREIGN KEY (complaint_id) REFERENCES Complaints(complaint_id),
     FOREIGN KEY (assigned_unit_id) REFERENCES Citizens(citizen_id)
 );
-
+DROP TABLE IF EXISTS VolunteerDetails;
 CREATE TABLE IF NOT EXISTS VolunteerDetails (
     volunteer_id INTEGER PRIMARY KEY,
     availability INTEGER DEFAULT 1,
     skills TEXT,
 
-    FOREIGN KEY (volunteer_id) REFERENCES Users(user_id)
+    FOREIGN KEY (volunteer_id) REFERENCES Citizens(citizen_id)
 );
 
 CREATE TABLE IF NOT EXISTS VolunteerAssignments (
