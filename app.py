@@ -473,17 +473,29 @@ def citizen_dashboard():
     )
 
 @app.route('/case_tracking')
-def case_tracking():
+@app.route('/case_tracking/<filter_type>')
+def case_tracking(filter_type=None):
     db = get_db_connection()
 
-    cases = db.execute('''
-        SELECT c.complaint_id, cc.name as category_name, c.location, c.status, 
-               cs.priority, c.created_at
-        FROM Complaints c
-        JOIN CrimeCategories cc ON c.category_id = cc.category_id
-        LEFT JOIN Cases cs ON c.complaint_id = cs.complaint_id
-        ORDER BY c.created_at DESC
-    ''').fetchall()
+    if filter_type == 'high_priority':
+        cases = db.execute('''
+            SELECT c.complaint_id, cc.name as category_name, c.location, c.status, 
+                   cs.priority, c.created_at
+            FROM Complaints c
+            JOIN CrimeCategories cc ON c.category_id = cc.category_id
+            JOIN Cases cs ON c.complaint_id = cs.complaint_id
+            WHERE cs.priority = 'High'
+            ORDER BY c.created_at DESC
+        ''').fetchall()
+    else:
+        cases = db.execute('''
+            SELECT c.complaint_id, cc.name as category_name, c.location, c.status, 
+                   cs.priority, c.created_at
+            FROM Complaints c
+            JOIN CrimeCategories cc ON c.category_id = cc.category_id
+            LEFT JOIN Cases cs ON c.complaint_id = cs.complaint_id
+            ORDER BY c.created_at DESC
+        ''').fetchall()
 
     all_cases = []
     for c in cases:
@@ -498,7 +510,7 @@ def case_tracking():
 
     db.close()
 
-    return render_template('case_tracking.html', cases=all_cases)
+    return render_template('case_tracking.html', cases=all_cases, filter_type=filter_type)
 
 @app.route('/notifications')
 def notifications():
