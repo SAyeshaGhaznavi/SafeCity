@@ -411,7 +411,24 @@ def police_dashboard():
         ORDER   BY c.created_at DESC
     """).fetchall()
 
+    notifications_raw = conn.execute("""
+        SELECT message, created_at
+        FROM Notifications
+        ORDER BY created_at DESC
+        LIMIT 10
+    """).fetchall()
+
     conn.close()
+
+    now = datetime.utcnow()
+    notifications = []
+    for n in notifications_raw:
+        dt = datetime.strptime(n['created_at'], '%Y-%m-%d %H:%M:%S')
+        notifications.append({
+            'message': n['message'],
+            'time_ago': time_ago(n['created_at']),
+            'is_new': (now - dt).total_seconds() / 3600 < 24
+        })
 
     return render_template(
         'police_dashboard.html',
@@ -420,6 +437,7 @@ def police_dashboard():
         resolved=resolved,
         high_priority=high_priority,
         all_complaints=all_complaints,
+        notifications=notifications,
     )
 
 
@@ -893,7 +911,26 @@ def detective_dashboard():
         ORDER   BY c.created_at DESC
     """).fetchall()
 
+    notifications_raw = conn.execute("""
+        SELECT message, created_at
+        FROM Notifications
+        ORDER BY created_at DESC
+        LIMIT 10
+    """).fetchall()
+
     conn.close()
+
+    now = datetime.utcnow()
+    recent = []
+
+    notifications = []
+    for n in notifications_raw:
+        dt = datetime.strptime(n['created_at'], '%Y-%m-%d %H:%M:%S')
+        notifications.append({
+            'message': n['message'],
+            'time_ago': time_ago(n['created_at']),
+            'is_new': (now - dt).total_seconds() / 3600 < 24
+        })
 
     return render_template(
         'detective_dashboard.html',
@@ -902,6 +939,7 @@ def detective_dashboard():
         resolved=resolved,
         high_priority=high_priority,
         all_complaints=all_complaints,
+        notifications=notifications,  # ✅ ADDED
     )
 
 

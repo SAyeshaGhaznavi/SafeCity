@@ -20,625 +20,202 @@
     }
 
     html, body {
-      height: 100vh;
-      width: 100vw;
-      background: var(--navy);
-      font-family: 'DM Sans', sans-serif;
-      margin: 0;
-      padding: 0;
-      color: var(--white);
-      overflow: hidden;
+      height:100vh;width:100vw;
+      background:var(--navy);
+      font-family:'DM Sans',sans-serif;
+      margin:0;padding:0;
+      color:var(--white);overflow:hidden;
     }
-
-    body {
-      display: flex;
-      align-items: stretch;
-      justify-content: stretch;
-    }
+    body{display:flex;align-items:stretch;justify-content:stretch}
 
     .app-container {
-      width: 100vw;
-      height: 100vh;
-      background: var(--navy);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      background-image:
-        linear-gradient(rgba(0,200,255,0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,200,255,0.025) 1px, transparent 1px);
-      background-size: 50px 50px;
+      width:100vw;height:100vh;background:var(--navy);overflow:hidden;
+      display:flex;flex-direction:column;position:relative;
+      background-image:linear-gradient(rgba(0,200,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,255,0.025) 1px,transparent 1px);
+      background-size:50px 50px;
     }
 
-    /* ── TOAST NOTIFICATIONS ── */
-    .toast-container {
-      position: fixed;
-      top: 16px;
-      right: 16px;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      pointer-events: none;
-    }
-
-    .toast {
-      pointer-events: auto;
-      padding: 12px 20px;
-      border-radius: 10px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      font-family: 'DM Sans', sans-serif;
-      color: var(--white);
-      border: 1.5px solid;
-      backdrop-filter: blur(12px);
-      animation: toastIn 0.35s ease forwards;
-      max-width: 360px;
-    }
-
-    .toast.removing {
-      animation: toastOut 0.3s ease forwards;
-    }
-
-    .toast-success {
-      background: rgba(0,229,160,0.15);
-      border-color: rgba(0,229,160,0.4);
-    }
-
-    .toast-error {
-      background: rgba(255,78,106,0.15);
-      border-color: rgba(255,78,106,0.4);
-    }
-
-    @keyframes toastIn {
-      from { opacity: 0; transform: translateX(40px); }
-      to   { opacity: 1; transform: translateX(0); }
-    }
-
-    @keyframes toastOut {
-      from { opacity: 1; transform: translateX(0); }
-      to   { opacity: 0; transform: translateX(40px); }
-    }
+    /* ── TOAST ── */
+    .toast-container{position:fixed;top:16px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+    .toast{pointer-events:auto;padding:12px 20px;border-radius:10px;font-size:0.82rem;font-weight:600;font-family:'DM Sans',sans-serif;color:var(--white);border:1.5px solid;backdrop-filter:blur(12px);animation:toastIn .35s ease forwards;max-width:360px}
+    .toast.removing{animation:toastOut .3s ease forwards}
+    .toast-success{background:rgba(0,229,160,0.15);border-color:rgba(0,229,160,0.4)}
+    .toast-error{background:rgba(255,78,106,0.15);border-color:rgba(255,78,106,0.4)}
+    @keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+    @keyframes toastOut{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(40px)}}
 
     /* ── HEADER ── */
-    .header {
-      padding: clamp(14px, 2vh, 24px) clamp(16px, 3vw, 40px);
-      border-bottom: 1.5px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-shrink: 0;
-      background: rgba(10,15,30,0.95);
-      backdrop-filter: blur(10px);
+    .header{
+      padding:clamp(14px, 2vh, 24px) clamp(16px, 3vw, 40px);
+      border-bottom:1.5px solid var(--border);
+      display:flex;align-items:center;justify-content:space-between;
+      flex-shrink:0;background:rgba(10,15,30,0.95);backdrop-filter:blur(10px);
     }
+    .header-left{display:flex;align-items:center;gap:clamp(10px, 1.5vw, 16px)}
+    .logo{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.1rem, 2.5vw, 1.8rem);letter-spacing:clamp(3px, 0.5vw, 5px)}
+    .logo span{color:var(--cyan)}
+    .online-badge{display:flex;align-items:center;gap:clamp(5px, 0.8vw, 8px);font-size:clamp(0.62rem, 1vw, 0.8rem);color:var(--green);font-weight:600}
+    .online-dot{width:clamp(6px, 1vw, 8px);height:clamp(6px, 1vw, 8px);background:var(--green);border-radius:50%;animation:pulse 1.5s infinite}
+    .header-right{display:flex;align-items:center;gap:clamp(8px, 1.5vw, 16px)}
+    .officer-avatar{width:clamp(30px, 5vw, 45px);height:clamp(30px, 5vw, 45px);border-radius:50%;background:rgba(0,200,255,0.15);border:2px solid var(--cyan);display:flex;align-items:center;justify-content:center;font-size:clamp(0.7rem, 1.2vw, 1rem);font-weight:700;color:var(--cyan)}
+    .logout-link{font-size:clamp(0.65rem, 1vw, 0.8rem);color:var(--muted);text-decoration:none;border:1.5px solid var(--border);padding:clamp(4px, 0.8vh, 8px) clamp(8px, 1.5vw, 16px);border-radius:clamp(5px, 0.8vw, 8px);transition:all .2s;font-weight:600}
+    .logout-link:hover{color:var(--red);border-color:var(--red)}
 
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: clamp(10px, 1.5vw, 16px);
-    }
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
-    .logo {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(1.1rem, 2.5vw, 1.8rem);
-      letter-spacing: clamp(3px, 0.5vw, 5px);
-    }
+    /* ── SCROLLABLE CONTENT ── */
+    .app-content{flex:1;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;scrollbar-width:thin;scrollbar-color:rgba(0,200,255,0.2) transparent}
+    .app-content::-webkit-scrollbar{width:6px}
+    .app-content::-webkit-scrollbar-thumb{background:rgba(0,200,255,0.3);border-radius:3px}
 
-    .logo span { color: var(--cyan); }
+    .content{flex:1;padding:clamp(14px, 2.5vh, 32px) clamp(14px, 3vw, 40px);display:flex;flex-direction:column;gap:clamp(14px, 2vh, 24px);width:100%}
 
-    .online-badge {
-      display: flex;
-      align-items: center;
-      gap: clamp(5px, 0.8vw, 8px);
-      font-size: clamp(0.62rem, 1vw, 0.8rem);
-      color: var(--green);
-      font-weight: 600;
-    }
-
-    .online-dot {
-      width: clamp(6px, 1vw, 8px);
-      height: clamp(6px, 1vw, 8px);
-      background: var(--green);
-      border-radius: 50%;
-      animation: pulse 1.5s infinite;
-    }
-
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: clamp(8px, 1.5vw, 16px);
-    }
-
-    .officer-avatar {
-      width: clamp(30px, 5vw, 45px);
-      height: clamp(30px, 5vw, 45px);
-      border-radius: 50%;
-      background: rgba(0,200,255,0.15);
-      border: 2px solid var(--cyan);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: clamp(0.7rem, 1.2vw, 1rem);
-      font-weight: 700;
-      color: var(--cyan);
-    }
-
-    .logout-link {
-      font-size: clamp(0.65rem, 1vw, 0.8rem);
-      color: var(--muted);
-      text-decoration: none;
-      border: 1.5px solid var(--border);
-      padding: clamp(4px, 0.8vh, 8px) clamp(8px, 1.5vw, 16px);
-      border-radius: clamp(5px, 0.8vw, 8px);
-      transition: all 0.2s;
-      font-weight: 600;
-    }
-
-    .logout-link:hover {
-      color: var(--red);
-      border-color: var(--red);
-    }
-
-    /* ── MAIN CONTENT ── */
-    .app-content {
-      flex: 1;
-      overflow-y: auto;
-      overflow-x: hidden;
-      display: flex;
-      flex-direction: column;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(0,200,255,0.2) transparent;
-    }
-
-    .app-content::-webkit-scrollbar { width: 6px; }
-    .app-content::-webkit-scrollbar-thumb {
-      background: rgba(0,200,255,0.3);
-      border-radius: 3px;
-    }
-
-    .content {
-      flex: 1;
-      padding: clamp(14px, 2.5vh, 32px) clamp(14px, 3vw, 40px);
-      display: flex;
-      flex-direction: column;
-      gap: clamp(14px, 2vh, 24px);
-      width: 100%;
-    }
-
-    .page-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(1.5rem, 3vw, 2.5rem);
-      letter-spacing: clamp(2px, 0.4vw, 3px);
-    }
-
-    .page-sub {
-      font-size: clamp(0.68rem, 1.1vw, 0.9rem);
-      color: var(--muted);
-      margin-top: 4px;
-    }
+    .page-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.5rem, 3vw, 2.5rem);letter-spacing:clamp(2px, 0.4vw, 3px)}
+    .page-sub{font-size:clamp(0.68rem, 1.1vw, 0.9rem);color:var(--muted);margin-top:4px}
 
     /* ── STATS GRID ── */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: clamp(8px, 1.5vw, 20px);
-    }
-
-    .stat-card {
-      border-radius: clamp(12px, 1.5vw, 16px);
-      padding: clamp(12px, 2vh, 20px) clamp(10px, 1.5vw, 18px);
-      position: relative;
-      overflow: hidden;
-      border: 1.5px solid var(--border);
-      transition: transform 0.2s ease;
-    }
-
-    .stat-card:hover { transform: translateY(-2px); }
-
-    .stat-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-    }
-
-    .stat-card.c-yellow { border-color: rgba(255,184,48,0.25); }
-    .stat-card.c-yellow::before { background: linear-gradient(90deg, var(--yellow), transparent); }
-
-    .stat-card.c-cyan { border-color: rgba(0,200,255,0.25); }
-    .stat-card.c-cyan::before { background: linear-gradient(90deg, var(--cyan), transparent); }
-
-    .stat-card.c-green { border-color: rgba(0,229,160,0.25); }
-    .stat-card.c-green::before { background: linear-gradient(90deg, var(--green), transparent); }
-
-    .stat-icon {
-      font-size: clamp(1.2rem, 2.5vw, 1.8rem);
-      margin-bottom: clamp(6px, 1vh, 10px);
-    }
-
-    .stat-num {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(1.8rem, 3.5vw, 2.5rem);
-      line-height: 1;
-    }
-
-    .c-yellow .stat-num { color: var(--yellow); }
-    .c-cyan .stat-num   { color: var(--cyan); }
-    .c-green .stat-num  { color: var(--green); }
-
-    .stat-lbl {
-      font-size: clamp(0.58rem, 1vw, 0.75rem);
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-top: clamp(3px, 0.5vh, 6px);
-    }
+    .stats-grid{display:grid;grid-template-columns:repeat(3, 1fr);gap:clamp(8px, 1.5vw, 20px)}
+    .stat-card{border-radius:clamp(12px, 1.5vw, 16px);padding:clamp(12px, 2vh, 20px) clamp(10px, 1.5vw, 18px);position:relative;overflow:hidden;border:1.5px solid var(--border);transition:transform .2s ease}
+    .stat-card:hover{transform:translateY(-2px)}
+    .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+    .stat-card.c-yellow{border-color:rgba(255,184,48,0.25)}
+    .stat-card.c-yellow::before{background:linear-gradient(90deg,var(--yellow),transparent)}
+    .stat-card.c-cyan{border-color:rgba(0,200,255,0.25)}
+    .stat-card.c-cyan::before{background:linear-gradient(90deg,var(--cyan),transparent)}
+    .stat-card.c-green{border-color:rgba(0,229,160,0.25)}
+    .stat-card.c-green::before{background:linear-gradient(90deg,var(--green),transparent)}
+    .stat-icon{font-size:clamp(1.2rem, 2.5vw, 1.8rem);margin-bottom:clamp(6px, 1vh, 10px)}
+    .stat-num{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.8rem, 3.5vw, 2.5rem);line-height:1}
+    .c-yellow .stat-num{color:var(--yellow)}
+    .c-cyan .stat-num{color:var(--cyan)}
+    .c-green .stat-num{color:var(--green)}
+    .stat-lbl{font-size:clamp(0.58rem, 1vw, 0.75rem);color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:clamp(3px, 0.5vh, 6px)}
 
     /* ── ACTION BUTTONS ROW ── */
-    .action-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: clamp(10px, 1.5vw, 20px);
-    }
+    .action-row{display:grid;grid-template-columns:1fr 1fr;gap:clamp(10px, 1.5vw, 20px)}
+    .action-card{display:flex;align-items:center;gap:clamp(10px, 1.5vw, 16px);padding:clamp(14px, 2vh, 22px) clamp(16px, 2vw, 24px);border-radius:clamp(12px, 1.5vw, 16px);border:1.5px solid var(--border);background:var(--card);text-decoration:none;color:var(--white);transition:all .25s ease;position:relative;overflow:hidden}
+    .action-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+    .action-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.3)}
+    .action-card.ac-cyan{border-color:rgba(0,200,255,0.25)}
+    .action-card.ac-cyan::before{background:linear-gradient(90deg,var(--cyan),transparent)}
+    .action-card.ac-cyan:hover{border-color:rgba(0,200,255,0.5);background:rgba(0,200,255,0.06)}
+    .action-card.ac-yellow{border-color:rgba(255,184,48,0.25)}
+    .action-card.ac-yellow::before{background:linear-gradient(90deg,var(--yellow),transparent)}
+    .action-card.ac-yellow:hover{border-color:rgba(255,184,48,0.5);background:rgba(255,184,48,0.06)}
+    .action-icon{width:clamp(40px, 5vw, 54px);height:clamp(40px, 5vw, 54px);border-radius:clamp(10px, 1.2vw, 14px);display:flex;align-items:center;justify-content:center;font-size:clamp(1.2rem, 2vw, 1.6rem);flex-shrink:0}
+    .ac-cyan .action-icon{background:rgba(0,200,255,0.12);border:1.5px solid rgba(0,200,255,0.2)}
+    .ac-yellow .action-icon{background:rgba(255,184,48,0.12);border:1.5px solid rgba(255,184,48,0.2)}
+    .action-info{display:flex;flex-direction:column;gap:2px}
+    .action-title{font-weight:700;font-size:clamp(0.82rem, 1.3vw, 1.05rem)}
+    .action-desc{font-size:clamp(0.6rem, 0.9vw, 0.75rem);color:var(--muted)}
+    .action-arrow{margin-left:auto;font-size:clamp(0.9rem, 1.5vw, 1.2rem);color:var(--muted);transition:transform .2s, color .2s;flex-shrink:0}
+    .action-card:hover .action-arrow{transform:translateX(3px)}
+    .ac-cyan:hover .action-arrow{color:var(--cyan)}
+    .ac-yellow:hover .action-arrow{color:var(--yellow)}
 
-    .action-card {
-      display: flex;
-      align-items: center;
-      gap: clamp(10px, 1.5vw, 16px);
-      padding: clamp(14px, 2vh, 22px) clamp(16px, 2vw, 24px);
-      border-radius: clamp(12px, 1.5vw, 16px);
-      border: 1.5px solid var(--border);
-      background: var(--card);
-      text-decoration: none;
-      color: var(--white);
-      transition: all 0.25s ease;
-      position: relative;
-      overflow: hidden;
-    }
+    /* ── SECTION CARDS ── */
+    .section-card{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:20px;padding:clamp(18px, 2.5vh, 28px);display:flex;flex-direction:column}
+    .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:clamp(14px, 2vh, 20px)}
+    .section-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.1rem, 1.8vw, 1.4rem);letter-spacing:2px;display:flex;align-items:center;gap:10px}
+    .section-count{font-size:0.65rem;background:rgba(0,200,255,0.15);color:var(--cyan);padding:3px 10px;border-radius:20px;font-weight:700;font-family:'DM Sans',sans-serif;letter-spacing:0}
+    .section-link{font-size:clamp(0.65rem, 1vw, 0.8rem);color:var(--cyan);text-decoration:none;font-weight:600;transition:opacity .2s}
+    .section-link:hover{opacity:.7}
 
-    .action-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-    }
+    /* ── DASHBOARD GRID ── */
+    .dashboard-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(14px, 2vh, 30px)}
 
-    .action-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-    }
+    /* ── TABLES ── */
+    .table-wrap{overflow-x:auto;overflow-y:auto;flex:1;max-height:300px;scrollbar-width:thin;scrollbar-color:rgba(0,200,255,0.15) transparent}
+    .table-wrap::-webkit-scrollbar{width:4px;height:4px}
+    .table-wrap::-webkit-scrollbar-thumb{background:rgba(0,200,255,0.2);border-radius:2px}
+    .data-table{width:100%;font-size:clamp(0.72rem, 1.1vw, 0.85rem);min-width:500px;border-collapse:collapse}
+    .data-table th{padding:clamp(8px, 1.5vh, 12px) clamp(12px, 1.5vw, 16px);color:var(--muted);text-transform:uppercase;letter-spacing:.8px;font-size:clamp(0.6rem, 0.9vw, 0.7rem);border-bottom:1.5px solid var(--border);text-align:left;font-weight:600;background:rgba(10,15,30,.5);position:sticky;top:0;z-index:2}
+    .data-table td{padding:clamp(9px, 1.5vh, 14px) clamp(12px, 1.5vw, 16px);border-bottom:1px solid rgba(0,200,255,0.05);vertical-align:middle}
+    .data-table tr:hover{background:rgba(0,200,255,0.03)}
+    .data-table tr:last-child td{border-bottom:none}
+    .td-id{color:var(--cyan);font-weight:700;white-space:nowrap}
 
-    .action-card.ac-cyan {
-      border-color: rgba(0,200,255,0.25);
-    }
-    .action-card.ac-cyan::before {
-      background: linear-gradient(90deg, var(--cyan), transparent);
-    }
-    .action-card.ac-cyan:hover {
-      border-color: rgba(0,200,255,0.5);
-      background: rgba(0,200,255,0.06);
-    }
+    /* ── PILLS ── */
+    .sp{font-size:clamp(0.6rem, 0.9vw, 0.65rem);font-weight:700;padding:clamp(3px, 0.5vh, 4px) clamp(7px, 1vw, 10px);border-radius:clamp(4px, 0.6vw, 6px);text-transform:uppercase;white-space:nowrap;letter-spacing:.5px;display:inline-block}
+    .sp-new{background:rgba(78,168,255,0.2);color:#4ea8ff}
+    .sp-progress{background:rgba(255,184,48,0.2);color:var(--yellow)}
+    .sp-resolved{background:rgba(0,229,160,0.15);color:var(--green)}
+    .pr{font-size:clamp(0.6rem, 0.9vw, 0.65rem);font-weight:700;padding:clamp(2px, 0.4vh, 3px) clamp(6px, 0.8vw, 8px);border-radius:5px;white-space:nowrap;display:inline-block}
+    .pr-high{color:var(--red);background:rgba(255,78,106,0.12)}
+    .pr-med{color:var(--yellow);background:rgba(255,184,48,0.12)}
+    .pr-low{color:var(--green);background:rgba(0,229,160,0.12)}
 
-    .action-card.ac-yellow {
-      border-color: rgba(255,184,48,0.25);
-    }
-    .action-card.ac-yellow::before {
-      background: linear-gradient(90deg, var(--yellow), transparent);
-    }
-    .action-card.ac-yellow:hover {
-      border-color: rgba(255,184,48,0.5);
-      background: rgba(255,184,48,0.06);
-    }
-
-    .action-icon {
-      width: clamp(40px, 5vw, 54px);
-      height: clamp(40px, 5vw, 54px);
-      border-radius: clamp(10px, 1.2vw, 14px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: clamp(1.2rem, 2vw, 1.6rem);
-      flex-shrink: 0;
-    }
-
-    .ac-cyan .action-icon {
-      background: rgba(0,200,255,0.12);
-      border: 1.5px solid rgba(0,200,255,0.2);
-    }
-
-    .ac-yellow .action-icon {
-      background: rgba(255,184,48,0.12);
-      border: 1.5px solid rgba(255,184,48,0.2);
-    }
-
-    .action-info {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .action-title {
-      font-weight: 700;
-      font-size: clamp(0.82rem, 1.3vw, 1.05rem);
-    }
-
-    .action-desc {
-      font-size: clamp(0.6rem, 0.9vw, 0.75rem);
-      color: var(--muted);
-    }
-
-    .action-arrow {
-      margin-left: auto;
-      font-size: clamp(0.9rem, 1.5vw, 1.2rem);
-      color: var(--muted);
-      transition: transform 0.2s, color 0.2s;
-      flex-shrink: 0;
-    }
-
-    .action-card:hover .action-arrow {
-      transform: translateX(3px);
-    }
-
-    .ac-cyan:hover .action-arrow { color: var(--cyan); }
-    .ac-yellow:hover .action-arrow { color: var(--yellow); }
-
-    /* ── TWO COLUMN ── */
-    .two-column-layout {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: clamp(14px, 2vh, 24px);
-    }
-
-    @media (min-width: 1200px) {
-      .two-column-layout {
-        grid-template-columns: 1fr 1.5fr;
-        align-items: stretch;
-      }
-    }
-
-    /* ── HIGH PRIORITY ── */
-    .priority-section {
-      background: rgba(255,78,106,0.06);
-      border: 1.5px solid rgba(255,78,106,0.2);
-      border-radius: clamp(12px, 1.5vw, 16px);
-      padding: clamp(12px, 2vh, 20px);
-      height: fit-content;
-    }
-
-    .priority-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: clamp(10px, 1.5vh, 16px);
-    }
-
-    .priority-title {
-      font-size: clamp(0.72rem, 1.2vw, 0.9rem);
-      font-weight: 700;
-      color: var(--red);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .priority-link {
-      font-size: clamp(0.65rem, 1vw, 0.8rem);
-      color: var(--cyan);
-      text-decoration: none;
-      font-weight: 600;
-      transition: opacity 0.2s;
-    }
-    .priority-link:hover { opacity: 0.7; }
-
-    .incident-item {
-      background: rgba(255,255,255,0.03);
-      border: 1.5px solid var(--border);
-      border-radius: clamp(8px, 1vw, 12px);
-      padding: clamp(10px, 1.5vh, 16px) clamp(12px, 1.5vw, 20px);
-      margin-bottom: clamp(8px, 1vh, 12px);
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: clamp(8px, 1.5vw, 16px);
-      transition: all 0.2s ease;
-    }
-
-    .incident-item:hover {
-      border-color: rgba(255,78,106,0.3);
-      background: rgba(255,78,106,0.03);
-    }
-
-    .incident-item:last-child { margin-bottom: 0; }
-
-    .incident-info .incident-type {
-      font-size: clamp(0.8rem, 1.3vw, 1rem);
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .incident-info .incident-loc {
-      font-size: clamp(0.68rem, 1vw, 0.85rem);
-      color: var(--muted);
-    }
-
-    .incident-info .incident-desc {
-      font-size: clamp(0.6rem, 0.9vw, 0.72rem);
-      color: rgba(122,141,176,0.7);
-      margin-top: 4px;
-      line-height: 1.4;
-    }
-
-    .incident-info .incident-id {
-      font-size: clamp(0.62rem, 1vw, 0.75rem);
-      color: var(--cyan);
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .incident-right {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: clamp(4px, 0.8vh, 8px);
-      flex-shrink: 0;
-    }
-
-    .status-pill {
-      font-size: clamp(0.6rem, 0.9vw, 0.7rem);
-      font-weight: 700;
-      padding: clamp(3px, 0.5vh, 5px) clamp(7px, 1vw, 10px);
-      border-radius: clamp(4px, 0.6vw, 6px);
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
-
-    .sp-new      { background: rgba(78,168,255,0.2);  color: #4ea8ff; }
-    .sp-progress { background: rgba(255,184,48,0.2);  color: var(--yellow); }
-    .sp-resolved { background: rgba(0,229,160,0.15);  color: var(--green); }
-
-    .assign-btn {
-      font-size: clamp(0.6rem, 0.9vw, 0.7rem);
-      background: rgba(0,200,255,0.1);
-      border: 1.5px solid rgba(0,200,255,0.2);
-      color: var(--cyan);
-      border-radius: clamp(4px, 0.6vw, 6px);
-      padding: clamp(3px, 0.5vh, 6px) clamp(7px, 1vw, 12px);
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-
-    .assign-btn:hover {
-      background: rgba(0,200,255,0.2);
-      transform: translateY(-1px);
-    }
-
-    .assign-btn.btn-resolve {
-      background: rgba(0,229,160,0.1);
-      border-color: rgba(0,229,160,0.25);
-      color: var(--green);
-    }
-    .assign-btn.btn-resolve:hover {
-      background: rgba(0,229,160,0.2);
-    }
-
-    .assign-btn.btn-view {
-      background: rgba(122,141,176,0.08);
-      border-color: rgba(122,141,176,0.2);
-      color: var(--muted);
-      text-decoration: none;
-      display: inline-block;
-      text-align: center;
-    }
-    .assign-btn.btn-view:hover {
-      background: rgba(122,141,176,0.15);
-    }
-
-    /* ── INLINE FORMS ── */
-    .inline-form {
-      display: inline;
-    }
-
-    .inline-form .assign-btn {
-      margin: 0;
-    }
+    /* ── NOTIFICATIONS LIST ── */
+    .notif-list{display:flex;flex-direction:column;gap:14px;overflow-y:auto;max-height:320px;scrollbar-width:thin;scrollbar-color:rgba(0,200,255,0.15) transparent}
+    .notif-list::-webkit-scrollbar{width:4px}
+    .notif-list::-webkit-scrollbar-thumb{background:rgba(0,200,255,0.2);border-radius:2px}
+    .notif-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;display:flex;gap:14px;align-items:flex-start;transition:all .2s}
+    .notif-card:hover{border-color:rgba(0,200,255,0.3);background:rgba(0,200,255,0.05)}
+    .notif-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+    .ni-bell{background:rgba(0,200,255,0.15)}
+    .ni-person{background:rgba(0,229,160,0.15)}
+    .ni-check{background:rgba(0,229,160,0.15)}
+    .ni-alert{background:rgba(255,78,106,0.15)}
+    .notif-body{flex:1;min-width:0}
+    .notif-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:4px}
+    .notif-text{font-size:0.85rem;line-height:1.5;color:var(--white);flex:1;word-break:break-word}
+    .new-badge{font-size:0.55rem;font-weight:800;background:var(--cyan);color:var(--navy);padding:3px 7px;border-radius:4px;letter-spacing:0.5px;flex-shrink:0;animation:badgePulse 2s infinite}
+    .notif-time{font-size:0.72rem;color:var(--muted)}
 
     /* ── EMPTY STATE ── */
-    .empty-state {
-      text-align: center;
-      padding: clamp(20px, 3vh, 40px) clamp(12px, 2vw, 20px);
-      color: var(--muted);
-      font-size: clamp(0.72rem, 1vw, 0.85rem);
+    .empty-state{text-align:center;padding:clamp(20px, 3vh, 40px) clamp(12px, 2vw, 20px);font-size:clamp(0.72rem, 1vw, 0.85rem);color:var(--muted);background:rgba(255,255,255,0.02);border-radius:12px}
+    .empty-icon{font-size:clamp(1.5rem, 3vw, 2.2rem);margin-bottom:8px;opacity:.5}
+
+    /* ── INLINE FORMS ── */
+    .inline-form{display:inline}
+
+    /* ── TABLE ACTION BUTTONS ── */
+    .tbl-btn{font-size:clamp(0.6rem, 0.9vw, 0.7rem);font-weight:600;padding:4px 10px;border-radius:5px;border:1px solid;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif;text-decoration:none;display:inline-block;text-align:center;white-space:nowrap}
+    .tbl-btn-assign{background:rgba(0,200,255,0.1);border-color:rgba(0,200,255,0.2);color:var(--cyan)}
+    .tbl-btn-assign:hover{background:rgba(0,200,255,0.2)}
+    .tbl-btn-resolve{background:rgba(0,229,160,0.1);border-color:rgba(0,229,160,0.25);color:var(--green)}
+    .tbl-btn-resolve:hover{background:rgba(0,229,160,0.2)}
+    .tbl-btn-view{background:rgba(122,141,176,0.08);border-color:rgba(122,141,176,0.2);color:var(--muted)}
+    .tbl-btn-view:hover{background:rgba(122,141,176,0.15)}
+
+    @keyframes badgePulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:1024px){
+      .dashboard-grid{grid-template-columns:1fr;gap:24px}
     }
-
-    .empty-state .empty-icon {
-      font-size: clamp(1.5rem, 3vw, 2.2rem);
-      margin-bottom: 8px;
-      opacity: 0.5;
+    @media(max-width:768px){
+      .logo{font-size:1.3rem}
+      .officer-avatar{width:38px;height:38px;font-size:0.85rem}
+      .logout-link{padding:6px 12px;font-size:0.72rem}
+      .page-title{font-size:2rem}
+      .action-row{gap:14px}
+      .action-card{padding:16px 20px;font-size:1rem}
+      .section-card{padding:20px 16px}
+      .section-title{font-size:1.2rem}
     }
-
-    /* ── ALL COMPLAINTS TABLE ── */
-    .complaints-section {
-      background: var(--card);
-      border: 1.5px solid var(--border);
-      border-radius: clamp(12px, 1.5vw, 16px);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
+    @media(max-width:480px){
+      .logo{font-size:1.1rem;letter-spacing:3px}
+      .online-badge{display:none}
+      .page-title{font-size:1.7rem}
+      .action-row{grid-template-columns:1fr;gap:12px}
+      .action-card{padding:14px 18px;font-size:0.95rem}
+      .section-card{padding:16px 12px}
+      .section-title{font-size:1.1rem}
+      .data-table{font-size:0.78rem}
+      .data-table th,.data-table td{padding:8px 10px}
+      .notif-card{padding:12px;gap:10px}
+      .notif-icon{width:36px;height:36px;font-size:1rem}
     }
-
-    .section-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: clamp(12px, 2vh, 18px) clamp(14px, 2vw, 24px);
-      border-bottom: 1.5px solid var(--border);
-      flex-shrink: 0;
+    @media(min-width:1200px){
+      .content{padding:clamp(20px, 3vh, 40px) clamp(24px, 4vw, 60px)}
+      .page-title{font-size:3rem}
+      .section-card{padding:32px}
     }
-
-    .section-head-title {
-      font-size: clamp(0.72rem, 1.2vw, 0.9rem);
-      font-weight: 700;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .section-link {
-      font-size: clamp(0.65rem, 1vw, 0.8rem);
-      color: var(--cyan);
-      text-decoration: none;
-      font-weight: 600;
-      transition: opacity 0.2s;
-    }
-    .section-link:hover { opacity: 0.7; }
-
-    .table-wrapper {
-      overflow-x: auto;
-      overflow-y: auto;
-      flex: 1;
-    }
-
-    .complaints-table {
-      width: 100%;
-      font-size: clamp(0.72rem, 1.1vw, 0.85rem);
-      min-width: 600px;
-    }
-
-    .complaints-table th {
-      padding: clamp(8px, 1.5vh, 12px) clamp(12px, 1.5vw, 16px);
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      font-size: clamp(0.6rem, 0.9vw, 0.7rem);
-      border-bottom: 1.5px solid var(--border);
-      text-align: left;
-      font-weight: 600;
-      background: rgba(10,15,30,0.5);
-      position: sticky;
-      top: 0;
-      z-index: 2;
-    }
-
-    .complaints-table td {
-      padding: clamp(9px, 1.5vh, 14px) clamp(12px, 1.5vw, 16px);
-      border-bottom: 1px solid rgba(0,200,255,0.05);
-    }
-
-    .complaints-table tr:hover { background: rgba(0,200,255,0.03); }
-    .complaints-table tr:last-child td { border-bottom: none; }
-
-    .pr-high { color: var(--red);    font-weight: 700; font-size: clamp(0.6rem, 0.9vw, 0.7rem); }
-    .pr-med  { color: var(--yellow); font-weight: 700; font-size: clamp(0.6rem, 0.9vw, 0.7rem); }
-    .pr-low  { color: var(--green);  font-weight: 700; font-size: clamp(0.6rem, 0.9vw, 0.7rem); }
-
-    .td-action { white-space: nowrap; }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
+    @media(max-height:700px){
+      .content{padding:16px 24px;gap:16px}
+      .section-card{padding:16px}
+      .page-title{font-size:2rem}
     }
   </style>
 </head>
@@ -676,7 +253,7 @@
           <div class="page-sub">Welcome{% if session.name %}, {{ session.name }}{% endif %} · Lahore Division</div>
         </div>
 
-        <!-- STATS — live from DB -->
+        <!-- STATS -->
         <div class="stats-grid">
           <div class="stat-card c-yellow">
             <div class="stat-icon">⏳</div>
@@ -715,55 +292,96 @@
           </a>
         </div>
 
-        <!-- TWO COLUMN LAYOUT -->
-        <div class="two-column-layout">
+        <!-- HIGH PRIORITY TABLE -->
+        <div class="section-card">
+          <div class="section-head">
+            <div class="section-title">🔴 High Priority Alerts <span class="section-count">{{ high_priority|length }}</span></div>
+            <a href="/case_tracking/high_priority" class="section-link">View all →</a>
+          </div>
+          {% if high_priority %}
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Type</th>
+                  <th>Location</th>
+                  <th>Status</th>
+                  <th>Priority</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for hp in high_priority %}
+                <tr>
+                  <td class="td-id">#{{ hp['complaint_id'] }}</td>
+                  <td>{{ hp['category'] }}</td>
+                  <td style="color:var(--muted)">📍 {{ hp['location'] }}</td>
+                  <td>
+                    {% if hp['status'] == 'Pending' %}
+                      <span class="sp sp-new">Pending</span>
+                    {% elif hp['status'] == 'In Progress' %}
+                      <span class="sp sp-progress">In Progress</span>
+                    {% else %}
+                      <span class="sp sp-resolved">Resolved</span>
+                    {% endif %}
+                  </td>
+                  <td><span class="pr pr-high">● High</span></td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="empty-state">
+            <div class="empty-icon">🟢</div>
+            No high priority alerts right now
+          </div>
+          {% endif %}
+        </div>
 
-          <!-- LEFT — High Priority Alerts -->
-          <div class="priority-section">
-            <div class="priority-header">
-              <span class="priority-title">🔴 High Priority Alerts</span>
-              <a href="/case_tracking/high_priority" class="priority-link">View all →</a>
+        <!-- BOTTOM GRID: Notifications + All Complaints -->
+        <div class="dashboard-grid">
+
+          <!-- NOTIFICATIONS -->
+          <div class="section-card">
+            <div class="section-head">
+              <div class="section-title">🔔 Notifications <span class="section-count">{{ notifications|length }}</span></div>
+              <a href="/notifications" class="section-link">View all →</a>
             </div>
-
-            {% if high_priority %}
-              {% for hp in high_priority %}
-              <div class="incident-item">
-                <div class="incident-info">
-                  <div class="incident-id">#{{ hp['complaint_id'] }}</div>
-                  <div class="incident-type">{{ hp['category'] }}</div>
-                  <div class="incident-loc">📍 {{ hp['location'] }}</div>
-                  {% if hp['description'] %}
-                  <div class="incident-desc">{{ hp['description'][:80] }}{% if hp['description']|length > 80 %}…{% endif %}</div>
-                  {% endif %}
+            <div class="notif-list">
+              {% for n in notifications %}
+              <div class="notif-card">
+                <div class="notif-icon {% if 'assigned' in n.message|lower %}ni-person{% elif 'resolved' in n.message|lower %}ni-check{% elif 'high' in n.message|lower %}ni-alert{% else %}ni-bell{% endif %}">
+                  {% if 'assigned' in n.message|lower %}👤{% elif 'resolved' in n.message|lower %}✓{% elif 'high' in n.message|lower %}🔴{% else %}🔔{% endif %}
                 </div>
-                <div class="incident-right">
-                  {% if hp['status'] == 'Pending' %}
-                    <span class="status-pill sp-new">New</span>
-                  {% elif hp['status'] == 'In Progress' %}
-                    <span class="status-pill sp-progress">In Progress</span>
-                  {% else %}
-                    <span class="status-pill sp-resolved">Resolved</span>
-                  {% endif %}
+                <div class="notif-body">
+                  <div class="notif-top">
+                    <div class="notif-text">{{ n['message'] | replace('\n', '<br>') | safe }}</div>
+                    {% if n['is_new'] %}
+                    <span class="new-badge">NEW</span>
+                    {% endif %}
+                  </div>
+                  <div class="notif-time">{{ n['time_ago'] }}</div>
                 </div>
+              </div>
+              {% else %}
+              <div class="empty-state">
+                <div class="empty-icon">🔔</div>
+                No notifications
               </div>
               {% endfor %}
-            {% else %}
-              <div class="empty-state">
-                <div class="empty-icon">🟢</div>
-                No high priority alerts right now.
-              </div>
-            {% endif %}
+            </div>
           </div>
 
-          <!-- RIGHT — All Complaints Table -->
-          <div class="complaints-section">
+          <!-- ALL COMPLAINTS TABLE -->
+          <div class="section-card">
             <div class="section-head">
-              <span class="section-head-title">All Complaints</span>
+              <div class="section-title">📋 All Complaints <span class="section-count">{{ all_complaints|length }}</span></div>
               <a href="/case_tracking" class="section-link">View all →</a>
             </div>
-            <div class="table-wrapper">
-              {% if all_complaints %}
-              <table class="complaints-table">
+            {% if all_complaints %}
+            <div class="table-wrap">
+              <table class="data-table">
                 <thead>
                   <tr>
                     <th>ID</th>
@@ -777,51 +395,51 @@
                 <tbody>
                   {% for c in all_complaints %}
                   <tr>
-                    <td style="color:var(--cyan)">#{{ c['complaint_id'] }}</td>
+                    <td class="td-id">#{{ c['complaint_id'] }}</td>
                     <td>{{ c['category'] }}</td>
-                    <td>{{ c['location'] }}</td>
+                    <td style="color:var(--muted)">📍 {{ c['location'] }}</td>
                     <td>
                       {% if c['status'] == 'Pending' %}
-                        <span class="status-pill sp-new">New</span>
+                        <span class="sp sp-new">Pending</span>
                       {% elif c['status'] == 'In Progress' %}
-                        <span class="status-pill sp-progress">In Prog</span>
+                        <span class="sp sp-progress">In Progress</span>
                       {% else %}
-                        <span class="status-pill sp-resolved">Done</span>
+                        <span class="sp sp-resolved">Resolved</span>
                       {% endif %}
                     </td>
                     <td>
                       {% if c['priority'] == 'High' %}
-                        <span class="pr-high">● High</span>
+                        <span class="pr pr-high">● High</span>
                       {% elif c['priority'] == 'Medium' %}
-                        <span class="pr-med">● Med</span>
+                        <span class="pr pr-med">● Med</span>
                       {% else %}
-                        <span class="pr-low">● Low</span>
+                        <span class="pr pr-low">● Low</span>
                       {% endif %}
                     </td>
-                    <td class="td-action">
+                    <td style="white-space:nowrap">
                       {% if c['status'] == 'Pending' %}
                         <form method="POST" action="/assign_case/{{ c['complaint_id'] }}" class="inline-form">
-                          <button type="submit" class="assign-btn" style="padding:2px 8px;">Assign</button>
+                          <button type="submit" class="tbl-btn tbl-btn-assign">Assign</button>
                         </form>
                       {% elif c['status'] == 'In Progress' %}
                         <form method="POST" action="/resolve_case/{{ c['complaint_id'] }}" class="inline-form">
-                          <button type="submit" class="assign-btn btn-resolve" style="padding:2px 8px;">Resolve</button>
+                          <button type="submit" class="tbl-btn tbl-btn-resolve">Resolve</button>
                         </form>
                       {% else %}
-                        <a href="/case_tracking" class="assign-btn btn-view" style="padding:2px 8px;">View</a>
+                        <a href="/case_tracking" class="tbl-btn tbl-btn-view">View</a>
                       {% endif %}
                     </td>
                   </tr>
                   {% endfor %}
                 </tbody>
               </table>
-              {% else %}
-              <div class="empty-state">
-                <div class="empty-icon">📋</div>
-                No complaints filed yet.
-              </div>
-              {% endif %}
             </div>
+            {% else %}
+            <div class="empty-state">
+              <div class="empty-icon">📋</div>
+              No complaints filed yet
+            </div>
+            {% endif %}
           </div>
 
         </div>
