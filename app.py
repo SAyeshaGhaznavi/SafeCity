@@ -171,12 +171,22 @@ def report():
         )
 
         PRIORITY_MAP = {
+            'Murder': 'High',
             'Assault': 'High',
+            'Accident': 'High',
+            'Kidnapping': 'High',
+            'Drug Offense': 'High',
+            'Domestic Violence': 'High',
+            'Robbery': 'High',
             'Theft': 'Medium',
             'Fraud': 'Medium',
             'Cybercrime': 'Medium',
-            'Vandalism': 'Low',
+            'Burglary': 'Medium',
+            'Extortion': 'Medium',
             'Other': 'Medium',
+            'Vandalism': 'Low',
+            'Noise Complaint': 'Low',
+            'Traffic Violation': 'Low',
         }
         priority = PRIORITY_MAP.get(crime_type, 'Medium')
 
@@ -224,7 +234,7 @@ def login(role):
         username = request.form.get('username')
         email = request.form.get('email')
         password = request.form.get('password')
-        badge_number = request.form.get('badge_number')
+        badge_number = request.form.get('badge_number').strip().upper()
 
         conn = get_db_connection()
         user = conn.execute(
@@ -282,30 +292,39 @@ def register_badge():
         name = request.form.get('name', '').strip()
         email = request.form.get('email', '').strip()
         password = request.form.get('password', '')
-        badgenumber = request.form.get('badgenumber', '').strip()
+        badgenumber = request.form.get('badgenumber', '').strip().upper()
+        role_type = request.form.get('type', '').strip()
 
-        if not name or not email or not password or not badgenumber:
+        if not name or not email or not password or not badgenumber or not role_type:
             return render_template("register_badge.html", msg="Please fill in all fields ⚠️")
+
+        if role_type not in ('Police', 'Detective', 'Operator'):
+            return render_template("register_badge.html", msg="Invalid personnel type ⚠️")
 
         conn = get_db_connection()
 
         existing = conn.execute(
-            "SELECT * FROM AuthorizedPersonnel WHERE name = ? OR email = ?",
-            (name, email)
+            "SELECT * FROM AuthorizedPersonnel WHERE name = ? OR email = ? OR badge_number = ?",
+            (name, email, badgenumber)
         ).fetchone()
 
         if existing:
             conn.close()
-            return render_template("register_badge.html", msg="Name or Email already exists ❌")
+            field = 'Name' if existing['name'] == name else 'Email' if existing['email'] == email else 'Badge number'
+            return render_template("register_badge.html", msg=f"{field} already exists ❌")
 
-        conn.execute(
-            "INSERT INTO AuthorizedPersonnel (name, email, password_hash, badge_number) VALUES (?, ?, ?, ?)",
-            (name, email, password, badgenumber)
-        )
+        try:
+            conn.execute(
+                "INSERT INTO AuthorizedPersonnel (name, email, password_hash, badge_number, type) VALUES (?, ?, ?, ?, ?)",
+                (name, email, password, badgenumber, role_type)
+            )
+            conn.commit()
+        except Exception:
+            conn.rollback()
+            conn.close()
+            return render_template("register_badge.html", msg="Registration failed. Please try again. ❌")
 
-        conn.commit()
         conn.close()
-
         flash("Registered Successfully ✅", "success")
         return redirect(url_for("splash"))
 

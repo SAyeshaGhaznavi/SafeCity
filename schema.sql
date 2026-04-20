@@ -131,7 +131,17 @@ VALUES
 ('Assault'),
 ('Vandalism'),
 ('Fraud'),
-('Cyber Crime'),
+('Cybercrime'),
+('Murder'),
+('Accident'),
+('Kidnapping'),
+('Drug Offense'),
+('Domestic Violence'),
+('Robbery'),
+('Burglary'),
+('Extortion'),
+('Noise Complaint'),
+('Traffic Violation'),
 ('Other');
 
 INSERT INTO Complaints (user_id, category_id, description, location, status, created_at)

@@ -35,7 +35,6 @@
       justify-content: stretch;
     }
     
-    /* FULL SCREEN CONTAINER */
     .app-container {
       width: 100vw;
       height: 100vh;
@@ -50,7 +49,6 @@
       background-size: 50px 50px;
     }
     
-    /* MAIN CONTENT AREA */
     .app-content {
       flex: 1;
       overflow-y: auto;
@@ -63,16 +61,12 @@
       scrollbar-color: rgba(0,200,255,0.2) transparent;
     }
     
-    .app-content::-webkit-scrollbar {
-      width: 6px;
-    }
-    
+    .app-content::-webkit-scrollbar { width: 6px; }
     .app-content::-webkit-scrollbar-thumb {
       background: rgba(0,200,255,0.3);
       border-radius: 3px;
     }
     
-    /* DESKTOP LAYOUT - Two columns */
     .register-wrapper {
       display: flex;
       flex-direction: row;
@@ -86,7 +80,6 @@
       padding: 20px 0;
     }
     
-    /* Left Column - Info Section */
     .info-section {
       flex: 1;
       display: flex;
@@ -104,9 +97,7 @@
       margin-bottom: 8px;
     }
     
-    .logo-large span {
-      color: var(--cyan);
-    }
+    .logo-large span { color: var(--cyan); }
     
     .badge-icon-large {
       font-size: 4rem;
@@ -121,9 +112,7 @@
       margin-bottom: 16px;
     }
     
-    h1 span {
-      color: var(--cyan);
-    }
+    h1 span { color: var(--cyan); }
     
     .info-text {
       font-size: 1rem;
@@ -177,9 +166,7 @@
       width: 100%;
     }
     
-    .verification-icon {
-      font-size: 1.8rem;
-    }
+    .verification-icon { font-size: 1.8rem; }
     
     .verification-text {
       font-size: 0.85rem;
@@ -193,7 +180,6 @@
       font-size: 0.95rem;
     }
     
-    /* Right Column - Form Card */
     .form-card {
       background: rgba(255,255,255,0.03);
       border: 1px solid var(--border);
@@ -213,9 +199,7 @@
       margin-bottom: 4px;
     }
     
-    .logo span {
-      color: var(--cyan);
-    }
+    .logo span { color: var(--cyan); }
     
     .sub {
       text-align: center;
@@ -269,7 +253,6 @@
       color: var(--green);
     }
     
-    /* Two-column form layout for desktop */
     .form-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -277,13 +260,8 @@
       margin-bottom: 8px;
     }
     
-    .form-group {
-      margin-bottom: 0;
-    }
-    
-    .form-group-full {
-      grid-column: span 2;
-    }
+    .form-group { margin-bottom: 0; }
+    .form-group-full { grid-column: span 2; }
     
     label {
       display: block;
@@ -295,7 +273,7 @@
       margin-bottom: 6px;
     }
     
-    input {
+    input, select {
       width: 100%;
       padding: 12px 14px;
       background: rgba(255,255,255,0.05);
@@ -308,15 +286,27 @@
       outline: none;
     }
     
-    input:focus {
+    input:focus, select:focus {
       border-color: var(--cyan);
       background: rgba(0,200,255,0.07);
       box-shadow: 0 0 0 3px rgba(0,200,255,0.1);
     }
     
-    input::placeholder {
-      color: var(--muted);
-      opacity: 0.6;
+    input::placeholder { color: var(--muted); opacity: 0.6; }
+    
+    select {
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2300c8ff' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 38px;
+    }
+    
+    select option {
+      background: var(--navy);
+      color: var(--white);
     }
     
     .btn {
@@ -384,14 +374,9 @@
       transition: all 0.2s;
     }
     
-    .footer-links a:hover {
-      text-decoration: underline;
-    }
+    .footer-links a:hover { text-decoration: underline; }
     
-    /* Decorative elements */
-    .info-section {
-      position: relative;
-    }
+    .info-section { position: relative; }
     
     .info-section::before {
       content: '';
@@ -405,9 +390,7 @@
       z-index: -1;
     }
     
-    .form-card {
-      position: relative;
-    }
+    .form-card { position: relative; }
     
     .form-card::after {
       content: '';
@@ -420,329 +403,91 @@
       border-radius: 50%;
       z-index: -1;
     }
-    
-    /* RESPONSIVE BREAKPOINTS */
+
     @media (max-width: 968px) {
-      .app-content {
-        align-items: flex-start;
-        padding: 24px 20px;
-      }
-      
-      .register-wrapper {
-        flex-direction: column;
-        gap: 40px;
-        padding: 10px 0 20px;
-      }
-      
-      .info-section {
-        align-items: center;
-        text-align: center;
-        max-width: 520px;
-        position: static;
-        margin: 0 auto;
-      }
-      
-      .feature-item {
-        text-align: left;
-      }
-      
-      .form-grid {
-        grid-template-columns: 1fr;
-        gap: 14px;
-      }
-      
-      .form-group-full {
-        grid-column: span 1;
-      }
-      
-      .form-card {
-        padding: 36px 28px;
-        margin: 0 auto;
-      }
-      
-      .info-section::before {
-        display: none;
-      }
-      
-      .form-card::after {
-        display: none;
-      }
+      .app-content { align-items: flex-start; padding: 24px 20px; }
+      .register-wrapper { flex-direction: column; gap: 40px; padding: 10px 0 20px; }
+      .info-section { align-items: center; text-align: center; max-width: 520px; position: static; margin: 0 auto; }
+      .feature-item { text-align: left; }
+      .form-grid { grid-template-columns: 1fr; gap: 14px; }
+      .form-group-full { grid-column: span 1; }
+      .form-card { padding: 36px 28px; margin: 0 auto; }
+      .info-section::before, .form-card::after { display: none; }
     }
     
     @media (max-width: 768px) {
-      .app-content {
-        padding: 20px 16px;
-      }
-      
-      .register-wrapper {
-        gap: 32px;
-      }
-      
-      .logo-large {
-        font-size: 2.8rem;
-        letter-spacing: 5px;
-      }
-      
-      .badge-icon-large {
-        font-size: 3.5rem;
-        margin-bottom: 20px;
-      }
-      
-      h1 {
-        font-size: 2.2rem;
-      }
-      
-      .info-text {
-        font-size: 0.9rem;
-        margin-bottom: 24px;
-      }
-      
-      .feature-list {
-        gap: 14px;
-      }
-      
-      .feature-icon {
-        font-size: 1.3rem;
-        min-width: 36px;
-      }
-      
-      .feature-content h3 {
-        font-size: 1rem;
-      }
-      
-      .feature-content p {
-        font-size: 0.8rem;
-      }
-      
-      .form-card {
-        padding: 32px 24px;
-      }
-      
-      .logo {
-        font-size: 1.6rem;
-      }
-      
-      .card-icon {
-        font-size: 2.5rem;
-      }
-      
-      .card-title {
-        font-size: 1.6rem;
-      }
-      
-      .card-desc {
-        font-size: 0.8rem;
-      }
-      
-      .footer-links {
-        font-size: 0.75rem;
-      }
+      .app-content { padding: 20px 16px; }
+      .register-wrapper { gap: 32px; }
+      .logo-large { font-size: 2.8rem; letter-spacing: 5px; }
+      .badge-icon-large { font-size: 3.5rem; margin-bottom: 20px; }
+      h1 { font-size: 2.2rem; }
+      .info-text { font-size: 0.9rem; margin-bottom: 24px; }
+      .feature-list { gap: 14px; }
+      .feature-icon { font-size: 1.3rem; min-width: 36px; }
+      .feature-content h3 { font-size: 1rem; }
+      .feature-content p { font-size: 0.8rem; }
+      .form-card { padding: 32px 24px; }
+      .logo { font-size: 1.6rem; }
+      .card-icon { font-size: 2.5rem; }
+      .card-title { font-size: 1.6rem; }
+      .card-desc { font-size: 0.8rem; }
+      .footer-links { font-size: 0.75rem; }
     }
     
     @media (max-width: 480px) {
-      .app-content {
-        padding: 16px 12px;
-      }
-      
-      .register-wrapper {
-        gap: 24px;
-      }
-      
-      .logo-large {
-        font-size: 2.2rem;
-        letter-spacing: 4px;
-      }
-      
-      .badge-icon-large {
-        font-size: 3rem;
-        margin-bottom: 16px;
-      }
-      
-      h1 {
-        font-size: 1.8rem;
-        margin-bottom: 12px;
-      }
-      
-      .info-text {
-        font-size: 0.8rem;
-        margin-bottom: 20px;
-      }
-      
-      .feature-item {
-        gap: 12px;
-      }
-      
-      .feature-icon {
-        font-size: 1.2rem;
-        min-width: 32px;
-      }
-      
-      .feature-content h3 {
-        font-size: 0.95rem;
-      }
-      
-      .feature-content p {
-        font-size: 0.75rem;
-      }
-      
-      .verification-badge {
-        padding: 12px 14px;
-      }
-      
-      .verification-icon {
-        font-size: 1.5rem;
-      }
-      
-      .verification-text {
-        font-size: 0.75rem;
-      }
-      
-      .form-card {
-        padding: 28px 18px;
-        border-radius: 20px;
-      }
-      
-      .logo {
-        font-size: 1.4rem;
-      }
-      
-      .sub {
-        font-size: 0.65rem;
-        margin-bottom: 16px;
-      }
-      
-      .card-icon {
-        font-size: 2.2rem;
-        margin-bottom: 12px;
-      }
-      
-      .card-title {
-        font-size: 1.4rem;
-      }
-      
-      .card-desc {
-        font-size: 0.75rem;
-        margin-bottom: 24px;
-      }
-      
-      .flash-msg {
-        padding: 10px 12px;
-        font-size: 0.75rem;
-      }
-      
-      label {
-        font-size: 0.65rem;
-      }
-      
-      input {
-        padding: 10px 12px;
-        font-size: 0.85rem;
-      }
-      
-      .btn {
-        padding: 12px 16px;
-        font-size: 0.9rem;
-        margin-top: 12px;
-      }
-      
-      .req-box {
-        padding: 14px;
-        font-size: 0.75rem;
-      }
-      
-      .req-box strong {
-        font-size: 0.85rem;
-      }
-      
-      .footer-links {
-        font-size: 0.7rem;
-        margin-top: 16px;
-      }
+      .app-content { padding: 16px 12px; }
+      .register-wrapper { gap: 24px; }
+      .logo-large { font-size: 2.2rem; letter-spacing: 4px; }
+      .badge-icon-large { font-size: 3rem; margin-bottom: 16px; }
+      h1 { font-size: 1.8rem; margin-bottom: 12px; }
+      .info-text { font-size: 0.8rem; margin-bottom: 20px; }
+      .feature-item { gap: 12px; }
+      .feature-icon { font-size: 1.2rem; min-width: 32px; }
+      .feature-content h3 { font-size: 0.95rem; }
+      .feature-content p { font-size: 0.75rem; }
+      .verification-badge { padding: 12px 14px; }
+      .verification-icon { font-size: 1.5rem; }
+      .verification-text { font-size: 0.75rem; }
+      .form-card { padding: 28px 18px; border-radius: 20px; }
+      .logo { font-size: 1.4rem; }
+      .sub { font-size: 0.65rem; margin-bottom: 16px; }
+      .card-icon { font-size: 2.2rem; margin-bottom: 12px; }
+      .card-title { font-size: 1.4rem; }
+      .card-desc { font-size: 0.75rem; margin-bottom: 24px; }
+      .flash-msg { padding: 10px 12px; font-size: 0.75rem; }
+      label { font-size: 0.65rem; }
+      input, select { padding: 10px 12px; font-size: 0.85rem; }
+      .btn { padding: 12px 16px; font-size: 0.9rem; margin-top: 12px; }
+      .req-box { padding: 14px; font-size: 0.75rem; }
+      .req-box strong { font-size: 0.85rem; }
+      .footer-links { font-size: 0.7rem; margin-top: 16px; }
     }
     
-    /* Desktop Large Screens */
     @media (min-width: 1200px) {
-      .register-wrapper {
-        gap: 80px;
-      }
-      
-      .logo-large {
-        font-size: 4rem;
-        letter-spacing: 8px;
-      }
-      
-      .badge-icon-large {
-        font-size: 4.5rem;
-      }
-      
-      h1 {
-        font-size: 3.2rem;
-      }
-      
-      .info-text {
-        font-size: 1.1rem;
-      }
-      
-      .form-card {
-        padding: 52px 44px;
-      }
-      
-      .form-grid {
-        gap: 20px 24px;
-      }
+      .register-wrapper { gap: 80px; }
+      .logo-large { font-size: 4rem; letter-spacing: 8px; }
+      .badge-icon-large { font-size: 4.5rem; }
+      h1 { font-size: 3.2rem; }
+      .info-text { font-size: 1.1rem; }
+      .form-card { padding: 52px 44px; }
+      .form-grid { gap: 20px 24px; }
     }
     
-    /* Ultra-wide screens */
     @media (min-width: 1600px) {
-      .register-wrapper {
-        max-width: 1500px;
-        gap: 100px;
-      }
-      
-      .info-section {
-        max-width: 550px;
-      }
-      
-      .form-card {
-        max-width: 580px;
-      }
+      .register-wrapper { max-width: 1500px; gap: 100px; }
+      .info-section { max-width: 550px; }
+      .form-card { max-width: 580px; }
     }
     
-    /* Small screen height fix */
     @media (max-height: 700px) {
-      .app-content {
-        padding: 20px;
-      }
-      
-      .register-wrapper {
-        padding: 0;
-      }
-      
-      .form-card {
-        padding: 30px 24px;
-      }
-      
-      .logo-large {
-        font-size: 2.5rem;
-      }
-      
-      .badge-icon-large {
-        font-size: 2.5rem;
-        margin-bottom: 16px;
-      }
-      
-      h1 {
-        font-size: 2rem;
-      }
-      
-      .info-text {
-        margin-bottom: 20px;
-      }
-      
-      .feature-list {
-        gap: 12px;
-        margin-bottom: 20px;
-      }
+      .app-content { padding: 20px; }
+      .register-wrapper { padding: 0; }
+      .form-card { padding: 30px 24px; }
+      .logo-large { font-size: 2.5rem; }
+      .badge-icon-large { font-size: 2.5rem; margin-bottom: 16px; }
+      h1 { font-size: 2rem; }
+      .info-text { margin-bottom: 20px; }
+      .feature-list { gap: 12px; margin-bottom: 20px; }
     }
   </style>
 </head>
@@ -750,7 +495,6 @@
   <div class="app-container">
     <div class="app-content">
       <div class="register-wrapper">
-        <!-- Left Column - Info Section (Visible on desktop) -->
         <div class="info-section">
           <div class="logo-large">SAFE<span>CITY</span></div>
           <div class="badge-icon-large">🛡️</div>
@@ -790,7 +534,6 @@
           </div>
         </div>
         
-        <!-- Right Column - Registration Form -->
         <div class="form-card">
           <div class="logo">SAFE<span>CITY</span></div>
           <p class="sub">Law Enforcement</p>
@@ -822,6 +565,15 @@
               <div class="form-group">
                 <label>Password</label>
                 <input type="password" name="password" placeholder="Create a strong password" required>
+              </div>
+              <div class="form-group form-group-full">
+                <label>Personnel Type</label>
+                <select name="type" required>
+                  <option value="" disabled selected>Select your role</option>
+                  <option value="Police">Police Officer</option>
+                  <option value="Detective">Detective</option>
+                  <option value="Operator">Operator</option>
+                </select>
               </div>
             </div>
             <button type="submit" class="btn btn-primary">Register Badge →</button>

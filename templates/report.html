@@ -35,7 +35,6 @@
       justify-content: stretch;
     }
     
-    /* FULL SCREEN CONTAINER */
     .app-container {
       width: 100vw;
       height: 100vh;
@@ -50,7 +49,6 @@
       background-size: 50px 50px;
     }
     
-    /* HEADER */
     .header {
       padding: 20px 40px;
       border-bottom: 1px solid var(--border);
@@ -88,7 +86,6 @@
       flex: 1;
     }
     
-    /* MAIN CONTENT AREA */
     .app-content {
       flex: 1;
       overflow-y: auto;
@@ -99,16 +96,12 @@
       scrollbar-color: rgba(0,200,255,0.2) transparent;
     }
     
-    .app-content::-webkit-scrollbar {
-      width: 6px;
-    }
-    
+    .app-content::-webkit-scrollbar { width: 6px; }
     .app-content::-webkit-scrollbar-thumb {
       background: rgba(0,200,255,0.3);
       border-radius: 3px;
     }
     
-    /* CONTENT WRAPPER */
     .content {
       flex: 1;
       padding: 32px 40px;
@@ -120,7 +113,6 @@
       width: 100%;
     }
     
-    /* DESKTOP LAYOUT - Two columns */
     .report-grid {
       display: grid;
       grid-template-columns: 1fr 1.2fr;
@@ -128,7 +120,6 @@
       align-items: start;
     }
     
-    /* Left Column - Crime Types */
     .crime-section {
       background: rgba(255,255,255,0.03);
       border: 1px solid var(--border);
@@ -147,19 +138,19 @@
     
     .crime-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
     }
     
     .crime-btn {
       background: rgba(255,255,255,0.04);
       border: 1.5px solid var(--border);
       border-radius: 14px;
-      padding: 20px 12px 16px;
+      padding: 18px 10px 14px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       cursor: pointer;
       transition: all 0.3s ease;
       font-family: 'DM Sans', sans-serif;
@@ -179,21 +170,11 @@
       transition: opacity 0.3s ease;
     }
     
-    .crime-btn[data-priority="High"]::after {
-      background: var(--red);
-    }
+    .crime-btn[data-priority="High"]::after { background: var(--red); }
+    .crime-btn[data-priority="Medium"]::after { background: var(--yellow); }
+    .crime-btn[data-priority="Low"]::after { background: var(--green); }
     
-    .crime-btn[data-priority="Medium"]::after {
-      background: var(--yellow);
-    }
-    
-    .crime-btn[data-priority="Low"]::after {
-      background: var(--green);
-    }
-    
-    .crime-btn.active::after {
-      opacity: 1;
-    }
+    .crime-btn.active::after { opacity: 1; }
     
     .crime-btn.active, .crime-btn:hover {
       border-color: var(--cyan);
@@ -204,48 +185,38 @@
     }
     
     .crime-btn-img {
-      width: 60px;
-      height: 60px;
-      border-radius: 12px;
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2.2rem;
+      font-size: 1.8rem;
       background: rgba(0,200,255,0.05);
     }
     
     .crime-btn-label {
-      font-size: 0.85rem;
+      font-size: 0.72rem;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 0.8px;
+      text-align: center;
+      line-height: 1.2;
     }
     
     .crime-btn-priority {
-      font-size: 0.65rem;
+      font-size: 0.58rem;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      padding: 3px 8px;
+      padding: 2px 7px;
       border-radius: 4px;
     }
     
-    .p-high {
-      color: var(--red);
-      background: rgba(255,78,106,0.12);
-    }
+    .p-high { color: var(--red); background: rgba(255,78,106,0.12); }
+    .p-med { color: var(--yellow); background: rgba(255,184,48,0.12); }
+    .p-low { color: var(--green); background: rgba(0,229,160,0.12); }
     
-    .p-med {
-      color: var(--yellow);
-      background: rgba(255,184,48,0.12);
-    }
-    
-    .p-low {
-      color: var(--green);
-      background: rgba(0,229,160,0.12);
-    }
-    
-    /* Right Column - Form */
     .form-section {
       background: rgba(255,255,255,0.03);
       border: 1px solid var(--border);
@@ -292,9 +263,7 @@
       opacity: 0.6;
     }
     
-    select option {
-      background: var(--navy);
-    }
+    select option { background: var(--navy); }
     
     textarea {
       resize: vertical;
@@ -334,15 +303,8 @@
       transform: scale(1.02);
     }
     
-    .upload-icon {
-      font-size: 2rem;
-      margin-bottom: 8px;
-    }
-    
-    .upload-text {
-      font-size: 0.85rem;
-      color: var(--muted);
-    }
+    .upload-icon { font-size: 2rem; margin-bottom: 8px; }
+    .upload-text { font-size: 0.85rem; color: var(--muted); }
     
     .btn-row {
       display: grid;
@@ -398,10 +360,7 @@
       border-top: 1px solid var(--border);
     }
     
-    .hotline strong {
-      color: var(--cyan);
-      font-size: 1.1rem;
-    }
+    .hotline strong { color: var(--cyan); font-size: 1.1rem; }
     
     .flash-msg {
       padding: 14px 18px;
@@ -424,7 +383,19 @@
       border-color: rgba(255,78,106,0.25);
     }
     
-    /* RESPONSIVE BREAKPOINTS */
+    .selected-badge {
+      text-align: center;
+      padding: 10px;
+      background: rgba(0,200,255,0.06);
+      border: 1px solid rgba(0,200,255,0.15);
+      border-radius: 10px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    
+    .selected-badge strong { color: var(--cyan); }
+    
     @media (max-width: 1024px) {
       .report-grid {
         grid-template-columns: 1fr;
@@ -432,205 +403,65 @@
       }
       
       .crime-grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(4, 1fr);
       }
     }
     
     @media (max-width: 768px) {
-      .header {
-        padding: 16px 24px;
-      }
-      
-      .header-title {
-        font-size: 1.5rem;
-      }
-      
-      .content {
-        padding: 24px 20px;
-      }
-      
-      .crime-section, .form-section {
-        padding: 24px 20px;
-      }
-      
-      .crime-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-      }
-      
-      .crime-btn {
-        padding: 16px 10px 14px;
-      }
-      
-      .crime-btn-img {
-        width: 50px;
-        height: 50px;
-        font-size: 1.8rem;
-      }
-      
-      .crime-btn-label {
-        font-size: 0.75rem;
-      }
-      
-      .btn-row {
-        grid-template-columns: 1fr;
-        gap: 12px;
-      }
+      .header { padding: 16px 24px; }
+      .header-title { font-size: 1.5rem; }
+      .content { padding: 24px 20px; }
+      .crime-section, .form-section { padding: 24px 20px; }
+      .crime-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+      .crime-btn { padding: 14px 8px 12px; }
+      .crime-btn-img { width: 42px; height: 42px; font-size: 1.6rem; }
+      .crime-btn-label { font-size: 0.68rem; }
+      .btn-row { grid-template-columns: 1fr; gap: 12px; }
     }
     
     @media (max-width: 480px) {
-      .header {
-        padding: 14px 16px;
-      }
-      
-      .back-btn {
-        width: 36px;
-        height: 36px;
-        font-size: 1.3rem;
-      }
-      
-      .header-title {
-        font-size: 1.3rem;
-      }
-      
-      .content {
-        padding: 20px 16px;
-        gap: 20px;
-      }
-      
-      .crime-section, .form-section {
-        padding: 20px 16px;
-      }
-      
-      .section-label {
-        font-size: 0.75rem;
-        margin-bottom: 16px;
-      }
-      
-      .crime-grid {
-        gap: 10px;
-      }
-      
-      .crime-btn {
-        padding: 14px 8px 12px;
-      }
-      
-      .crime-btn-img {
-        width: 45px;
-        height: 45px;
-        font-size: 1.6rem;
-      }
-      
-      .crime-btn-label {
-        font-size: 0.7rem;
-      }
-      
-      .crime-btn-priority {
-        font-size: 0.6rem;
-      }
-      
-      .form-group {
-        margin-bottom: 14px;
-      }
-      
-      label {
-        font-size: 0.7rem;
-      }
-      
-      input, select, textarea {
-        padding: 10px 12px;
-        font-size: 0.85rem;
-      }
-      
-      .checkbox-row {
-        font-size: 0.85rem;
-      }
-      
-      .upload-area {
-        padding: 20px;
-      }
-      
-      .upload-icon {
-        font-size: 1.8rem;
-      }
-      
-      .upload-text {
-        font-size: 0.8rem;
-      }
-      
-      .btn {
-        padding: 12px 16px;
-        font-size: 0.9rem;
-      }
-      
-      .hotline {
-        font-size: 0.8rem;
-      }
-      
-      .hotline strong {
-        font-size: 1rem;
-      }
-      
-      .flash-msg {
-        padding: 12px 14px;
-        font-size: 0.85rem;
-      }
+      .header { padding: 14px 16px; }
+      .back-btn { width: 36px; height: 36px; font-size: 1.3rem; }
+      .header-title { font-size: 1.3rem; }
+      .content { padding: 20px 16px; gap: 20px; }
+      .crime-section, .form-section { padding: 20px 16px; }
+      .section-label { font-size: 0.75rem; margin-bottom: 14px; }
+      .crime-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      .crime-btn { padding: 12px 6px 10px; }
+      .crime-btn-img { width: 38px; height: 38px; font-size: 1.4rem; }
+      .crime-btn-label { font-size: 0.62rem; }
+      .crime-btn-priority { font-size: 0.52rem; padding: 1px 5px; }
+      .form-group { margin-bottom: 14px; }
+      label { font-size: 0.7rem; }
+      input, select, textarea { padding: 10px 12px; font-size: 0.85rem; }
+      .checkbox-row { font-size: 0.85rem; }
+      .upload-area { padding: 20px; }
+      .upload-icon { font-size: 1.8rem; }
+      .upload-text { font-size: 0.8rem; }
+      .btn { padding: 12px 16px; font-size: 0.9rem; }
+      .hotline { font-size: 0.8rem; }
+      .hotline strong { font-size: 1rem; }
+      .flash-msg { padding: 12px 14px; font-size: 0.85rem; }
     }
     
-    /* Desktop Large Screens */
     @media (min-width: 1200px) {
-      .content {
-        padding: 40px 60px;
-      }
-      
-      .header {
-        padding: 24px 60px;
-      }
-      
-      .header-title {
-        font-size: 2rem;
-      }
-      
-      .crime-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-      
-      .crime-btn {
-        padding: 24px 16px 20px;
-      }
-      
-      .crime-btn-img {
-        width: 70px;
-        height: 70px;
-        font-size: 2.5rem;
-      }
-      
-      .crime-btn-label {
-        font-size: 0.95rem;
-      }
+      .content { padding: 40px 60px; }
+      .header { padding: 24px 60px; }
+      .header-title { font-size: 2rem; }
+      .crime-grid { grid-template-columns: repeat(4, 1fr); }
+      .crime-btn { padding: 20px 12px 16px; }
+      .crime-btn-img { width: 54px; height: 54px; font-size: 2.2rem; }
+      .crime-btn-label { font-size: 0.78rem; }
     }
     
-    /* Ultra-wide screens */
     @media (min-width: 1600px) {
-      .content {
-        max-width: 1600px;
-      }
-      
-      .report-grid {
-        gap: 60px;
-      }
+      .content { max-width: 1600px; }
+      .report-grid { gap: 60px; }
     }
     
-    /* Small screen height fix */
     @media (max-height: 700px) {
-      .content {
-        padding: 20px 30px;
-        gap: 20px;
-      }
-      
-      .crime-section, .form-section {
-        padding: 20px;
-      }
+      .content { padding: 20px 30px; gap: 20px; }
+      .crime-section, .form-section { padding: 20px; }
     }
   </style>
   <script>
@@ -639,18 +470,19 @@
       btn.classList.add('active');
       document.getElementById('crimeTypeInput').value = btn.querySelector('.crime-btn-label').textContent;
       document.getElementById('priorityInput').value = btn.dataset.priority;
+      var badge = document.getElementById('selectedBadge');
+      var priColor = btn.dataset.priority === 'High' ? 'var(--red)' : btn.dataset.priority === 'Medium' ? 'var(--yellow)' : 'var(--green)';
+      badge.innerHTML = 'Selected: <strong>' + btn.querySelector('.crime-btn-label').textContent + '</strong> · Priority: <strong style="color:' + priColor + '">' + btn.dataset.priority + '</strong>';
     }
   </script>
 </head>
 <body>
   <div class="app-container">
-    <!-- HEADER -->
     <div class="header">
       <button class="back-btn" onclick="window.history.back()">←</button>
       <div class="header-title">REPORT CRIME</div>
     </div>
 
-    <!-- CONTENT -->
     <div class="app-content">
       <div class="content">
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -664,24 +496,52 @@
         {% endwith %}
 
         <div class="report-grid">
-          <!-- Left Column - Crime Types -->
           <div class="crime-section">
             <div class="section-label">Select Crime Type</div>
+            <div id="selectedBadge" class="selected-badge">Selected: <strong>Theft</strong> · Priority: <strong style="color:var(--yellow)">Medium</strong></div>
             <div class="crime-grid">
-              <button class="crime-btn active" data-priority="Medium" onclick="selectCrime(this)">
-                <span class="crime-btn-img">💰</span>
-                <span class="crime-btn-label">Theft</span>
-                <span class="crime-btn-priority p-med">Medium</span>
+              <!-- HIGH PRIORITY -->
+              <button class="crime-btn" data-priority="High" onclick="selectCrime(this)">
+                <span class="crime-btn-img">🔪</span>
+                <span class="crime-btn-label">Murder</span>
+                <span class="crime-btn-priority p-high">High</span>
               </button>
               <button class="crime-btn" data-priority="High" onclick="selectCrime(this)">
                 <span class="crime-btn-img">👊</span>
                 <span class="crime-btn-label">Assault</span>
                 <span class="crime-btn-priority p-high">High</span>
               </button>
-              <button class="crime-btn" data-priority="Low" onclick="selectCrime(this)">
-                <span class="crime-btn-img">🏚️</span>
-                <span class="crime-btn-label">Vandalism</span>
-                <span class="crime-btn-priority p-low">Low</span>
+              <button class="crime-btn" data-priority="High" onclick="selectCrime(this)">
+                <span class="crime-btn-img">🚗</span>
+                <span class="crime-btn-label">Accident</span>
+                <span class="crime-btn-priority p-high">High</span>
+              </button>
+              <button class="crime-btn" data-priority="High" onclick="selectCrime(this)">
+                <span class="crime-btn-img">⛓️</span>
+                <span class="crime-btn-label">Kidnapping</span>
+                <span class="crime-btn-priority p-high">High</span>
+              </button>
+              <button class="crime-btn" data-priority="High" onclick="selectCrime(this)">
+                <span class="crime-btn-img">💊</span>
+                <span class="crime-btn-label">Drug Offense</span>
+                <span class="crime-btn-priority p-high">High</span>
+              </button>
+              <button class="crime-btn" data-priority="High" onclick="selectCrime(this)">
+                <span class="crime-btn-img">🏠</span>
+                <span class="crime-btn-label">Domestic Violence</span>
+                <span class="crime-btn-priority p-high">High</span>
+              </button>
+              <button class="crime-btn" data-priority="High" onclick="selectCrime(this)">
+                <span class="crime-btn-img">🏦</span>
+                <span class="crime-btn-label">Robbery</span>
+                <span class="crime-btn-priority p-high">High</span>
+              </button>
+
+              <!-- MEDIUM PRIORITY -->
+              <button class="crime-btn active" data-priority="Medium" onclick="selectCrime(this)">
+                <span class="crime-btn-img">💰</span>
+                <span class="crime-btn-label">Theft</span>
+                <span class="crime-btn-priority p-med">Medium</span>
               </button>
               <button class="crime-btn" data-priority="Medium" onclick="selectCrime(this)">
                 <span class="crime-btn-img">📋</span>
@@ -694,6 +554,33 @@
                 <span class="crime-btn-priority p-med">Medium</span>
               </button>
               <button class="crime-btn" data-priority="Medium" onclick="selectCrime(this)">
+                <span class="crime-btn-img">🔓</span>
+                <span class="crime-btn-label">Burglary</span>
+                <span class="crime-btn-priority p-med">Medium</span>
+              </button>
+              <button class="crime-btn" data-priority="Medium" onclick="selectCrime(this)">
+                <span class="crime-btn-img">⚫</span>
+                <span class="crime-btn-label">Extortion</span>
+                <span class="crime-btn-priority p-med">Medium</span>
+              </button>
+
+              <!-- LOW PRIORITY -->
+              <button class="crime-btn" data-priority="Low" onclick="selectCrime(this)">
+                <span class="crime-btn-img">🏚️</span>
+                <span class="crime-btn-label">Vandalism</span>
+                <span class="crime-btn-priority p-low">Low</span>
+              </button>
+              <button class="crime-btn" data-priority="Low" onclick="selectCrime(this)">
+                <span class="crime-btn-img">🔊</span>
+                <span class="crime-btn-label">Noise Complaint</span>
+                <span class="crime-btn-priority p-low">Low</span>
+              </button>
+              <button class="crime-btn" data-priority="Low" onclick="selectCrime(this)">
+                <span class="crime-btn-img">🚦</span>
+                <span class="crime-btn-label">Traffic Violation</span>
+                <span class="crime-btn-priority p-low">Low</span>
+              </button>
+              <button class="crime-btn" data-priority="Medium" onclick="selectCrime(this)">
                 <span class="crime-btn-img">•••</span>
                 <span class="crime-btn-label">Other</span>
                 <span class="crime-btn-priority p-med">Medium</span>
@@ -701,7 +588,6 @@
             </div>
           </div>
 
-          <!-- Right Column - Form -->
           <div class="form-section">
             <form method="POST" action="/report" enctype="multipart/form-data">
               <input type="hidden" name="crime_type" id="crimeTypeInput" value="Theft">
