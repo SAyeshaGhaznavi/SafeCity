@@ -192,7 +192,7 @@ def report():
 
         db.execute('''
             INSERT INTO Cases (complaint_id, assigned_police_id, assigned_detective_id, assigned_volunteer_id, priority, notes)
-            VALUES (?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?)
         ''', (complaint_id, None, None, None, priority, f'Priority: {priority}'))
 
         if evidence and evidence.filename:
@@ -747,6 +747,10 @@ def append_case_notes(complaint_id):
         "INSERT INTO Logs (user_id, action) VALUES (?, ?)",
         (session['user_id'], f"Added note to case #{complaint_id}")
     )
+    conn.execute(
+        "INSERT INTO Notifications (message) VALUES (?)",
+        (f"Detective {detective_name} added a note to case #{complaint_id}.",)
+    )
     conn.commit()
     conn.close()
 
@@ -951,33 +955,228 @@ def update_investigation(complaint_id):
     return redirect(url_for('detective_dashboard'))
 
 
+
+
+
 @app.route('/admin_dashboard')
 def admin_dashboard():
-    if session.get('role') != 'Operator': return redirect(url_for('login'))
+    if session.get('role') not in ('Operator', 'Admin'):
+        return redirect(url_for('login'))
 
     conn = get_db_connection()
-    active_dispatches = conn.execute("""
-            SELECT d.dispatch_id, d.complaint_id, d.status, d.eta, c.location, cc.name as category
-            FROM Dispatch d
-            JOIN Complaints c ON d.complaint_id = c.complaint_id
-            JOIN CrimeCategories cc ON c.category_id = cc.category_id
-            WHERE d.status NOT IN ('Completed')
-            ORDER BY d.created_at DESC
-        """).fetchall()
 
-    unassigned_high = conn.execute("""
-            SELECT c.complaint_id, cc.name as category, c.location 
-            FROM Complaints c JOIN Cases cs ON c.complaint_id = cs.complaint_id
-            JOIN CrimeCategories cc ON c.category_id = cc.category_id
-            WHERE cs.priority = 'High' AND c.complaint_id NOT IN (SELECT complaint_id FROM Dispatch)
-        """).fetchall()
+    pending = conn.execute("SELECT COUNT(*) FROM Complaints WHERE status = 'Pending'").fetchone()[0]
+    in_progress = conn.execute("SELECT COUNT(*) FROM Complaints WHERE status = 'In Progress'").fetchone()[0]
+    resolved = conn.execute("SELECT COUNT(*) FROM Complaints WHERE status = 'Resolved'").fetchone()[0]
 
-    # Get available units (Citizens marked as volunteers or personnel)
-    units = conn.execute("SELECT citizen_id, full_name FROM Citizens LIMIT 5").fetchall()
+    # Cases without officer (pending/in-progress, no officer assigned)
+    no_officer = conn.execute("""
+        SELECT c.complaint_id, cc.name as category, c.description, c.location, c.status, cs.priority, c.created_at
+        FROM Complaints c
+        JOIN Cases cs ON c.complaint_id = cs.complaint_id
+        JOIN CrimeCategories cc ON c.category_id = cc.category_id
+        WHERE cs.assigned_police_id IS NULL AND c.status IN ('Pending', 'In Progress')
+        ORDER BY cs.priority DESC, c.created_at DESC
+    """).fetchall()
+
+    # Cases without detective (has officer, no detective, pending/in-progress)
+    no_detective = conn.execute("""
+        SELECT c.complaint_id, cc.name as category, c.location, c.status, cs.priority, c.created_at,
+               ap.name as officer_name
+        FROM Complaints c
+        JOIN Cases cs ON c.complaint_id = cs.complaint_id
+        JOIN CrimeCategories cc ON c.category_id = cc.category_id
+        LEFT JOIN AuthorizedPersonnel ap ON cs.assigned_police_id = ap.personnel_id
+        WHERE cs.assigned_police_id IS NOT NULL
+          AND cs.assigned_detective_id IS NULL
+          AND c.status IN ('Pending', 'In Progress')
+        ORDER BY cs.priority DESC, c.created_at DESC
+    """).fetchall()
+
+    # Available officers
+    officers = conn.execute("""
+        SELECT personnel_id, name, badge_number
+        FROM AuthorizedPersonnel
+        WHERE type = 'Police'
+        ORDER BY name
+    """).fetchall()
+
+    # Available detectives
+    detectives = conn.execute("""
+        SELECT p.personnel_id, p.name, p.badge_number, d.specialization
+        FROM AuthorizedPersonnel p
+        JOIN Detectives d ON p.personnel_id = d.personnel_id
+        ORDER BY p.name
+    """).fetchall()
+
+    # High priority (not resolved)
+    high_priority = conn.execute("""
+        SELECT c.complaint_id, cc.name as category, c.description, c.location, c.status, cs.priority
+        FROM Complaints c
+        JOIN Cases cs ON c.complaint_id = cs.complaint_id
+        JOIN CrimeCategories cc ON c.category_id = cc.category_id
+        WHERE cs.priority = 'High' AND c.status != 'Resolved'
+        ORDER BY c.created_at DESC
+        LIMIT 5
+    """).fetchall()
+
+    # Recent cases (top 5)
+    recent_raw = conn.execute("""
+        SELECT c.complaint_id, cc.name as category, c.location, c.status, c.created_at,
+               COALESCE(cs.priority, 'Medium') as priority
+        FROM Complaints c
+        LEFT JOIN Cases cs ON c.complaint_id = cs.complaint_id
+        JOIN CrimeCategories cc ON c.category_id = cc.category_id
+        ORDER BY c.created_at DESC
+        LIMIT 5
+    """).fetchall()
+
+    # Notifications (latest 10)
+    notifications_raw = conn.execute("""
+        SELECT message, created_at
+        FROM Notifications
+        ORDER BY created_at DESC
+        LIMIT 10
+    """).fetchall()
+
+    # All complaints for table
+    all_complaints = conn.execute("""
+        SELECT c.complaint_id, cc.name as category, c.location, c.status,
+               COALESCE(cs.priority, 'Medium') as priority, c.created_at
+        FROM Complaints c
+        LEFT JOIN Cases cs ON c.complaint_id = cs.complaint_id
+        JOIN CrimeCategories cc ON c.category_id = cc.category_id
+        ORDER BY c.created_at DESC
+    """).fetchall()
+
     conn.close()
 
-    return render_template('operator_dashboard.html', active_dispatches=active_dispatches,
-                           unassigned_high=unassigned_high, units=units)
+    # Build lists with time_ago
+    now = datetime.utcnow()
+    recent = []
+    for r in recent_raw:
+        recent.append({
+            'complaint_id': r['complaint_id'],
+            'category': r['category'],
+            'location': r['location'],
+            'status': r['status'],
+            'priority': r['priority'],
+            'time_ago': time_ago(r['created_at'])
+        })
+
+    notifications = []
+    for n in notifications_raw:
+        dt = datetime.strptime(n['created_at'], '%Y-%m-%d %H:%M:%S')
+        notifications.append({
+            'message': n['message'],
+            'time_ago': time_ago(n['created_at']),
+            'is_new': (now - dt).total_seconds() / 3600 < 24
+        })
+
+    return render_template(
+        'admin_dashboard.html',
+        pending=pending,
+        in_progress=in_progress,
+        resolved=resolved,
+        no_officer=no_officer,
+        no_detective=no_detective,
+        officers=officers,
+        detectives=detectives,
+        high_priority=high_priority,
+        recent=recent,
+        notifications=notifications,
+        all_complaints=all_complaints,
+    )
+
+
+@app.route('/admin_assign_officer/<int:complaint_id>', methods=['POST'])
+def admin_assign_officer(complaint_id):
+    if session.get('role') not in ('Operator', 'Admin'):
+        return redirect(url_for('login'))
+
+    officer_id = request.form.get('officer_id')
+    if not officer_id:
+        flash('Please select an officer.', 'error')
+        return redirect(url_for('admin_dashboard'))
+
+    conn = get_db_connection()
+
+    officer = conn.execute(
+        "SELECT name FROM AuthorizedPersonnel WHERE personnel_id = ?", (officer_id,)
+    ).fetchone()
+
+    if not officer:
+        flash('Invalid officer selected.', 'error')
+        conn.close()
+        return redirect(url_for('admin_dashboard'))
+
+    conn.execute(
+        "UPDATE Cases SET assigned_police_id = ?, last_updated = CURRENT_TIMESTAMP WHERE complaint_id = ?",
+        (officer_id, complaint_id)
+    )
+    conn.execute(
+        "INSERT INTO Logs (user_id, action) VALUES (?, ?)",
+        (session['user_id'], f"Assigned officer {officer['name']} to case #{complaint_id}")
+    )
+    conn.execute(
+        "INSERT INTO Notifications (message) VALUES (?)",
+        (f"Admin assigned {officer['name']} to case #{complaint_id}.",)
+    )
+    conn.commit()
+    conn.close()
+
+    flash(f"Officer {officer['name']} assigned to case #{complaint_id}.", 'success')
+    return redirect(url_for('admin_dashboard'))
+
+
+@app.route('/admin_assign_detective/<int:complaint_id>', methods=['POST'])
+def admin_assign_detective(complaint_id):
+    if session.get('role') not in ('Operator', 'Admin'):
+        return redirect(url_for('login'))
+
+    detective_id = request.form.get('detective_id')
+    if not detective_id:
+        flash('Please select a detective.', 'error')
+        return redirect(url_for('admin_dashboard'))
+
+    conn = get_db_connection()
+
+    detective = conn.execute("""
+        SELECT p.name, d.specialization
+        FROM AuthorizedPersonnel p
+        JOIN Detectives d ON p.personnel_id = d.personnel_id
+        WHERE p.personnel_id = ?
+    """, (detective_id,)).fetchone()
+
+    if not detective:
+        flash('Invalid detective selected.', 'error')
+        conn.close()
+        return redirect(url_for('admin_dashboard'))
+
+    conn.execute(
+        "UPDATE Cases SET assigned_detective_id = ?, last_updated = CURRENT_TIMESTAMP WHERE complaint_id = ?",
+        (detective_id, complaint_id)
+    )
+    conn.execute(
+        "INSERT INTO Logs (user_id, action) VALUES (?, ?)",
+        (session['user_id'], f"Assigned detective {detective['name']} ({detective['specialization']}) to case #{complaint_id}")
+    )
+    conn.execute(
+        "INSERT INTO Notifications (message) VALUES (?)",
+        (f"Admin assigned Detective {detective['name']} ({detective['specialization']}) to case #{complaint_id}.",)
+    )
+    conn.commit()
+    conn.close()
+
+    flash(f"Detective {detective['name']} assigned to case #{complaint_id}.", 'success')
+    return redirect(url_for('admin_dashboard'))
+
+
+
+
+
+
+
 
 
 @app.route('/dispatch_unit', methods=['POST'])
