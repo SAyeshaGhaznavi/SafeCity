@@ -311,22 +311,59 @@ def register_badge():
 
     return render_template("register_badge.html")
 
+@app.route('/my_assigned_cases')
+def my_assigned_cases():
+    if 'user_id' not in session:
+        flash('Please log in first.', 'error')
+        return redirect('/login')
+
+    db = get_db_connection()
+    cases = db.execute('''
+        SELECT c.complaint_id, cc.name as category_name, c.location, c.status,
+               cs.priority, c.created_at
+        FROM Complaints c
+        JOIN CrimeCategories cc ON c.category_id = cc.category_id
+        JOIN Cases cs ON c.complaint_id = cs.complaint_id
+        WHERE cs.assigned_police_id = ?
+        ORDER BY c.created_at DESC
+    ''', (session['user_id'],)).fetchall()
+
+    all_cases = []
+    for c in cases:
+        all_cases.append({
+            'complaint_id': c['complaint_id'],
+            'category_name': c['category_name'],
+            'location': c['location'],
+            'status': c['status'],
+            'priority': c['priority'] if c['priority'] else 'Medium',
+            'time_ago': time_ago(c['created_at'])
+        })
+
+    db.close()
+    return render_template('case_tracking.html', cases=all_cases, filter_type='assigned')
+
 
 @app.route('/police_dashboard')
 def police_dashboard():
     conn = get_db_connection()
-    pending = conn.execute(
-        "SELECT COUNT(*) FROM Complaints WHERE status = 'Pending'"
-    ).fetchone()[0]
+    pending = conn.execute('''
+        SELECT COUNT(*) FROM Complaints c
+        JOIN Cases cs ON c.complaint_id = cs.complaint_id
+        WHERE cs.assigned_police_id = ? AND c.status = 'Pending'
+    ''', (session.get('user_id'),)).fetchone()[0]
 
-    in_progress = conn.execute(
-        "SELECT COUNT(*) FROM Complaints WHERE status = 'In Progress'"
-    ).fetchone()[0]
+    in_progress = conn.execute('''
+        SELECT COUNT(*) FROM Complaints c
+        JOIN Cases cs ON c.complaint_id = cs.complaint_id
+        WHERE cs.assigned_police_id = ? AND c.status = 'In Progress'
+    ''', (session.get('user_id'),)).fetchone()[0]
 
-    resolved = conn.execute(
-        "SELECT COUNT(*) FROM Complaints WHERE status = 'Resolved'"
-    ).fetchone()[0]
-
+    resolved = conn.execute('''
+        SELECT COUNT(*) FROM Complaints c
+        JOIN Cases cs ON c.complaint_id = cs.complaint_id
+        WHERE cs.assigned_police_id = ? AND c.status = 'Resolved'
+    ''', (session.get('user_id'),)).fetchone()[0]
+    
     high_priority = conn.execute("""
         SELECT  c.complaint_id,
                 cc.name            AS category,
@@ -555,6 +592,7 @@ def notifications():
 @app.route('/case_detail/<int:case_id>')
 def case_detail(case_id):
     db = get_db_connection()
+    is_assigned = request.args.get('assigned') == '1'
 
     case = db.execute('''
         SELECT c.complaint_id, cc.name as category_name, c.description, 
@@ -639,8 +677,59 @@ def case_detail(case_id):
         except:
             case_dict['date_filed'] = case_dict['created_at']
 
-    return render_template('case_detail.html', case=case_dict)
+    return render_template('case_detail.html', case=case_dict, is_assigned=is_assigned)
 
+
+@app.route('/update_case_status/<int:complaint_id>', methods=['POST'])
+def update_case_status(complaint_id):
+    if 'user_id' not in session:
+        flash('Please log in first.', 'error')
+        return redirect('/login')
+
+    new_status = request.form.get('status', '').strip()
+    valid = ['Pending', 'In Progress', 'Resolved']
+
+    if new_status not in valid:
+        flash('Invalid status selected.', 'error')
+        return redirect(f'/case_detail/{complaint_id}?assigned=1')
+
+    conn = get_db_connection()
+
+    case_check = conn.execute('''
+        SELECT assigned_police_id FROM Cases WHERE complaint_id = ?
+    ''', (complaint_id,)).fetchone()
+
+    if not case_check:
+        flash('Case not found.', 'error')
+        conn.close()
+        return redirect('/my_assigned_cases')
+
+    if case_check['assigned_police_id'] != session['user_id']:
+        flash('You can only update cases assigned to you.', 'error')
+        conn.close()
+        return redirect('/my_assigned_cases')
+
+    conn.execute(
+        "UPDATE Complaints SET status = ? WHERE complaint_id = ?",
+        (new_status, complaint_id)
+    )
+    conn.execute(
+        "UPDATE Cases SET last_updated = CURRENT_TIMESTAMP WHERE complaint_id = ?",
+        (complaint_id,)
+    )
+    conn.execute(
+        "INSERT INTO Logs (user_id, action) VALUES (?, ?)",
+        (session['user_id'], f"Updated status of case #{complaint_id} to {new_status}")
+    )
+    conn.execute(
+        "INSERT INTO Notifications (message) VALUES (?)",
+        (f"Case #{complaint_id} has been marked as {new_status}.",)
+    )
+    conn.commit()
+    conn.close()
+
+    flash(f'Case #{complaint_id} status updated to {new_status}.', 'success')
+    return redirect(f'/case_detail/{complaint_id}?assigned=1')
 
 @app.route('/emergency_tracking')
 def emergency_tracking():
@@ -676,20 +765,98 @@ def statistics_board():
 
 @app.route('/detective_dashboard')
 def detective_dashboard():
-    if session.get('role') != 'Detective': return redirect(url_for('login'))
+    if session.get('role') != 'Detective':
+        return redirect(url_for('login'))
 
     conn = get_db_connection()
-    # Detectives see only cases assigned to them
-    cases = conn.execute("""
-            SELECT c.complaint_id, cc.name as category, c.description, c.location, c.status, cs.priority, cs.notes
-            FROM Complaints c
-            JOIN Cases cs ON c.complaint_id = cs.complaint_id
-            JOIN CrimeCategories cc ON c.category_id = cc.category_id
-            WHERE cs.assigned_detective_id = ?
-            ORDER BY c.created_at DESC
-        """, (session.get('user_id'),)).fetchall()
+
+    pending = conn.execute('''
+        SELECT COUNT(*) FROM Complaints c
+        JOIN Cases cs ON c.complaint_id = cs.complaint_id
+        WHERE cs.assigned_detective_id = ? AND c.status = 'Pending'
+    ''', (session.get('user_id'),)).fetchone()[0]
+
+    in_progress = conn.execute('''
+        SELECT COUNT(*) FROM Complaints c
+        JOIN Cases cs ON c.complaint_id = cs.complaint_id
+        WHERE cs.assigned_detective_id = ? AND c.status = 'In Progress'
+    ''', (session.get('user_id'),)).fetchone()[0]
+
+    resolved = conn.execute('''
+        SELECT COUNT(*) FROM Complaints c
+        JOIN Cases cs ON c.complaint_id = cs.complaint_id
+        WHERE cs.assigned_detective_id = ? AND c.status = 'Resolved'
+    ''', (session.get('user_id'),)).fetchone()[0]
+
+    high_priority = conn.execute("""
+        SELECT  c.complaint_id,
+                cc.name            AS category,
+                c.description,
+                c.location,
+                c.status,
+                cs.priority
+        FROM    Complaints c
+        JOIN    Cases cs  ON c.complaint_id = cs.complaint_id
+        JOIN    CrimeCategories cc ON c.category_id = cc.category_id
+        WHERE   cs.priority = 'High'
+        ORDER   BY c.created_at DESC
+        LIMIT   4
+    """).fetchall()
+
+    all_complaints = conn.execute("""
+        SELECT  c.complaint_id,
+                cc.name                        AS category,
+                c.location,
+                c.status,
+                COALESCE(cs.priority, 'Medium') AS priority
+        FROM    Complaints c
+        LEFT JOIN Cases cs  ON c.complaint_id = cs.complaint_id
+        JOIN    CrimeCategories cc ON c.category_id = cc.category_id
+        ORDER   BY c.created_at DESC
+    """).fetchall()
+
     conn.close()
-    return render_template('detective_dashboard.html', cases=cases)
+
+    return render_template(
+        'detective_dashboard.html',
+        pending=pending,
+        in_progress=in_progress,
+        resolved=resolved,
+        high_priority=high_priority,
+        all_complaints=all_complaints,
+    )
+
+
+@app.route('/detective_assigned_cases')
+def detective_assigned_cases():
+    if 'user_id' not in session:
+        flash('Please log in first.', 'error')
+        return redirect('/login')
+
+    db = get_db_connection()
+    cases = db.execute('''
+        SELECT c.complaint_id, cc.name as category_name, c.location, c.status,
+               cs.priority, c.created_at
+        FROM Complaints c
+        JOIN CrimeCategories cc ON c.category_id = cc.category_id
+        JOIN Cases cs ON c.complaint_id = cs.complaint_id
+        WHERE cs.assigned_detective_id = ?
+        ORDER BY c.created_at DESC
+    ''', (session['user_id'],)).fetchall()
+
+    all_cases = []
+    for c in cases:
+        all_cases.append({
+            'complaint_id': c['complaint_id'],
+            'category_name': c['category_name'],
+            'location': c['location'],
+            'status': c['status'],
+            'priority': c['priority'] if c['priority'] else 'Medium',
+            'time_ago': time_ago(c['created_at'])
+        })
+
+    db.close()
+    return render_template('case_tracking.html', cases=all_cases, filter_type='assigned')
 
 
 @app.route('/update_investigation/<int:complaint_id>', methods=['POST'])

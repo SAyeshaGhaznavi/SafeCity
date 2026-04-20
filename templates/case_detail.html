@@ -344,13 +344,6 @@
       color: var(--muted);
     }
     
-    .btn-row {
-      grid-column: 1 / -1;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: clamp(10px, 1.5vw, 16px);
-    }
-    
     .btn {
       padding: clamp(10px, 1.5vh, 14px) clamp(12px, 2vw, 20px);
       border: 1.5px solid var(--border);
@@ -382,6 +375,210 @@
       color: var(--muted);
       grid-column: 1 / -1;
     }
+
+    /* ── ASSIGNED OFFICER ACTIONS ── */
+    .action-btns-row {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(10px, 1.5vw, 16px);
+    }
+
+    .act-btn {
+      padding: clamp(11px, 1.5vh, 14px) clamp(12px, 2vw, 20px);
+      border-radius: clamp(8px, 1vw, 12px);
+      font-size: clamp(0.78rem, 1.2vw, 0.95rem);
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      font-family: 'DM Sans', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(6px, 1vw, 10px);
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .act-btn::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+
+    .act-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .act-btn-notes {
+      background: rgba(0,200,255,0.08);
+      border: 1.5px solid rgba(0,200,255,0.25);
+      color: var(--cyan);
+    }
+    .act-btn-notes::before {
+      background: linear-gradient(90deg, var(--cyan), transparent);
+    }
+    .act-btn-notes:hover {
+      background: rgba(0,200,255,0.14);
+      border-color: var(--cyan);
+      box-shadow: 0 4px 16px rgba(0,200,255,0.15);
+    }
+
+    .act-btn-status {
+      background: rgba(0,229,160,0.08);
+      border: 1.5px solid rgba(0,229,160,0.25);
+      color: var(--green);
+    }
+    .act-btn-status::before {
+      background: linear-gradient(90deg, var(--green), transparent);
+    }
+    .act-btn-status:hover {
+      background: rgba(0,229,160,0.14);
+      border-color: var(--green);
+      box-shadow: 0 4px 16px rgba(0,229,160,0.15);
+    }
+
+    /* ── COLLAPSIBLE PANELS ── */
+    .collapsible-panel {
+      grid-column: 1 / -1;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.3s ease;
+      opacity: 0;
+      margin-top: 0;
+    }
+
+    .collapsible-panel.open {
+      max-height: 600px;
+      opacity: 1;
+      margin-top: 0;
+    }
+
+    .panel-inner {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: clamp(10px, 1.5vw, 16px);
+      padding: clamp(14px, 2.5vh, 28px);
+    }
+
+    .panel-inner.notes-panel {
+      border-color: rgba(0,200,255,0.2);
+    }
+
+    .panel-inner.status-panel {
+      border-color: rgba(0,229,160,0.2);
+    }
+
+    .panel-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(0.95rem, 1.8vw, 1.3rem);
+      letter-spacing: clamp(1.5px, 0.3vw, 2px);
+      margin-bottom: clamp(10px, 1.5vh, 16px);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-title.pt-cyan { color: var(--cyan); }
+    .panel-title.pt-green { color: var(--green); }
+
+    .notes-content {
+      font-size: clamp(0.8rem, 1.2vw, 1rem);
+      line-height: 1.7;
+      color: var(--muted);
+      padding: clamp(12px, 2vh, 20px);
+      background: rgba(0,200,255,0.03);
+      border-radius: clamp(8px, 1vw, 12px);
+      border: 1px solid rgba(0,200,255,0.1);
+    }
+
+    .notes-empty {
+      text-align: center;
+      color: rgba(122,141,176,0.5);
+      font-style: italic;
+      padding: clamp(8px, 1.5vh, 12px) 0;
+    }
+
+    .status-form {
+      display: flex;
+      align-items: center;
+      gap: clamp(10px, 1.5vw, 16px);
+      flex-wrap: wrap;
+    }
+
+    .status-form label {
+      font-size: clamp(0.72rem, 1.1vw, 0.88rem);
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .status-select {
+      flex: 1;
+      min-width: 180px;
+      padding: clamp(9px, 1.2vh, 12px) clamp(12px, 1.5vw, 16px);
+      background: rgba(0,229,160,0.06);
+      border: 1.5px solid rgba(0,229,160,0.2);
+      border-radius: clamp(7px, 0.9vw, 10px);
+      color: var(--white);
+      font-size: clamp(0.78rem, 1.1vw, 0.92rem);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2300e5a0' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right clamp(12px, 1.5vw, 16px) center;
+      padding-right: clamp(36px, 4vw, 44px);
+      transition: all 0.2s;
+    }
+
+    .status-select:focus {
+      outline: none;
+      border-color: var(--green);
+      box-shadow: 0 0 0 2px rgba(0,229,160,0.15);
+    }
+
+    .status-select option {
+      background: #0d1225;
+      color: var(--white);
+      padding: 8px;
+    }
+
+    .submit-status-btn {
+      padding: clamp(9px, 1.2vh, 12px) clamp(16px, 2.5vw, 28px);
+      background: rgba(0,229,160,0.15);
+      border: 1.5px solid rgba(0,229,160,0.3);
+      color: var(--green);
+      border-radius: clamp(7px, 0.9vw, 10px);
+      font-size: clamp(0.78rem, 1.1vw, 0.92rem);
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .submit-status-btn:hover {
+      background: rgba(0,229,160,0.25);
+      border-color: var(--green);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,229,160,0.15);
+    }
+
+    .current-status-hint {
+      font-size: clamp(0.65rem, 0.9vw, 0.78rem);
+      color: var(--muted);
+      margin-top: clamp(8px, 1vh, 12px);
+      opacity: 0.7;
+    }
+
+    .current-status-hint strong {
+      color: var(--white);
+      opacity: 1;
+    }
     
     @media (min-width: 1200px) {
       .detail-grid {
@@ -398,8 +595,7 @@
         grid-template-columns: repeat(3, 1fr);
       }
       
-      .status-banner,
-      .btn-row {
+      .status-banner {
         grid-column: span 3;
       }
     }
@@ -572,11 +768,50 @@
             </div>
           </div>
 
+          {% if is_assigned %}
           <!-- Action Buttons -->
-          <div class="btn-row">
-            <button class="btn" onclick="alert('Message feature coming soon')">📧 Message Officer</button>
-            <button class="btn" onclick="alert('Update feature coming soon')">✏️ Add Update</button>
+          <div class="action-btns-row">
+            <button class="act-btn act-btn-notes" onclick="togglePanel('notesPanel')">
+              📝 View Notes
+            </button>
+            <button class="act-btn act-btn-status" onclick="togglePanel('statusPanel')">
+              ✏️ Update Status
+            </button>
           </div>
+
+          <!-- Notes Panel -->
+          <div id="notesPanel" class="collapsible-panel">
+            <div class="panel-inner notes-panel">
+              <div class="panel-title pt-cyan">📝 Case Notes</div>
+              {% if case.notes %}
+                <div class="notes-content">{{ case.notes }}</div>
+              {% else %}
+                <div class="notes-content">
+                  <div class="notes-empty">No notes have been added to this case yet.</div>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Status Update Panel -->
+          <div id="statusPanel" class="collapsible-panel">
+            <div class="panel-inner status-panel">
+              <div class="panel-title pt-green">✏️ Update Case Status</div>
+              <form method="POST" action="/update_case_status/{{ case.complaint_id }}" class="status-form">
+                <label for="statusSelect">Set status to:</label>
+                <select name="status" id="statusSelect" class="status-select" required>
+                  <option value="" disabled selected>Select status</option>
+                  <option value="Pending" {% if case.status == 'Pending' %}selected{% endif %}>Pending</option>
+                  <option value="In Progress" {% if case.status == 'In Progress' %}selected{% endif %}>In Progress</option>
+                  <option value="Resolved" {% if case.status == 'Resolved' %}selected{% endif %}>Resolved</option>
+                </select>
+                <button type="submit" class="submit-status-btn">Apply</button>
+              </form>
+              <div class="current-status-hint">Current status: <strong>{{ case.status if case.status else 'Pending' }}</strong></div>
+            </div>
+          </div>
+          {% endif %}
+
         </div>
         {% else %}
         <div class="empty-state">
@@ -590,5 +825,22 @@
       </div>
     </div>
   </div>
+
+  <script>
+    function togglePanel(id) {
+      var panel = document.getElementById(id);
+      if (!panel) return;
+
+      // Close other panel if open
+      var panels = document.querySelectorAll('.collapsible-panel');
+      panels.forEach(function(p) {
+        if (p.id !== id && p.classList.contains('open')) {
+          p.classList.remove('open');
+        }
+      });
+
+      panel.classList.toggle('open');
+    }
+  </script>
 </body>
 </html>
