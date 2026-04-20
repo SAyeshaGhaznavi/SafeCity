@@ -142,20 +142,9 @@
       margin-bottom: clamp(6px, 1vh, 12px);
     }
     
-    .sb-pending {
-      background: rgba(255,184,48,0.2);
-      color: var(--yellow);
-    }
-    
-    .sb-progress {
-      background: rgba(0,200,255,0.2);
-      color: var(--cyan);
-    }
-    
-    .sb-resolved {
-      background: rgba(0,229,160,0.15);
-      color: var(--green);
-    }
+    .sb-pending { background: rgba(255,184,48,0.2); color: var(--yellow); }
+    .sb-progress { background: rgba(0,200,255,0.2); color: var(--cyan); }
+    .sb-resolved { background: rgba(0,229,160,0.15); color: var(--green); }
     
     .status-case-num {
       font-size: clamp(0.8rem, 1.5vw, 1.3rem);
@@ -189,10 +178,7 @@
       font-weight: 500;
     }
     
-    .info-value.highlight {
-      color: var(--yellow);
-      font-weight: 700;
-    }
+    .info-value.highlight { color: var(--yellow); font-weight: 700; }
     
     .block {
       background: var(--card);
@@ -253,10 +239,7 @@
       margin-bottom: clamp(2px, 0.5vh, 4px);
     }
     
-    .officer-badge {
-      font-size: clamp(0.7rem, 1vw, 0.8rem);
-      color: var(--muted);
-    }
+    .officer-badge { font-size: clamp(0.7rem, 1vw, 0.8rem); color: var(--muted); }
     
     .officer-sub {
       font-size: clamp(0.65rem, 0.9vw, 0.75rem);
@@ -277,38 +260,15 @@
       transition: all 0.2s ease;
     }
     
-    .evidence-item:last-child {
-      margin-bottom: 0;
-    }
+    .evidence-item:last-child { margin-bottom: 0; }
+    .evidence-item:hover { border-color: rgba(0,200,255,0.3); background: rgba(0,200,255,0.06); }
+    .evidence-icon { font-size: clamp(1.1rem, 1.8vw, 1.5rem); }
+    .evidence-name { font-size: clamp(0.78rem, 1.2vw, 1rem); font-weight: 600; margin-bottom: clamp(1px, 0.3vh, 4px); }
+    .evidence-size { font-size: clamp(0.65rem, 0.9vw, 0.75rem); color: var(--muted); }
     
-    .evidence-item:hover {
-      border-color: rgba(0,200,255,0.3);
-      background: rgba(0,200,255,0.06);
-    }
+    .timeline { padding-left: clamp(18px, 2.5vw, 24px); }
     
-    .evidence-icon {
-      font-size: clamp(1.1rem, 1.8vw, 1.5rem);
-    }
-    
-    .evidence-name {
-      font-size: clamp(0.78rem, 1.2vw, 1rem);
-      font-weight: 600;
-      margin-bottom: clamp(1px, 0.3vh, 4px);
-    }
-    
-    .evidence-size {
-      font-size: clamp(0.65rem, 0.9vw, 0.75rem);
-      color: var(--muted);
-    }
-    
-    .timeline {
-      padding-left: clamp(18px, 2.5vw, 24px);
-    }
-    
-    .tl-item {
-      margin-bottom: clamp(14px, 2vh, 20px);
-      position: relative;
-    }
+    .tl-item { margin-bottom: clamp(14px, 2vh, 20px); position: relative; }
     
     .tl-item::before {
       content: '';
@@ -333,16 +293,8 @@
       background: var(--border);
     }
     
-    .tl-event {
-      font-size: clamp(0.82rem, 1.3vw, 0.95rem);
-      font-weight: 600;
-      margin-bottom: clamp(2px, 0.4vh, 4px);
-    }
-    
-    .tl-date {
-      font-size: clamp(0.68rem, 1vw, 0.8rem);
-      color: var(--muted);
-    }
+    .tl-event { font-size: clamp(0.82rem, 1.3vw, 0.95rem); font-weight: 600; margin-bottom: clamp(2px, 0.4vh, 4px); }
+    .tl-date { font-size: clamp(0.68rem, 1vw, 0.8rem); color: var(--muted); }
     
     .btn {
       padding: clamp(10px, 1.5vh, 14px) clamp(12px, 2vw, 20px);
@@ -376,7 +328,7 @@
       grid-column: 1 / -1;
     }
 
-    /* ── ASSIGNED OFFICER ACTIONS ── */
+    /* ── POLICE ACTION BUTTONS ── */
     .action-btns-row {
       grid-column: 1 / -1;
       display: grid;
@@ -408,36 +360,63 @@
       height: 3px;
     }
 
-    .act-btn:hover {
-      transform: translateY(-2px);
-    }
+    .act-btn:hover { transform: translateY(-2px); }
 
     .act-btn-notes {
       background: rgba(0,200,255,0.08);
       border: 1.5px solid rgba(0,200,255,0.25);
       color: var(--cyan);
     }
-    .act-btn-notes::before {
-      background: linear-gradient(90deg, var(--cyan), transparent);
-    }
-    .act-btn-notes:hover {
-      background: rgba(0,200,255,0.14);
-      border-color: var(--cyan);
-      box-shadow: 0 4px 16px rgba(0,200,255,0.15);
-    }
+    .act-btn-notes::before { background: linear-gradient(90deg, var(--cyan), transparent); }
+    .act-btn-notes:hover { background: rgba(0,200,255,0.14); border-color: var(--cyan); box-shadow: 0 4px 16px rgba(0,200,255,0.15); }
 
     .act-btn-status {
       background: rgba(0,229,160,0.08);
       border: 1.5px solid rgba(0,229,160,0.25);
       color: var(--green);
     }
-    .act-btn-status::before {
-      background: linear-gradient(90deg, var(--green), transparent);
+    .act-btn-status::before { background: linear-gradient(90deg, var(--green), transparent); }
+    .act-btn-status:hover { background: rgba(0,229,160,0.14); border-color: var(--green); box-shadow: 0 4px 16px rgba(0,229,160,0.15); }
+
+    /* ── DETECTIVE SINGLE BUTTON ── */
+    .detective-btn-row {
+      grid-column: 1 / -1;
     }
-    .act-btn-status:hover {
-      background: rgba(0,229,160,0.14);
-      border-color: var(--green);
-      box-shadow: 0 4px 16px rgba(0,229,160,0.15);
+
+    .act-btn-detective {
+      width: 100%;
+      padding: clamp(11px, 1.5vh, 14px) clamp(12px, 2vw, 20px);
+      border-radius: clamp(8px, 1vw, 12px);
+      font-size: clamp(0.78rem, 1.2vw, 0.95rem);
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      font-family: 'DM Sans', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(6px, 1vw, 10px);
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      background: rgba(255,184,48,0.08);
+      border: 1.5px solid rgba(255,184,48,0.25);
+      color: var(--yellow);
+    }
+
+    .act-btn-detective::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--yellow), transparent);
+    }
+
+    .act-btn-detective:hover {
+      transform: translateY(-2px);
+      background: rgba(255,184,48,0.14);
+      border-color: var(--yellow);
+      box-shadow: 0 4px 16px rgba(255,184,48,0.15);
     }
 
     /* ── COLLAPSIBLE PANELS ── */
@@ -445,15 +424,13 @@
       grid-column: 1 / -1;
       max-height: 0;
       overflow: hidden;
-      transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.3s ease;
+      transition: max-height 0.4s ease, opacity 0.3s ease;
       opacity: 0;
-      margin-top: 0;
     }
 
     .collapsible-panel.open {
-      max-height: 600px;
+      max-height: 800px;
       opacity: 1;
-      margin-top: 0;
     }
 
     .panel-inner {
@@ -463,13 +440,9 @@
       padding: clamp(14px, 2.5vh, 28px);
     }
 
-    .panel-inner.notes-panel {
-      border-color: rgba(0,200,255,0.2);
-    }
-
-    .panel-inner.status-panel {
-      border-color: rgba(0,229,160,0.2);
-    }
+    .panel-inner.notes-panel { border-color: rgba(0,200,255,0.2); }
+    .panel-inner.status-panel { border-color: rgba(0,229,160,0.2); }
+    .panel-inner.detective-notes-panel { border-color: rgba(255,184,48,0.2); }
 
     .panel-title {
       font-family: 'Bebas Neue', sans-serif;
@@ -483,6 +456,7 @@
 
     .panel-title.pt-cyan { color: var(--cyan); }
     .panel-title.pt-green { color: var(--green); }
+    .panel-title.pt-yellow { color: var(--yellow); }
 
     .notes-content {
       font-size: clamp(0.8rem, 1.2vw, 1rem);
@@ -492,6 +466,20 @@
       background: rgba(0,200,255,0.03);
       border-radius: clamp(8px, 1vw, 12px);
       border: 1px solid rgba(0,200,255,0.1);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .detective-notes-content {
+      font-size: clamp(0.8rem, 1.2vw, 1rem);
+      line-height: 1.7;
+      color: var(--muted);
+      padding: clamp(12px, 2vh, 20px);
+      background: rgba(255,184,48,0.03);
+      border-radius: clamp(8px, 1vw, 12px);
+      border: 1px solid rgba(255,184,48,0.1);
+      white-space: pre-wrap;
+      word-break: break-word;
     }
 
     .notes-empty {
@@ -499,6 +487,66 @@
       color: rgba(122,141,176,0.5);
       font-style: italic;
       padding: clamp(8px, 1.5vh, 12px) 0;
+    }
+
+    .notes-existing-label {
+      font-size: clamp(0.58rem, 0.9vw, 0.72rem);
+      font-weight: 700;
+      color: var(--yellow);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: clamp(6px, 1vh, 10px);
+    }
+
+    .notes-form-area {
+      margin-top: clamp(12px, 1.5vh, 18px);
+      padding-top: clamp(12px, 1.5vh, 18px);
+      border-top: 1px solid rgba(255,184,48,0.12);
+    }
+
+    .notes-textarea {
+      width: 100%;
+      min-height: clamp(70px, 10vh, 100px);
+      padding: clamp(10px, 1.2vh, 14px) clamp(12px, 1.5vw, 16px);
+      background: rgba(255,184,48,0.04);
+      border: 1.5px solid rgba(255,184,48,0.15);
+      border-radius: clamp(7px, 0.9vw, 10px);
+      color: var(--white);
+      font-size: clamp(0.78rem, 1vw, 0.9rem);
+      font-family: 'DM Sans', sans-serif;
+      resize: vertical;
+      transition: all 0.2s;
+      line-height: 1.5;
+    }
+
+    .notes-textarea:focus {
+      outline: none;
+      border-color: var(--yellow);
+      box-shadow: 0 0 0 2px rgba(255,184,48,0.1);
+    }
+
+    .notes-textarea::placeholder { color: rgba(122,141,176,0.4); }
+
+    .submit-notes-btn {
+      margin-top: clamp(8px, 1vh, 12px);
+      padding: clamp(9px, 1.2vh, 12px) clamp(18px, 2.5vw, 28px);
+      background: rgba(255,184,48,0.12);
+      border: 1.5px solid rgba(255,184,48,0.3);
+      color: var(--yellow);
+      border-radius: clamp(7px, 0.9vw, 10px);
+      font-size: clamp(0.78rem, 1.1vw, 0.9rem);
+      font-weight: 700;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .submit-notes-btn:hover {
+      background: rgba(255,184,48,0.22);
+      border-color: var(--yellow);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(255,184,48,0.15);
     }
 
     .status-form {
@@ -541,11 +589,7 @@
       box-shadow: 0 0 0 2px rgba(0,229,160,0.15);
     }
 
-    .status-select option {
-      background: #0d1225;
-      color: var(--white);
-      padding: 8px;
-    }
+    .status-select option { background: #0d1225; color: var(--white); }
 
     .submit-status-btn {
       padding: clamp(9px, 1.2vh, 12px) clamp(16px, 2.5vw, 28px);
@@ -575,29 +619,16 @@
       opacity: 0.7;
     }
 
-    .current-status-hint strong {
-      color: var(--white);
-      opacity: 1;
-    }
+    .current-status-hint strong { color: var(--white); opacity: 1; }
     
     @media (min-width: 1200px) {
-      .detail-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      
-      .block-full {
-        grid-column: span 2;
-      }
+      .detail-grid { grid-template-columns: repeat(2, 1fr); }
+      .block-full { grid-column: span 2; }
     }
     
     @media (min-width: 1600px) {
-      .detail-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-      
-      .status-banner {
-        grid-column: span 3;
-      }
+      .detail-grid { grid-template-columns: repeat(3, 1fr); }
+      .status-banner { grid-column: span 3; }
     }
   </style>
 </head>
@@ -613,7 +644,6 @@
         {% if case %}
         <div class="detail-grid">
 
-          <!-- Status Banner -->
           <div class="status-banner">
             <div class="status-badge {% if case.status == 'Pending' %}sb-pending{% elif case.status == 'In Progress' %}sb-progress{% elif case.status == 'Resolved' %}sb-resolved{% else %}sb-progress{% endif %}">
               {{ case.status if case.status else 'In Progress' }}
@@ -621,7 +651,6 @@
             <div class="status-case-num">CASE #{{ case.complaint_id }}</div>
           </div>
 
-          <!-- Info Grid -->
           <div class="info-grid">
             <div class="info-item">
               <div class="info-label">Case Type</div>
@@ -641,7 +670,6 @@
             </div>
           </div>
 
-          <!-- Assigned Police Officer -->
           <div class="block">
             <div class="block-title">Assigned Officer</div>
             {% if case.officer_name %}
@@ -663,7 +691,6 @@
             {% endif %}
           </div>
 
-          <!-- Assigned Detective -->
           <div class="block">
             <div class="block-title">Assigned Detective</div>
             {% if case.detective_name %}
@@ -688,7 +715,6 @@
             {% endif %}
           </div>
 
-          <!-- Assigned Volunteer -->
           <div class="block">
             <div class="block-title">Assigned Volunteer</div>
             {% if case.volunteer_name %}
@@ -710,13 +736,11 @@
             {% endif %}
           </div>
 
-          <!-- Description -->
           <div class="block">
             <div class="block-title">Description</div>
             <div class="block-text">{{ case.description if case.description else 'No description provided' }}</div>
           </div>
 
-          <!-- Evidence & Documents -->
           <div class="block">
             <div class="block-title">Evidence & Documents</div>
             {% if case.evidence_files %}
@@ -742,7 +766,6 @@
             {% endif %}
           </div>
 
-          <!-- Case Timeline -->
           <div class="block block-full">
             <div class="block-title">Case Timeline</div>
             <div class="timeline">
@@ -768,8 +791,8 @@
             </div>
           </div>
 
+          {# ── POLICE: View Notes + Update Status ── #}
           {% if is_assigned %}
-          <!-- Action Buttons -->
           <div class="action-btns-row">
             <button class="act-btn act-btn-notes" onclick="togglePanel('notesPanel')">
               📝 View Notes
@@ -779,7 +802,6 @@
             </button>
           </div>
 
-          <!-- Notes Panel -->
           <div id="notesPanel" class="collapsible-panel">
             <div class="panel-inner notes-panel">
               <div class="panel-title pt-cyan">📝 Case Notes</div>
@@ -793,7 +815,6 @@
             </div>
           </div>
 
-          <!-- Status Update Panel -->
           <div id="statusPanel" class="collapsible-panel">
             <div class="panel-inner status-panel">
               <div class="panel-title pt-green">✏️ Update Case Status</div>
@@ -808,6 +829,33 @@
                 <button type="submit" class="submit-status-btn">Apply</button>
               </form>
               <div class="current-status-hint">Current status: <strong>{{ case.status if case.status else 'Pending' }}</strong></div>
+            </div>
+          </div>
+          {% endif %}
+
+          {# ── DETECTIVE: Add Notes ── #}
+          {% if is_detective %}
+          <div class="detective-btn-row">
+            <button class="act-btn-detective" onclick="togglePanel('detectiveNotesPanel')">
+              📝 Add Notes
+            </button>
+          </div>
+
+          <div id="detectiveNotesPanel" class="collapsible-panel">
+            <div class="panel-inner detective-notes-panel">
+              <div class="panel-title pt-yellow">📝 Case Notes</div>
+
+              {% if case.notes %}
+              <div class="notes-existing-label">Existing Notes</div>
+              <div class="detective-notes-content">{{ case.notes }}</div>
+              {% endif %}
+
+              <div class="notes-form-area">
+                <form method="POST" action="/append_case_notes/{{ case.complaint_id }}">
+                  <textarea name="new_note" class="notes-textarea" placeholder="Write your investigation note here..." required></textarea>
+                  <button type="submit" class="submit-notes-btn">Append Note</button>
+                </form>
+              </div>
             </div>
           </div>
           {% endif %}
@@ -831,7 +879,6 @@
       var panel = document.getElementById(id);
       if (!panel) return;
 
-      // Close other panel if open
       var panels = document.querySelectorAll('.collapsible-panel');
       panels.forEach(function(p) {
         if (p.id !== id && p.classList.contains('open')) {

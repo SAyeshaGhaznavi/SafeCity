@@ -561,7 +561,7 @@
               </div>
             </div>
             <div class="case-loc">📍 {{ c.location }}</div>
-            <a href="/case_detail/{{ c.complaint_id }}{% if filter_type == 'assigned' %}?assigned=1{% endif %}" class="view-btn">View Details →</a>
+              <a href="/case_detail/{{ c.complaint_id }}{% if viewer_role == 'police' %}?assigned=1{% elif viewer_role == 'detective' %}?detective=1{% endif %}" class="view-btn">View Details →</a>
           </div>
           {% else %}
           <div class="empty-state">

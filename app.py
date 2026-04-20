@@ -340,7 +340,7 @@ def my_assigned_cases():
         })
 
     db.close()
-    return render_template('case_tracking.html', cases=all_cases, filter_type='assigned')
+    return render_template('case_tracking.html', cases=all_cases, filter_type='assigned', viewer_role='police')
 
 
 @app.route('/police_dashboard')
@@ -363,7 +363,7 @@ def police_dashboard():
         JOIN Cases cs ON c.complaint_id = cs.complaint_id
         WHERE cs.assigned_police_id = ? AND c.status = 'Resolved'
     ''', (session.get('user_id'),)).fetchone()[0]
-    
+
     high_priority = conn.execute("""
         SELECT  c.complaint_id,
                 cc.name            AS category,
@@ -593,6 +593,7 @@ def notifications():
 def case_detail(case_id):
     db = get_db_connection()
     is_assigned = request.args.get('assigned') == '1'
+    is_detective = request.args.get('detective') == '1'
 
     case = db.execute('''
         SELECT c.complaint_id, cc.name as category_name, c.description, 
@@ -677,7 +678,61 @@ def case_detail(case_id):
         except:
             case_dict['date_filed'] = case_dict['created_at']
 
-    return render_template('case_detail.html', case=case_dict, is_assigned=is_assigned)
+    return render_template('case_detail.html', case=case_dict, is_assigned=is_assigned, is_detective=is_detective)
+
+
+@app.route('/append_case_notes/<int:complaint_id>', methods=['POST'])
+def append_case_notes(complaint_id):
+    if session.get('role') != 'Detective':
+        flash('Unauthorized.', 'error')
+        return redirect('/login')
+
+    new_note = request.form.get('new_note', '').strip()
+    if not new_note:
+        flash('Note cannot be empty.', 'error')
+        return redirect(f'/case_detail/{complaint_id}?detective=1')
+
+    conn = get_db_connection()
+
+    # Verify case is assigned to this detective
+    check = conn.execute('''
+        SELECT assigned_detective_id, notes FROM Cases WHERE complaint_id = ?
+    ''', (complaint_id,)).fetchone()
+
+    if not check:
+        flash('Case not found.', 'error')
+        conn.close()
+        return redirect('/detective_assigned_cases')
+
+    if check['assigned_detective_id'] != session['user_id']:
+        flash('You can only add notes to cases assigned to you.', 'error')
+        conn.close()
+        return redirect('/detective_assigned_cases')
+
+    # Append note with timestamp
+    timestamp = datetime.utcnow().strftime('%Y-%m-%d %H:%M')
+    detective_name = session.get('name', 'Detective')
+    stamped_note = f"[{timestamp}] {detective_name}: {new_note}"
+
+    existing = check['notes'] if check['notes'] else ''
+    if existing:
+        updated_notes = existing + '\n' + stamped_note
+    else:
+        updated_notes = stamped_note
+
+    conn.execute(
+        "UPDATE Cases SET notes = ?, last_updated = CURRENT_TIMESTAMP WHERE complaint_id = ?",
+        (updated_notes, complaint_id)
+    )
+    conn.execute(
+        "INSERT INTO Logs (user_id, action) VALUES (?, ?)",
+        (session['user_id'], f"Added note to case #{complaint_id}")
+    )
+    conn.commit()
+    conn.close()
+
+    flash('Note added successfully.', 'success')
+    return redirect(f'/case_detail/{complaint_id}?detective=1')
 
 
 @app.route('/update_case_status/<int:complaint_id>', methods=['POST'])
@@ -856,7 +911,7 @@ def detective_assigned_cases():
         })
 
     db.close()
-    return render_template('case_tracking.html', cases=all_cases, filter_type='assigned')
+    return render_template('case_tracking.html', cases=all_cases, filter_type='assigned', viewer_role='detective')
 
 
 @app.route('/update_investigation/<int:complaint_id>', methods=['POST'])
