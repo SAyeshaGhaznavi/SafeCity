@@ -4,7 +4,7 @@ import time
 from flask import Flask, request, render_template, redirect
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import session
-from flask import url_for,  flash
+from flask import url_for, flash
 from werkzeug.utils import secure_filename
 from datetime import datetime
 
@@ -18,10 +18,12 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 DATABASE = "safecity.db"
 
+
 def get_db_connection():
     conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
     return conn
+
 
 def init_db():
     with app.app_context():
@@ -30,37 +32,40 @@ def init_db():
             conn.executescript(f.read())
         conn.close()
 
+
 @app.route("/initdb")
 def run_initdb():
     init_db()
 
     conn = get_db_connection()
     cursor = conn.cursor()
-    
+
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
     tables = cursor.fetchall()
 
     table_data = {}
     for table in tables:
         table_name = table['name']
-        
+
         cursor.execute(f"SELECT * FROM {table_name};")
         data = cursor.fetchall()
         table_data[table_name] = data
-    
+
     conn.close()
-    
+
     return render_template("initdb.html", table_data=table_data)
+
 
 @app.route('/')
 def splash():
     return render_template('splash.html')
 
+
 @app.route('/viewdb')
 def view_db():
     conn = get_db_connection()
     cursor = conn.cursor()
-    
+
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
     tables = cursor.fetchall()
 
@@ -70,31 +75,34 @@ def view_db():
         cursor.execute(f"SELECT * FROM {table_name};")
         data = cursor.fetchall()
         table_data[table_name] = data
-    
+
     conn.close()
-    
+
     return render_template("initdb.html", table_data=table_data)
+
 
 @app.route('/portal')
 def portal():
     return render_template('portal.html')
 
+
 @app.route('/personnel_select')
 def personnel_select():
     return render_template('personnel_select.html')
+
 
 @app.route('/report', methods=['GET', 'POST'])
 def report():
     if request.method == 'GET':
         return render_template('report.html')
 
-    crime_type   = request.form.get('crime_type', 'Other').strip()
-    description  = request.form.get('description', '').strip()
-    location     = request.form.get('location', '').strip()
-    full_name    = request.form.get('full_name', '').strip()
-    cnic         = request.form.get('cnic', '').strip()
+    crime_type = request.form.get('crime_type', 'Other').strip()
+    description = request.form.get('description', '').strip()
+    location = request.form.get('location', '').strip()
+    full_name = request.form.get('full_name', '').strip()
+    cnic = request.form.get('cnic', '').strip()
     is_anonymous = 'anonymous' in request.form
-    evidence     = request.files.get('evidence')
+    evidence = request.files.get('evidence')
 
     errors = []
     if not description:
@@ -163,12 +171,12 @@ def report():
         )
 
         PRIORITY_MAP = {
-            'Assault':      'High',
-            'Theft':        'Medium',
-            'Fraud':        'Medium',
-            'Cybercrime':   'Medium',
-            'Vandalism':    'Low',
-            'Other':      'Medium',
+            'Assault': 'High',
+            'Theft': 'Medium',
+            'Fraud': 'Medium',
+            'Cybercrime': 'Medium',
+            'Vandalism': 'Low',
+            'Other': 'Medium',
         }
         priority = PRIORITY_MAP.get(crime_type, 'Medium')
 
@@ -204,6 +212,7 @@ def report():
 
     flash('Thank you for reporting. Your complaint has been submitted successfully.', 'success')
     return redirect(url_for('report'))
+
 
 @app.route('/login/<role>', methods=['GET', 'POST'])
 def login(role):
@@ -265,6 +274,7 @@ def login(role):
 
     return render_template("login.html", role=role)
 
+
 @app.route('/register_badge', methods=['GET', 'POST'])
 def register_badge():
     if request.method == 'POST':
@@ -287,7 +297,7 @@ def register_badge():
         if existing:
             conn.close()
             return render_template("register_badge.html", msg="Name or Email already exists ❌")
-        
+
         conn.execute(
             "INSERT INTO AuthorizedPersonnel (name, email, password_hash, badge_number) VALUES (?, ?, ?, ?)",
             (name, email, password, badgenumber)
@@ -394,7 +404,6 @@ def assign_case(complaint_id):
 
 @app.route('/resolve_case/<int:complaint_id>', methods=['POST'])
 def resolve_case(complaint_id):
-
     if 'personnel_id' not in session:
         flash('Please log in first.', 'error')
         return redirect('/login')
@@ -418,6 +427,7 @@ def resolve_case(complaint_id):
     flash(f'Case #{complaint_id} marked as Resolved.', 'success')
     return redirect('/police_dashboard')
 
+
 def time_ago(dt_str):
     if not dt_str:
         return ''
@@ -433,7 +443,8 @@ def time_ago(dt_str):
         return f'{minutes // 60}h ago'
     else:
         return f'{minutes // 1440}d ago'
-    
+
+
 @app.route('/citizen_dashboard')
 def citizen_dashboard():
     db = get_db_connection()
@@ -468,9 +479,10 @@ def citizen_dashboard():
     db.close()
 
     return render_template('citizen_dashboard.html',
-        recent_notifications=recent_notifications,
-        recent_reports=recent_reports
-    )
+                           recent_notifications=recent_notifications,
+                           recent_reports=recent_reports
+                           )
+
 
 @app.route('/case_tracking')
 @app.route('/case_tracking/<filter_type>')
@@ -512,6 +524,7 @@ def case_tracking(filter_type=None):
 
     return render_template('case_tracking.html', cases=all_cases, filter_type=filter_type)
 
+
 @app.route('/notifications')
 def notifications():
     db = get_db_connection()
@@ -538,10 +551,11 @@ def notifications():
 
     return render_template('notifications.html', all_notifications=notifications_list)
 
+
 @app.route('/case_detail/<int:case_id>')
 def case_detail(case_id):
     db = get_db_connection()
-    
+
     case = db.execute('''
         SELECT c.complaint_id, cc.name as category_name, c.description, 
                c.location, c.status, c.created_at,
@@ -561,7 +575,7 @@ def case_detail(case_id):
         LEFT JOIN Citizens vol ON cs.assigned_volunteer_id = vol.citizen_id
         WHERE c.complaint_id = ?
     ''', (case_id,)).fetchone()
-    
+
     evidence_files = []
     if case:
         evidence = db.execute('''
@@ -569,67 +583,69 @@ def case_detail(case_id):
             FROM Evidence
             WHERE complaint_id = ?
         ''', (case_id,)).fetchall()
-        
+
         for e in evidence:
             filename = e['file_url'].split('/')[-1] if e['file_url'] else 'Unknown file'
             evidence_files.append({
                 'name': filename,
                 'url': e['file_url']
             })
-    
+
     timeline = []
     if case:
         timeline.append({
             'event': 'Case Filed',
             'date': case['created_at']
         })
-        
+
         if case['status'] != 'Pending' and case['status']:
             timeline.append({
                 'event': f"Status: {case['status']}",
                 'date': case['created_at']
             })
-            
+
         if case['officer_name']:
             timeline.append({
                 'event': f"Police Officer Assigned: {case['officer_name']}",
                 'date': case['created_at']
             })
-        
+
         if case['detective_name']:
             timeline.append({
                 'event': f"Detective Assigned: {case['detective_name']}",
                 'date': case['created_at']
             })
-        
+
         if case['volunteer_name']:
             timeline.append({
                 'event': f"Volunteer Assigned: {case['volunteer_name']}",
                 'date': case['created_at']
             })
-    
+
     db.close()
-    
+
     if not case:
         flash('Case not found', 'error')
         return redirect(url_for('case_tracking'))
-    
+
     case_dict = dict(case)
     case_dict['evidence_files'] = evidence_files
     case_dict['timeline'] = timeline
-    
+
     if case_dict['created_at']:
         try:
             dt = datetime.strptime(case_dict['created_at'], '%Y-%m-%d %H:%M:%S')
             case_dict['date_filed'] = dt.strftime('%B %d, %Y')
         except:
             case_dict['date_filed'] = case_dict['created_at']
-    
+
     return render_template('case_detail.html', case=case_dict)
+
 
 @app.route('/emergency_tracking')
 def emergency_tracking():
     return render_template('emergency_tracking.html')
+
 
 @app.route('/statistics_board')
 def statistics_board():
@@ -644,14 +660,27 @@ def statistics_board():
         FROM Complaints c JOIN CrimeCategories cc ON c.category_id = cc.category_id 
         GROUP BY cc.name ORDER BY count DESC
     """).fetchall()
+    status_stats = conn.execute("""
+            SELECT status, COUNT(*) as count
+            FROM Complaints
+            GROUP BY status
+        """).fetchall()
+
+    conn.close()
+
+    return render_template('statistics_board.html',
+                           total_crimes=total_crimes,
+                           categories=categories,
+                           status_stats=status_stats)
+
 
 @app.route('/detective_dashboard')
 def detective_dashboard():
-        if session.get('role') != 'Detective': return redirect(url_for('login'))
+    if session.get('role') != 'Detective': return redirect(url_for('login'))
 
-        conn = get_db_connection()
-        # Detectives see only cases assigned to them
-        cases = conn.execute("""
+    conn = get_db_connection()
+    # Detectives see only cases assigned to them
+    cases = conn.execute("""
             SELECT c.complaint_id, cc.name as category, c.description, c.location, c.status, cs.priority, cs.notes
             FROM Complaints c
             JOIN Cases cs ON c.complaint_id = cs.complaint_id
@@ -659,34 +688,34 @@ def detective_dashboard():
             WHERE cs.assigned_detective_id = ?
             ORDER BY c.created_at DESC
         """, (session.get('user_id'),)).fetchall()
-        conn.close()
-        return render_template('detective_dashboard.html', cases=cases)
+    conn.close()
+    return render_template('detective_dashboard.html', cases=cases)
+
 
 @app.route('/update_investigation/<int:complaint_id>', methods=['POST'])
 def update_investigation(complaint_id):
-        if session.get('role') != 'Detective': return redirect(url_for('login'))
-        notes = request.form.get('notes', '').strip()
-        status = request.form.get('status', 'In Progress')
+    if session.get('role') != 'Detective': return redirect(url_for('login'))
+    notes = request.form.get('notes', '').strip()
+    status = request.form.get('status', 'In Progress')
 
-        conn = get_db_connection()
-        conn.execute("UPDATE Cases SET notes = ?, last_updated = CURRENT_TIMESTAMP WHERE complaint_id = ?",
-                     (notes, complaint_id))
-        conn.execute("UPDATE Complaints SET status = ? WHERE complaint_id = ?", (status, complaint_id))
-        conn.execute("INSERT INTO Logs (user_id, action) VALUES (?, ?)",
-                     (session['user_id'], f"Updated investigation notes for case #{complaint_id}"))
-        conn.commit()
-        conn.close()
-        flash('Investigation updated successfully.', 'success')
-        return redirect(url_for('detective_dashboard'))
-
+    conn = get_db_connection()
+    conn.execute("UPDATE Cases SET notes = ?, last_updated = CURRENT_TIMESTAMP WHERE complaint_id = ?",
+                 (notes, complaint_id))
+    conn.execute("UPDATE Complaints SET status = ? WHERE complaint_id = ?", (status, complaint_id))
+    conn.execute("INSERT INTO Logs (user_id, action) VALUES (?, ?)",
+                 (session['user_id'], f"Updated investigation notes for case #{complaint_id}"))
+    conn.commit()
+    conn.close()
+    flash('Investigation updated successfully.', 'success')
+    return redirect(url_for('detective_dashboard'))
 
 
 @app.route('/admin_dashboard')
 def admin_dashboard():
-        if session.get('role') != 'Operator': return redirect(url_for('login'))
+    if session.get('role') != 'Operator': return redirect(url_for('login'))
 
-        conn = get_db_connection()
-        active_dispatches = conn.execute("""
+    conn = get_db_connection()
+    active_dispatches = conn.execute("""
             SELECT d.dispatch_id, d.complaint_id, d.status, d.eta, c.location, cc.name as category
             FROM Dispatch d
             JOIN Complaints c ON d.complaint_id = c.complaint_id
@@ -695,57 +724,60 @@ def admin_dashboard():
             ORDER BY d.created_at DESC
         """).fetchall()
 
-        unassigned_high = conn.execute("""
+    unassigned_high = conn.execute("""
             SELECT c.complaint_id, cc.name as category, c.location 
             FROM Complaints c JOIN Cases cs ON c.complaint_id = cs.complaint_id
             JOIN CrimeCategories cc ON c.category_id = cc.category_id
             WHERE cs.priority = 'High' AND c.complaint_id NOT IN (SELECT complaint_id FROM Dispatch)
         """).fetchall()
 
-        # Get available units (Citizens marked as volunteers or personnel)
-        units = conn.execute("SELECT citizen_id, full_name FROM Citizens LIMIT 5").fetchall()
-        conn.close()
+    # Get available units (Citizens marked as volunteers or personnel)
+    units = conn.execute("SELECT citizen_id, full_name FROM Citizens LIMIT 5").fetchall()
+    conn.close()
 
-        return render_template('operator_dashboard.html', active_dispatches=active_dispatches,
-                               unassigned_high=unassigned_high, units=units)
+    return render_template('operator_dashboard.html', active_dispatches=active_dispatches,
+                           unassigned_high=unassigned_high, units=units)
+
 
 @app.route('/dispatch_unit', methods=['POST'])
 def dispatch_unit():
-        if session.get('role') != 'Operator': return redirect(url_for('login'))
+    if session.get('role') != 'Operator': return redirect(url_for('login'))
 
-        complaint_id = request.form.get('complaint_id')
-        unit_id = request.form.get('unit_id')
-        eta = request.form.get('eta', 10)
+    complaint_id = request.form.get('complaint_id')
+    unit_id = request.form.get('unit_id')
+    eta = request.form.get('eta', 10)
 
-        conn = get_db_connection()
-        # Insert dispatch record
-        conn.execute(
-            "INSERT INTO Dispatch (complaint_id, assigned_unit_id, status, eta) VALUES (?, ?, 'Dispatched', ?)",
-            (complaint_id, unit_id, eta))
-        # Update complaint status
-        conn.execute("UPDATE Complaints SET status = 'In Progress' WHERE complaint_id = ?", (complaint_id,))
-        conn.execute("INSERT INTO Notifications (message) VALUES (?)",
-                     (f'Emergency unit dispatched to Complaint #{complaint_id}. ETA: {eta} mins.'))
-        conn.commit()
-        conn.close()
+    conn = get_db_connection()
+    # Insert dispatch record
+    conn.execute(
+        "INSERT INTO Dispatch (complaint_id, assigned_unit_id, status, eta) VALUES (?, ?, 'Dispatched', ?)",
+        (complaint_id, unit_id, eta))
+    # Update complaint status
+    conn.execute("UPDATE Complaints SET status = 'In Progress' WHERE complaint_id = ?", (complaint_id,))
+    conn.execute("INSERT INTO Notifications (message) VALUES (?)",
+                 (f'Emergency unit dispatched to Complaint #{complaint_id}. ETA: {eta} mins.'))
+    conn.commit()
+    conn.close()
 
-        flash('Unit dispatched successfully!', 'success')
-        return redirect(url_for('operator_dashboard'))
+    flash('Unit dispatched successfully!', 'success')
+    return redirect(url_for('operator_dashboard'))
+
 
 @app.route('/update_dispatch/<int:dispatch_id>', methods=['POST'])
 def update_dispatch(dispatch_id):
-        new_status = request.form.get('status')
-        conn = get_db_connection()
-        conn.execute("UPDATE Dispatch SET status = ? WHERE dispatch_id = ?", (new_status, dispatch_id))
-        if new_status == 'Completed':
-            dispatch = conn.execute("SELECT complaint_id FROM Dispatch WHERE dispatch_id = ?",
-                                    (dispatch_id,)).fetchone()
-            if dispatch:
-                conn.execute("UPDATE Complaints SET status = 'Resolved' WHERE complaint_id = ?",
-                             (dispatch['complaint_id'],))
-        conn.commit()
-        conn.close()
-        return redirect(url_for('admin_dashboard'))
+    new_status = request.form.get('status')
+    conn = get_db_connection()
+    conn.execute("UPDATE Dispatch SET status = ? WHERE dispatch_id = ?", (new_status, dispatch_id))
+    if new_status == 'Completed':
+        dispatch = conn.execute("SELECT complaint_id FROM Dispatch WHERE dispatch_id = ?",
+                                (dispatch_id,)).fetchone()
+        if dispatch:
+            conn.execute("UPDATE Complaints SET status = 'Resolved' WHERE complaint_id = ?",
+                         (dispatch['complaint_id'],))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('admin_dashboard'))
+
 
 @app.route('/profile')
 def profile():
@@ -776,10 +808,12 @@ def profile():
 
     return render_template("profile.html", user=user, role=role)
 
+
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('portal'))
+
 
 @app.route('/my_complaints')
 def my_complaints():
@@ -794,6 +828,7 @@ def my_complaints():
 
     return render_template("my_complaints.html", complaints=complaints)
 
+
 @app.route('/update_status/<int:id>', methods=['POST'])
 def update_status(id):
     status = request.form.get('status')
@@ -807,11 +842,6 @@ def update_status(id):
     conn.close()
 
     return redirect(url_for('police_dashboard'))
-
-
-
-
-
 
 
 if __name__ == '__main__':
