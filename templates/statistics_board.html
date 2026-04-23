@@ -30,389 +30,108 @@
       overflow: hidden;
     }
     
-    body {
-      display: flex;
-      align-items: stretch;
-      justify-content: stretch;
-    }
+    body { display: flex; align-items: stretch; justify-content: stretch; }
     
-    /* FULL SCREEN CONTAINER */
     .app-container {
-      width: 100vw;
-      height: 100vh;
-      background: var(--navy);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      background-image: 
-        linear-gradient(rgba(0,200,255,0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,200,255,0.025) 1px, transparent 1px);
+      width: 100vw; height: 100vh; background: var(--navy); overflow: hidden;
+      display: flex; flex-direction: column; position: relative;
+      background-image: linear-gradient(rgba(0,200,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(0,200,255,0.025) 1px, transparent 1px);
       background-size: 50px 50px;
     }
     
-    /* HEADER */
     .header {
-      padding: clamp(14px, 2vh, 24px) clamp(16px, 3vw, 40px);
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: clamp(12px, 2vw, 16px);
-      flex-shrink: 0;
-      background: rgba(10,15,30,0.95);
-      backdrop-filter: blur(10px);
+      padding: clamp(14px, 2vh, 24px) clamp(16px, 3vw, 40px); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: clamp(12px, 2vw, 16px); flex-shrink: 0;
+      background: rgba(10,15,30,0.95); backdrop-filter: blur(10px);
     }
     
     .back-btn {
-      background: none;
-      border: none;
-      color: var(--cyan);
-      font-size: clamp(1.2rem, 2vw, 1.5rem);
-      cursor: pointer;
-      width: clamp(28px, 4vw, 40px);
-      height: clamp(28px, 4vw, 40px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 8px;
-      transition: all 0.2s;
+      background: none; border: none; color: var(--cyan); font-size: clamp(1.2rem, 2vw, 1.5rem);
+      cursor: pointer; width: clamp(28px, 4vw, 40px); height: clamp(28px, 4vw, 40px);
+      display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: all 0.2s;
     }
-    
-    .back-btn:hover {
-      background: rgba(0,200,255,0.1);
-    }
+    .back-btn:hover { background: rgba(0,200,255,0.1); }
     
     .header-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(1.1rem, 3vw, 2rem);
-      letter-spacing: clamp(2px, 0.5vw, 3px);
-      flex: 1;
+      font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.1rem, 3vw, 2rem);
+      letter-spacing: clamp(2px, 0.5vw, 3px); flex: 1;
     }
     
-    /* MAIN CONTENT AREA */
     .app-content {
-      flex: 1;
-      overflow-y: auto;
-      overflow-x: hidden;
-      display: flex;
-      flex-direction: column;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(0,200,255,0.2) transparent;
+      flex: 1; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column;
+      scrollbar-width: thin; scrollbar-color: rgba(0,200,255,0.2) transparent;
     }
+    .app-content::-webkit-scrollbar { width: 6px; }
+    .app-content::-webkit-scrollbar-thumb { background: rgba(0,200,255,0.3); border-radius: 3px; }
     
-    .app-content::-webkit-scrollbar {
-      width: 6px;
-    }
-    
-    .app-content::-webkit-scrollbar-thumb {
-      background: rgba(0,200,255,0.3);
-      border-radius: 3px;
-    }
-    
-    /* CONTENT WRAPPER - Fluid */
     .content {
-      flex: 1;
-      padding: clamp(14px, 2.5vh, 32px) clamp(14px, 3vw, 40px);
-      display: flex;
-      flex-direction: column;
-      gap: clamp(12px, 2vh, 20px);
-      width: 100%;
+      flex: 1; padding: clamp(14px, 2.5vh, 32px) clamp(14px, 3vw, 40px);
+      display: flex; flex-direction: column; gap: clamp(12px, 2vh, 20px); width: 100%;
     }
     
-    /* Stats Grid for Desktop */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
-      gap: clamp(12px, 1.5vw, 20px);
-    }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: clamp(12px, 1.5vw, 20px); }
+    .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr)); gap: clamp(12px, 1.5vw, 20px); }
     
-    .charts-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
-      gap: clamp(12px, 1.5vw, 20px);
-    }
-    
-    .time-filter {
-      display: flex;
-      gap: clamp(7px, 1vw, 12px);
-      flex-wrap: wrap;
-    }
-    
+    .time-filter { display: flex; gap: clamp(7px, 1vw, 12px); flex-wrap: wrap; }
     .filter-btn {
-      background: transparent;
-      border: 1.5px solid var(--border);
-      color: var(--muted);
-      padding: clamp(5px, 1vh, 10px) clamp(11px, 1.5vw, 20px);
-      border-radius: clamp(6px, 0.8vw, 10px);
-      cursor: pointer;
-      font-size: clamp(0.7rem, 1vw, 0.85rem);
-      font-weight: 700;
-      transition: all 0.2s;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-family: 'DM Sans', sans-serif;
+      background: transparent; border: 1.5px solid var(--border); color: var(--muted);
+      padding: clamp(5px, 1vh, 10px) clamp(11px, 1.5vw, 20px); border-radius: clamp(6px, 0.8vw, 10px);
+      cursor: pointer; font-size: clamp(0.7rem, 1vw, 0.85rem); font-weight: 700;
+      transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'DM Sans', sans-serif;
     }
-    
-    .filter-btn.active {
-      background: rgba(0,200,255,0.15);
-      border-color: var(--cyan);
-      color: var(--cyan);
-    }
-    
-    .filter-btn:hover {
-      border-color: var(--cyan);
-    }
+    .filter-btn.active { background: rgba(0,200,255,0.15); border-color: var(--cyan); color: var(--cyan); }
+    .filter-btn:hover { border-color: var(--cyan); }
     
     .stat-row {
-      background: var(--card);
-      border: 1.5px solid var(--border);
-      border-radius: clamp(10px, 1.5vw, 16px);
-      padding: clamp(12px, 2vh, 20px) clamp(14px, 2vw, 24px);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      background: var(--card); border: 1.5px solid var(--border); border-radius: clamp(10px, 1.5vw, 16px);
+      padding: clamp(12px, 2vh, 20px) clamp(14px, 2vw, 24px); display: flex; align-items: center; justify-content: space-between;
     }
-    
-    .stat-left {
-      display: flex;
-      align-items: center;
-      gap: clamp(10px, 1.5vw, 16px);
-    }
-    
+    .stat-left { display: flex; align-items: center; gap: clamp(10px, 1.5vw, 16px); }
     .stat-ico {
-      width: clamp(42px, 6vw, 60px);
-      height: clamp(42px, 6vw, 60px);
-      border-radius: clamp(9px, 1.2vw, 14px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: clamp(1.2rem, 2vw, 1.8rem);
-      flex-shrink: 0;
+      width: clamp(42px, 6vw, 60px); height: clamp(42px, 6vw, 60px); border-radius: clamp(9px, 1.2vw, 14px);
+      display: flex; align-items: center; justify-content: center; font-size: clamp(1.2rem, 2vw, 1.8rem); flex-shrink: 0;
     }
-    
     .ico-red { background: rgba(255,78,106,0.15); }
     .ico-cyan { background: rgba(0,200,255,0.12); }
     .ico-yellow { background: rgba(255,184,48,0.12); }
     .ico-green { background: rgba(0,229,160,0.12); }
     
-    .stat-lbl {
-      font-size: clamp(0.65rem, 1vw, 0.8rem);
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      font-weight: 600;
-      margin-bottom: clamp(3px, 0.5vh, 6px);
-    }
+    .stat-lbl { font-size: clamp(0.65rem, 1vw, 0.8rem); color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; margin-bottom: clamp(3px, 0.5vh, 6px); }
+    .stat-val { font-family: 'Bebas Neue', sans-serif; font-size: clamp(1.8rem, 3vw, 2.5rem); line-height: 1; }
+    .stat-change { font-size: clamp(0.7rem, 1vw, 0.85rem); padding: clamp(3px, 0.5vh, 6px) clamp(8px, 1vw, 12px); border-radius: clamp(4px, 0.6vw, 6px); background: rgba(0,229,160,0.15); color: var(--green); font-weight: 700; }
+    .stat-change.down { background: rgba(255,78,106,0.12); color: var(--red); }
     
-    .stat-val {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(1.8rem, 3vw, 2.5rem);
-      line-height: 1;
-    }
+    .chart-block { background: var(--card); border: 1.5px solid var(--border); border-radius: clamp(10px, 1.5vw, 16px); padding: clamp(14px, 2.5vh, 24px); }
+    .chart-title { font-weight: 700; font-size: clamp(0.82rem, 1.3vw, 1rem); margin-bottom: clamp(12px, 2vh, 18px); }
     
-    .stat-change {
-      font-size: clamp(0.7rem, 1vw, 0.85rem);
-      padding: clamp(3px, 0.5vh, 6px) clamp(8px, 1vw, 12px);
-      border-radius: clamp(4px, 0.6vw, 6px);
-      background: rgba(0,229,160,0.15);
-      color: var(--green);
-      font-weight: 700;
-    }
+    .bar-item { display: flex; align-items: center; gap: clamp(8px, 1.2vw, 12px); margin-bottom: clamp(9px, 1.5vh, 12px); }
+    .bar-item:last-child { margin-bottom: 0; }
+    .bar-lbl { width: clamp(64px, 8vw, 90px); font-size: clamp(0.7rem, 1vw, 0.85rem); color: var(--muted); flex-shrink: 0; }
+    .bar-track { flex: 1; height: clamp(20px, 3vh, 28px); background: rgba(0,200,255,0.07); border-radius: clamp(4px, 0.6vw, 6px); overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: clamp(4px, 0.6vw, 6px); display: flex; align-items: center; justify-content: flex-end; padding-right: clamp(6px, 1vw, 10px); font-size: clamp(0.65rem, 1vw, 0.8rem); font-weight: 700; color: var(--navy); }
     
-    .stat-change.down {
-      background: rgba(255,78,106,0.12);
-      color: var(--red);
-    }
+    .pie-wrap { display: flex; flex-direction: column; align-items: center; gap: clamp(12px, 2vh, 20px); }
+    .pie { width: clamp(100px, 20vw, 180px); height: clamp(100px, 20vw, 180px); border-radius: 50%; position: relative; box-shadow: 0 0 30px rgba(0,200,255,0.15); }
+    .pie-center { position: absolute; inset: clamp(8px, 1.5vw, 15px); background: var(--navy); border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; border: 1.5px solid var(--border); }
+    .pie-num { font-family: 'Bebas Neue', sans-serif; font-size: clamp(0.9rem, 1.8vw, 1.4rem); color: var(--cyan); }
+    .pie-sub { font-size: clamp(0.55rem, 0.9vw, 0.7rem); color: var(--muted); }
     
-    .chart-block {
-      background: var(--card);
-      border: 1.5px solid var(--border);
-      border-radius: clamp(10px, 1.5vw, 16px);
-      padding: clamp(14px, 2.5vh, 24px);
-    }
+    .legend-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: clamp(7px, 1vh, 12px); width: 100%; }
+    .legend-item { display: flex; align-items: center; gap: clamp(6px, 1vw, 10px); font-size: clamp(0.72rem, 1.1vw, 0.85rem); color: var(--muted); }
+    .legend-dot { width: clamp(10px, 1.5vw, 14px); height: clamp(10px, 1.5vw, 14px); border-radius: clamp(2px, 0.4vw, 4px); flex-shrink: 0; }
     
-    .chart-title {
-      font-weight: 700;
-      font-size: clamp(0.82rem, 1.3vw, 1rem);
-      margin-bottom: clamp(12px, 2vh, 18px);
-    }
-    
-    .bar-item {
-      display: flex;
-      align-items: center;
-      gap: clamp(8px, 1.2vw, 12px);
-      margin-bottom: clamp(9px, 1.5vh, 12px);
-    }
-    
-    .bar-item:last-child {
-      margin-bottom: 0;
-    }
-    
-    .bar-lbl {
-      width: clamp(64px, 8vw, 90px);
-      font-size: clamp(0.7rem, 1vw, 0.85rem);
-      color: var(--muted);
-      flex-shrink: 0;
-    }
-    
-    .bar-track {
-      flex: 1;
-      height: clamp(20px, 3vh, 28px);
-      background: rgba(0,200,255,0.07);
-      border-radius: clamp(4px, 0.6vw, 6px);
-      overflow: hidden;
-    }
-    
-    .bar-fill {
-      height: 100%;
-      border-radius: clamp(4px, 0.6vw, 6px);
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      padding-right: clamp(6px, 1vw, 10px);
-      font-size: clamp(0.65rem, 1vw, 0.8rem);
-      font-weight: 700;
-      color: var(--navy);
-    }
-    
-    .bf-red { background: linear-gradient(90deg, var(--red), #ff7a8a); }
-    .bf-yellow { background: linear-gradient(90deg, var(--yellow), #ffc858); }
-    .bf-cyan { background: linear-gradient(90deg, var(--cyan), #66e5ff); }
-    .bf-green { background: linear-gradient(90deg, var(--green), #4dffce); }
-    
-    .pie-wrap {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: clamp(12px, 2vh, 20px);
-    }
-    
-    .pie {
-      width: clamp(100px, 20vw, 180px);
-      height: clamp(100px, 20vw, 180px);
-      border-radius: 50%;
-      background: conic-gradient(var(--red) 0% 30%, var(--cyan) 30% 55%, var(--yellow) 55% 75%, var(--green) 75% 100%);
-      position: relative;
-      box-shadow: 0 0 30px rgba(0,200,255,0.15);
-    }
-    
-    .pie-center {
-      position: absolute;
-      inset: clamp(8px, 1.5vw, 15px);
-      background: var(--navy);
-      border-radius: 50%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      border: 1.5px solid var(--border);
-    }
-    
-    .pie-num {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(0.9rem, 1.8vw, 1.4rem);
-      color: var(--cyan);
-    }
-    
-    .pie-sub {
-      font-size: clamp(0.55rem, 0.9vw, 0.7rem);
-      color: var(--muted);
-    }
-    
-    .legend-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: clamp(7px, 1vh, 12px);
-      width: 100%;
-    }
-    
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: clamp(6px, 1vw, 10px);
-      font-size: clamp(0.72rem, 1.1vw, 0.85rem);
-      color: var(--muted);
-    }
-    
-    .legend-dot {
-      width: clamp(10px, 1.5vw, 14px);
-      height: clamp(10px, 1.5vw, 14px);
-      border-radius: clamp(2px, 0.4vw, 4px);
-      flex-shrink: 0;
-    }
-    
-    /* Bottom Navigation */
-    .bottom-nav {
-      display: flex;
-      border-top: 1.5px solid var(--border);
-      background: rgba(10,15,30,0.95);
-      backdrop-filter: blur(10px);
-      flex-shrink: 0;
-      padding: 0 clamp(10px, 2vw, 40px);
-    }
-    
-    .nav-btn {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: clamp(3px, 0.5vh, 5px);
-      padding: clamp(9px, 1.5vh, 14px) clamp(6px, 1vw, 12px);
-      font-size: clamp(0.55rem, 0.9vw, 0.75rem);
-      color: var(--muted);
-      text-decoration: none;
-      transition: color 0.2s;
-      cursor: pointer;
-      border: none;
-      background: transparent;
-      font-family: 'DM Sans', sans-serif;
-      max-width: 120px;
-      margin: 0 auto;
-    }
-    
-    .nav-btn.active, .nav-btn:hover {
-      color: var(--cyan);
-    }
-    
-    .nav-btn-icon {
-      font-size: clamp(1rem, 1.8vw, 1.3rem);
-    }
-    
-    /* Full width on mobile, multi-column on desktop */
-    @media (min-width: 768px) {
-      .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-    
-    @media (min-width: 1200px) {
-      .stats-grid {
-        grid-template-columns: repeat(4, 1fr);
-      }
-      
-      .charts-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-    
-    @media (min-width: 1600px) {
-      .charts-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
+    @media (min-width: 768px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1200px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } .charts-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1600px) { .charts-grid { grid-template-columns: repeat(3, 1fr); } }
   </style>
 </head>
 <body>
   <div class="app-container">
-    <!-- HEADER -->
     <div class="header">
       <button class="back-btn" onclick="window.history.back()">←</button>
       <div class="header-title">STATISTICS</div>
     </div>
 
-    <!-- CONTENT -->
     <div class="app-content">
       <div class="content">
         <div class="time-filter">
@@ -421,17 +140,16 @@
           <button class="filter-btn" onclick="setFilter(this)">This Year</button>
         </div>
 
-        <!-- Stats Cards Grid -->
         <div class="stats-grid">
           <div class="stat-row">
             <div class="stat-left">
               <div class="stat-ico ico-red">🚨</div>
               <div>
                 <div class="stat-lbl">Total Incidents</div>
-                <div class="stat-val" style="color:var(--red)">1,248</div>
+                <div class="stat-val" style="color:var(--red)">{{ total_crimes }}</div>
               </div>
             </div>
-            <div class="stat-change">+12%</div>
+            <div class="stat-change">100%</div>
           </div>
           
           <div class="stat-row">
@@ -439,10 +157,10 @@
               <div class="stat-ico ico-cyan">✅</div>
               <div>
                 <div class="stat-lbl">Resolved Cases</div>
-                <div class="stat-val" style="color:var(--cyan)">856</div>
+                <div class="stat-val" style="color:var(--cyan)">{{ resolved }}</div>
               </div>
             </div>
-            <div class="stat-change">+8%</div>
+            <div class="stat-change">{{ resolved_pct }}%</div>
           </div>
           
           <div class="stat-row">
@@ -450,10 +168,10 @@
               <div class="stat-ico ico-yellow">⏳</div>
               <div>
                 <div class="stat-lbl">Pending Cases</div>
-                <div class="stat-val" style="color:var(--yellow)">234</div>
+                <div class="stat-val" style="color:var(--yellow)">{{ pending }}</div>
               </div>
             </div>
-            <div class="stat-change down">-3%</div>
+            <div class="stat-change down">{{ pending_pct }}%</div>
           </div>
           
           <div class="stat-row">
@@ -461,90 +179,65 @@
               <div class="stat-ico ico-green">👮</div>
               <div>
                 <div class="stat-lbl">Active Officers</div>
-                <div class="stat-val" style="color:var(--green)">127</div>
+                <div class="stat-val" style="color:var(--green)">{{ active_officers }}</div>
               </div>
             </div>
-            <div class="stat-change">+2%</div>
+            <div class="stat-change">Active</div>
           </div>
         </div>
 
-        <!-- Charts Grid -->
         <div class="charts-grid">
-          <!-- CRIME TYPE CHART -->
           <div class="chart-block">
             <div class="chart-title">Crime Type Breakdown</div>
-            <div class="bar-item">
-              <span class="bar-lbl">Theft</span>
-              <div class="bar-track"><div class="bar-fill bf-red" style="width:35%">312</div></div>
-            </div>
-            <div class="bar-item">
-              <span class="bar-lbl">Assault</span>
-              <div class="bar-track"><div class="bar-fill bf-red" style="width:22%">195</div></div>
-            </div>
-            <div class="bar-item">
-              <span class="bar-lbl">Noise</span>
-              <div class="bar-track"><div class="bar-fill bf-yellow" style="width:18%">158</div></div>
-            </div>
-            <div class="bar-item">
-              <span class="bar-lbl">Traffic</span>
-              <div class="bar-track"><div class="bar-fill bf-cyan" style="width:25%">220</div></div>
-            </div>
-            <div class="bar-item">
-              <span class="bar-lbl">Other</span>
-              <div class="bar-track"><div class="bar-fill bf-green" style="width:15%">131</div></div>
-            </div>
+            {% for cat in categories %}
+              <div class="bar-item">
+                <span class="bar-lbl">{{ cat.name }}</span>
+                <div class="bar-track">
+                    <div class="bar-fill" data-css="{{ cat.full_style }}">{{ cat.count }}</div>
+                </div>
+              </div>
+            {% endfor %}
           </div>
 
-          <!-- PIE CHART -->
           <div class="chart-block">
             <div class="chart-title">Case Status Distribution</div>
             <div class="pie-wrap">
-              <div class="pie">
+              <div class="pie" data-css="{{ pie_style }}">
                 <div class="pie-center">
-                  <div class="pie-num">1,248</div>
+                  <div class="pie-num">{{ total_crimes }}</div>
                   <div class="pie-sub">Total</div>
                 </div>
               </div>
               <div class="legend-grid">
-                <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Pending (30%)</div>
-                <div class="legend-item"><div class="legend-dot" style="background:var(--cyan)"></div>In Progress (25%)</div>
-                <div class="legend-item"><div class="legend-dot" style="background:var(--yellow)"></div>Under Review (20%)</div>
-                <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Resolved (25%)</div>
+                <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Pending ({{ status_map['Pending'] }})</div>
+                <div class="legend-item"><div class="legend-dot" style="background:var(--cyan)"></div>In Progress ({{ status_map['In Progress'] }})</div>
+                <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Resolved ({{ status_map['Resolved'] }})</div>
               </div>
             </div>
           </div>
 
-          <!-- RESPONSE TIME -->
           <div class="chart-block">
             <div class="chart-title">Avg Response Time (min)</div>
-            <div class="bar-item">
-              <span class="bar-lbl">Police</span>
-              <div class="bar-track"><div class="bar-fill bf-cyan" style="width:45%">7.2</div></div>
-            </div>
-            <div class="bar-item">
-              <span class="bar-lbl">Ambulance</span>
-              <div class="bar-track"><div class="bar-fill bf-green" style="width:60%">9.8</div></div>
-            </div>
-            <div class="bar-item">
-              <span class="bar-lbl">Fire Dept</span>
-              <div class="bar-track"><div class="bar-fill bf-red" style="width:55%">8.9</div></div>
-            </div>
+            {% for rt in response_times %}
+              <div class="bar-item">
+                <span class="bar-lbl">{{ rt.label }}</span>
+                <div class="bar-track">
+                    <div class="bar-fill" data-css="{{ rt.full_style }}">{{ rt.time }}</div>
+                </div>
+              </div>
+            {% endfor %}
           </div>
         </div>
       </div>
     </div>
-
-    <!-- Bottom Navigation -->
-    <div class="bottom-nav">
-      <a href="/police_dashboard" class="nav-btn"><span class="nav-btn-icon">📊</span>Dashboard</a>
-      <a href="/case_tracking" class="nav-btn"><span class="nav-btn-icon">📋</span>Cases</a>
-      <a href="/statistics_board" class="nav-btn active"><span class="nav-btn-icon">📈</span>Stats</a>
-      <a href="/register_badge" class="nav-btn"><span class="nav-btn-icon">🪪</span>Officers</a>
-    </div>
   </div>
   <script>
+    document.querySelectorAll('[data-css]').forEach(function(el) {
+      el.setAttribute('style', el.getAttribute('data-css'));
+    });
+
     function setFilter(btn){
-      document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+      document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active')});
       btn.classList.add('active');
     }
   </script>

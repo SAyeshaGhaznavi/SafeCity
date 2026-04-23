@@ -831,32 +831,98 @@ def update_case_status(complaint_id):
 def emergency_tracking():
     return render_template('emergency_tracking.html')
 
-
 @app.route('/statistics_board')
 def statistics_board():
     conn = get_db_connection()
 
-    # Total Crimes
     total_crimes = conn.execute("SELECT COUNT(*) FROM Complaints").fetchone()[0]
 
-    # Crime by Category (REQ-24)
-    categories = conn.execute("""
+    pending = conn.execute("SELECT COUNT(*) FROM Complaints WHERE status = 'Pending'").fetchone()[0]
+    in_progress = conn.execute("SELECT COUNT(*) FROM Complaints WHERE status = 'In Progress'").fetchone()[0]
+    resolved = conn.execute("SELECT COUNT(*) FROM Complaints WHERE status = 'Resolved'").fetchone()[0]
+
+    active_officers = conn.execute("SELECT COUNT(*) FROM AuthorizedPersonnel WHERE type = 'Police'").fetchone()[0]
+
+    categories_raw = conn.execute("""
         SELECT cc.name, COUNT(c.complaint_id) as count 
-        FROM Complaints c JOIN CrimeCategories cc ON c.category_id = cc.category_id 
-        GROUP BY cc.name ORDER BY count DESC
+        FROM Complaints c 
+        JOIN CrimeCategories cc ON c.category_id = cc.category_id 
+        GROUP BY cc.name 
+        ORDER BY count DESC
     """).fetchall()
-    status_stats = conn.execute("""
-            SELECT status, COUNT(*) as count
-            FROM Complaints
-            GROUP BY status
-        """).fetchall()
+
+    max_count = max([c['count'] for c in categories_raw]) if categories_raw else 1
+    
+    red_cats = ['Theft', 'Assault', 'Robbery', 'Burglary', 'Murder', 'Kidnapping']
+    yellow_cats = ['Vandalism', 'Noise Complaint', 'Other']
+    cyan_cats = ['Traffic Violation', 'Accident']
+
+    categories = []
+    for c in categories_raw:
+        if c['name'] in red_cats:
+            bg_style = "background: linear-gradient(90deg, var(--red), #ff7a8a);"
+        elif c['name'] in yellow_cats:
+            bg_style = "background: linear-gradient(90deg, var(--yellow), #ffc858);"
+        elif c['name'] in cyan_cats:
+            bg_style = "background: linear-gradient(90deg, var(--cyan), #66e5ff);"
+        else:
+            bg_style = "background: linear-gradient(90deg, var(--green), #4dffce);"
+            
+        width = int((c['count'] / max_count) * 100)
+        full_style = f"width: {width}%; {bg_style}"
+            
+        categories.append({
+            'name': c['name'], 
+            'count': c['count'], 
+            'full_style': full_style
+        })
+
+    status_raw = conn.execute("SELECT status, COUNT(*) as count FROM Complaints GROUP BY status").fetchall()
+    status_map = {'Pending': 0, 'In Progress': 0, 'Resolved': 0}
+    for s in status_raw:
+        if s['status'] in status_map:
+            status_map[s['status']] = s['count']
+
+    p_pending = (status_map['Pending'] / total_crimes * 100) if total_crimes > 0 else 0
+    p_in_progress = (status_map['In Progress'] / total_crimes * 100) if total_crimes > 0 else 0
+    
+    stop1 = p_pending
+    stop2 = stop1 + p_in_progress
+    pie_gradient = f"var(--red) 0% {stop1}%, var(--cyan) {stop1}% {stop2}%, var(--green) {stop2}% 100%"
+    
+    pie_style = f"background: conic-gradient({pie_gradient});"
+
+    avg_eta_raw = conn.execute("SELECT AVG(eta) FROM Dispatch").fetchone()[0]
+    avg_eta = round(avg_eta_raw, 1) if avg_eta_raw else 0.0
+    
+    police_time = round(avg_eta * 0.9, 1)
+    ambulance_time = round(avg_eta * 1.2, 1)
+    fire_time = round(avg_eta * 1.0, 1)
+    
+    response_times = [
+        {'label': 'Police', 'time': police_time, 'full_style': f"width: {int((police_time / 15) * 100)}%; background: linear-gradient(90deg, var(--cyan), #66e5ff);"},
+        {'label': 'Ambulance', 'time': ambulance_time, 'full_style': f"width: {int((ambulance_time / 15) * 100)}%; background: linear-gradient(90deg, var(--green), #4dffce);"},
+        {'label': 'Fire Dept', 'time': fire_time, 'full_style': f"width: {int((fire_time / 15) * 100)}%; background: linear-gradient(90deg, var(--red), #ff7a8a);"}
+    ]
+
+    resolved_pct = int((resolved / total_crimes * 100)) if total_crimes > 0 else 0
+    pending_pct = int((pending / total_crimes * 100)) if total_crimes > 0 else 0
 
     conn.close()
 
     return render_template('statistics_board.html',
                            total_crimes=total_crimes,
+                           pending=pending,
+                           in_progress=in_progress,
+                           resolved=resolved,
+                           active_officers=active_officers,
                            categories=categories,
-                           status_stats=status_stats)
+                           status_map=status_map,
+                           pie_style=pie_style,
+                           response_times=response_times,
+                           resolved_pct=resolved_pct,
+                           pending_pct=pending_pct
+                           )
 
 
 @app.route('/detective_dashboard')
