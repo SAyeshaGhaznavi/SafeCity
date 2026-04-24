@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>SafeCity – Volunteer Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --navy:#0a0f1e;
+      --cyan:#00c8ff;
+      --white:#f0f4ff;
+      --muted:#7a8db0;
+      --red:#ff4e6a;
+      --yellow:#ffb830;
+      --green:#00e5a0;
+      --border:rgba(0,200,255,0.15);
+      --card:rgba(255,255,255,0.04);
+    }
+
+    html, body {
+      height: 100vh;
+      width: 100vw;
+      background: var(--navy);
+      font-family: 'DM Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+      color: var(--white);
+      overflow: hidden;
+    }
+
+    body {
+      display: flex;
+      align-items: stretch;
+      justify-content: stretch;
+    }
+
+    .app-container {
+      width: 100vw;
+      height: 100vh;
+      background: var(--navy);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      background-image:
+        linear-gradient(rgba(0,200,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,200,255,0.025) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+
+    .header {
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      background: rgba(10,15,30,0.95);
+      backdrop-filter: blur(10px);
+    }
+
+    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 4px; }
+    .logo span { color: var(--green); }
+
+    .header-right { display: flex; align-items: center; gap: 20px; }
+    .role-badge {
+      font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px; font-size: 0.8rem;
+      padding: 4px 10px; border-radius: 4px; text-transform: uppercase;
+      background: rgba(0,229,160,0.2); color: var(--green); border: 1px solid var(--green);
+    }
+
+    .user-avatar {
+      width: 45px; height: 45px; border-radius: 50%;
+      background: rgba(0,200,255,0.15); border: 2px solid var(--cyan);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; color: var(--cyan); font-size: 1rem;
+    }
+
+    .logout-link {
+      font-size: 0.8rem; color: var(--muted); text-decoration: none;
+      border: 1.5px solid var(--border); padding: 8px 16px; border-radius: 8px;
+      transition: all 0.3s ease; font-weight: 600;
+    }
+    .logout-link:hover { color: var(--red); border-color: var(--red); background: rgba(255,78,106,0.05); }
+
+    .app-content { flex: 1; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; }
+    .app-content::-webkit-scrollbar { width: 6px; }
+    .app-content::-webkit-scrollbar-thumb { background: rgba(0,200,255,0.3); border-radius: 3px; }
+
+    .content {
+      flex: 1; padding: 32px 40px; display: flex; flex-direction: column; gap: 32px;
+      max-width: 1600px; margin: 0 auto; width: 100%;
+    }
+
+    .page-title { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; letter-spacing: 3px; line-height: 1.2; }
+    .page-sub { font-size: 0.95rem; color: var(--muted); margin-top: 4px; }
+
+    .action-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 8px; }
+
+    .action-btn {
+      padding: 20px 24px; border: none; border-radius: 14px; font-size: 1.1rem; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px;
+      transition: all 0.3s ease; text-decoration: none; font-family: 'DM Sans', sans-serif;
+    }
+
+    .btn-log {
+      background: linear-gradient(135deg, var(--green), #00b38f); color: var(--navy);
+      box-shadow: 0 4px 15px rgba(0,229,160,0.2);
+    }
+    .btn-log:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(0,229,160,0.3); }
+
+    .btn-sos {
+      background: linear-gradient(135deg, var(--red), #ff2d5e); color: #fff;
+      box-shadow: 0 4px 15px rgba(255,78,106,0.2);
+    }
+    .btn-sos:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(255,78,106,0.3); }
+
+    .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+
+    .section-card {
+      background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+      border-radius: 20px; padding: 28px;
+    }
+
+    .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .section-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 2px; }
+    .section-link { font-size: 0.8rem; color: var(--cyan); text-decoration: none; font-weight: 600; }
+    .section-link:hover { text-decoration: underline; }
+
+    .list-container { display: flex; flex-direction: column; gap: 16px; }
+
+    .card-item {
+      background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px;
+      display: flex; align-items: center; justify-content: space-between; transition: all 0.2s ease;
+    }
+    .card-item:hover { border-color: rgba(0,200,255,0.3); background: rgba(0,200,255,0.05); }
+
+    .item-icon {
+      width: 45px; height: 45px; border-radius: 12px; display: flex; align-items: center;
+      justify-content: center; font-size: 1.3rem; flex-shrink: 0; margin-right: 16px;
+    }
+
+    .item-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 4px; }
+    .item-meta { font-size: 0.75rem; color: var(--muted); }
+
+    .status-pill {
+      font-size: 0.7rem; font-weight: 700; padding: 6px 12px; border-radius: 6px;
+      text-transform: uppercase; flex-shrink: 0; letter-spacing: 0.5px;
+    }
+
+    .sp-pending { background: rgba(255,184,48,0.2); color: var(--yellow); }
+    .sp-active { background: rgba(0,229,160,0.15); color: var(--green); }
+    .sp-urgent { background: rgba(255,78,106,0.2); color: var(--red); }
+
+    @media (max-width: 1024px) { .dashboard-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 768px) { .action-grid { grid-template-columns: 1fr; } .content { padding: 20px; } }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+        <div class="header">
+      <div class="logo">SAFE<span>CITY</span></div>
+      <div class="header-right">
+        <div class="role-badge">VOLUNTEER</div>
+
+        <div class="user-avatar">
+            {% if session.name %}{{ session.name[0] }}{% else %}V{% endif %}
+        </div>
+        <a href="/logout" class="logout-link">Logout</a> <!-- Changed link to /logout -->
+      </div>
+    </div>
+
+    <div class="app-content">
+      <div class="content">
+        <div class="welcome-section">
+          <div class="page-title">Volunteer Operations</div>
+          <div class="page-sub">Welcome back. Log your patrol activities and assist the community.</div>
+        </div>
+
+        <div class="action-grid">
+          <a href="/log_patrol" class="action-btn btn-log">📍 Start Patrol / Log Activity</a>
+          <button onclick="alert('SOS Signal Sent to HQ')" class="action-btn btn-sos">🚨 Emergency SOS</button>
+        </div>
+
+        <div class="dashboard-grid">
+          <!-- Left: Updates -->
+          <div class="section-card">
+            <div class="section-head">
+              <div class="section-title">Community Updates</div>
+              <a href="/updates" class="section-link">View all →</a>
+            </div>
+            <div class="list-container">
+              {% for update in community_updates %}
+              <div class="card-item" style="display:block">
+                <div style="display:flex; gap:16px; margin-bottom:8px;">
+                  <div class="item-icon" style="background: rgba(0,200,255,0.15);">🔔</div>
+                  <div>
+                    <div class="item-title">{{ update.title }}</div>
+                    <div class="item-meta">{{ update.message }}</div>
+                  </div>
+                </div>
+                <div style="font-size:0.7rem; color:var(--muted); margin-left:61px;">{{ update.time_ago }}</div>
+              </div>
+              {% else %}
+              <div style="text-align:center; padding:20px; color:var(--muted);">No updates</div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Right: Tasks -->
+          <div class="section-card">
+            <div class="section-head">
+              <div class="section-title">My Tasks</div>
+              <a href="/schedule" class="section-link">Schedule →</a>
+            </div>
+            <div class="list-container">
+              {% for task in tasks %}
+              <div class="card-item">
+                <div class="item-icon" style="background: rgba(0,229,160,0.15);">📋</div>
+                <div>
+                  <div class="item-title">{{ task.description }}</div>
+                  <div class="item-meta">Zone: {{ task.zone }} | Due: {{ task.due_date }}</div>
+                </div>
+                <span class="status-pill {% if task.urgent %}sp-urgent{% elif task.active %}sp-active{% else %}sp-pending{% endif %}">
+                  {{ task.status }}
+                </span>
+              </div>
+              {% else %}
+              <div style="text-align:center; padding:20px; color:var(--muted);">No tasks assigned</div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

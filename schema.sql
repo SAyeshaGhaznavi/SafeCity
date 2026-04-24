@@ -47,12 +47,13 @@ CREATE TABLE IF NOT EXISTS Evidence (
     FOREIGN KEY (complaint_id) REFERENCES Complaints(complaint_id)
 );
 
+-- UPDATE THE CASES TABLE DEFINITION IN schema.sql
 CREATE TABLE IF NOT EXISTS Cases (
     case_id INTEGER PRIMARY KEY AUTOINCREMENT,
     complaint_id INTEGER UNIQUE,
     assigned_police_id INTEGER,
     assigned_detective_id INTEGER,
-    assigned_volunteer_id INTEGER,
+    assigned_volunteer_id INTEGER, -- FK below points to Personnel now
     priority TEXT DEFAULT 'Medium' CHECK(priority IN ('High','Medium','Low')),
     notes TEXT,
     last_updated DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -60,7 +61,7 @@ CREATE TABLE IF NOT EXISTS Cases (
     FOREIGN KEY (complaint_id) REFERENCES Complaints(complaint_id),
     FOREIGN KEY (assigned_police_id) REFERENCES AuthorizedPersonnel(personnel_id),
     FOREIGN KEY (assigned_detective_id) REFERENCES AuthorizedPersonnel(personnel_id),
-    FOREIGN KEY (assigned_volunteer_id) REFERENCES Citizens(citizen_id)
+    FOREIGN KEY (assigned_volunteer_id) REFERENCES AuthorizedPersonnel(personnel_id)
 );
 
 CREATE TABLE IF NOT EXISTS Dispatch (
