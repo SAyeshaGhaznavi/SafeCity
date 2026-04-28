@@ -414,17 +414,25 @@
         <!-- ACTIONS -->
         <div class="action-grid">
           <a href="/report" class="action-card primary">
-            <div class="ac-icon">🚨</div>
+            <div class="ac-icon">
+              <img src="{{ url_for('static', filename='icons/alert.png') }}" alt="Report Crime Icon" width="32" height="32">
+            </div>
             <div class="ac-title">Report Crime</div>
             <div class="ac-desc">File an incident anonymously</div>
           </a>
+          
           <button onclick="alert('Emergency services notified!')" class="action-card danger-card">
-            <div class="ac-icon">🆘</div>
+            <div class="ac-icon">
+              <img src="{{ url_for('static', filename='icons/sos.png') }}" alt="SOS Alert Icon" width="32" height="32">
+            </div>
             <div class="ac-title">SOS Alert</div>
             <div class="ac-desc">Immediate emergency call</div>
           </button>
+          
           <a href="/citizen_dashboard" class="action-card">
-            <div class="ac-icon">📊</div>
+            <div class="ac-icon">
+              <img src="{{ url_for('static', filename='icons/dashboard.png') }}" alt="Dashboard Icon" width="32" height="32">
+            </div>
             <div class="ac-title">Dashboard</div>
             <div class="ac-desc">Your activity overview</div>
           </a>
