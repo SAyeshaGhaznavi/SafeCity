@@ -72,16 +72,6 @@
     .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: clamp(12px, 1.5vw, 20px); }
     .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr)); gap: clamp(12px, 1.5vw, 20px); }
     
-    .time-filter { display: flex; gap: clamp(7px, 1vw, 12px); flex-wrap: wrap; }
-    .filter-btn {
-      background: transparent; border: 1.5px solid var(--border); color: var(--muted);
-      padding: clamp(5px, 1vh, 10px) clamp(11px, 1.5vw, 20px); border-radius: clamp(6px, 0.8vw, 10px);
-      cursor: pointer; font-size: clamp(0.7rem, 1vw, 0.85rem); font-weight: 700;
-      transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'DM Sans', sans-serif;
-    }
-    .filter-btn.active { background: rgba(0,200,255,0.15); border-color: var(--cyan); color: var(--cyan); }
-    .filter-btn:hover { border-color: var(--cyan); }
-    
     .stat-row {
       background: var(--card); border: 1.5px solid var(--border); border-radius: clamp(10px, 1.5vw, 16px);
       padding: clamp(12px, 2vh, 20px) clamp(14px, 2vw, 24px); display: flex; align-items: center; justify-content: space-between;
@@ -134,12 +124,6 @@
 
     <div class="app-content">
       <div class="content">
-        <div class="time-filter">
-          <button class="filter-btn" onclick="setFilter(this)">This Week</button>
-          <button class="filter-btn active" onclick="setFilter(this)">This Month</button>
-          <button class="filter-btn" onclick="setFilter(this)">This Year</button>
-        </div>
-
         <div class="stats-grid">
           <div class="stat-row">
             <div class="stat-left">
@@ -235,11 +219,6 @@
     document.querySelectorAll('[data-css]').forEach(function(el) {
       el.setAttribute('style', el.getAttribute('data-css'));
     });
-
-    function setFilter(btn){
-      document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active')});
-      btn.classList.add('active');
-    }
   </script>
 </body>
 </html>
