@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS Cases (
     complaint_id INTEGER UNIQUE,
     assigned_police_id INTEGER,
     assigned_detective_id INTEGER,
-    assigned_volunteer_id INTEGER, -- FK below points to Personnel now
+    assigned_volunteer_id INTEGER,
     priority TEXT DEFAULT 'Medium' CHECK(priority IN ('High','Medium','Low')),
     notes TEXT,
     last_updated DATETIME DEFAULT CURRENT_TIMESTAMP,

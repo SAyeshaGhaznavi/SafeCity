@@ -1,11 +1,11 @@
 import sqlite3
 import os
 import time
-from flask import Flask, request, render_template, redirect
+from flask import Flask, request, render_template, redirect, session, url_for, flash
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask import session, url_for, flash
 from werkzeug.utils import secure_filename
 from datetime import datetime
+import random  # ADDED THIS: Missing in your original code
 
 app = Flask(__name__)
 app.secret_key = "safe_city_secret_123"
@@ -27,8 +27,11 @@ def get_db_connection():
 def init_db():
     with app.app_context():
         conn = get_db_connection()
-        with open("schema.sql", "r") as f:
-            conn.executescript(f.read())
+        # Ensure schema.sql exists in the same directory
+        if os.path.exists("schema.sql"):
+            with open("schema.sql", "r") as f:
+                conn.executescript(f.read())
+        conn.commit()
         conn.close()
 
 
@@ -89,9 +92,14 @@ def portal():
     return render_template('portal.html')
 
 
+# --- MISSING ROUTE ADDED ---
 @app.route('/personnel_select')
 def personnel_select():
+    """Renders the page where users select Police, Detective, Operator, or Volunteer."""
     return render_template('personnel_select.html')
+
+
+# ---------------------------
 
 
 @app.route('/report', methods=['GET', 'POST'])
@@ -229,7 +237,6 @@ def report():
 
 @app.route('/login/<role>', methods=['GET', 'POST'])
 def login(role):
-    # Added 'Volunteer' to valid roles
     valid_roles = ['Police', 'Detective', 'Operator', 'Admin', 'Volunteer']
     if role not in valid_roles:
         return redirect(url_for('portal'))
@@ -284,7 +291,8 @@ def login(role):
         elif user['type'] == 'Volunteer':
             return redirect(url_for('volunteer_dashboard'))
         elif user['type'] in ('Operator', 'Admin'):
-            return redirect(url_for('admin_dashboard'))
+            # Operator logic goes to operator_dashboard
+            return redirect(url_for('operator_dashboard'))
 
     return render_template("login.html", role=role)
 
@@ -302,7 +310,6 @@ def register_badge():
         if not name or not email or not password or not badgenumber or not role_type:
             return render_template("register_badge.html", msg="Please fill in all fields ⚠️")
 
-        # Added Volunteer to valid registration types
         if role_type not in ('Police', 'Detective', 'Operator', 'Volunteer'):
             return render_template("register_badge.html", msg="Invalid personnel type ⚠️")
 
@@ -340,7 +347,7 @@ def register_badge():
 def my_assigned_cases():
     if 'user_id' not in session:
         flash('Please log in first.', 'error')
-        return redirect('/login')
+        return redirect(url_for('login'))
 
     db = get_db_connection()
     cases = db.execute('''
@@ -454,7 +461,7 @@ def police_dashboard():
 def assign_case(complaint_id):
     if 'user_id' not in session:
         flash('Please log in first.', 'error')
-        return redirect('/login')
+        return redirect(url_for('login'))
 
     conn = get_db_connection()
     case = conn.execute(
@@ -471,7 +478,6 @@ def assign_case(complaint_id):
             "UPDATE Complaints SET status = 'In Progress' WHERE complaint_id = ?",
             (complaint_id,),
         )
-        # Log the action
         conn.execute(
             "INSERT INTO Logs (user_id, action) VALUES (?, ?)",
             (session['user_id'], f"Assigned case #{complaint_id}"),
@@ -482,14 +488,14 @@ def assign_case(complaint_id):
         flash(f'No case record found for complaint #{complaint_id}.', 'error')
 
     conn.close()
-    return redirect('/police_dashboard')
+    return redirect(url_for('police_dashboard'))
 
 
 @app.route('/resolve_case/<int:complaint_id>', methods=['POST'])
 def resolve_case(complaint_id):
     if 'user_id' not in session:
         flash('Please log in first.', 'error')
-        return redirect('/login')
+        return redirect(url_for('login'))
 
     conn = get_db_connection()
     conn.execute(
@@ -508,7 +514,7 @@ def resolve_case(complaint_id):
     conn.close()
 
     flash(f'Case #{complaint_id} marked as Resolved.', 'success')
-    return redirect('/police_dashboard')
+    return redirect(url_for('police_dashboard'))
 
 
 def time_ago(dt_str):
@@ -731,7 +737,7 @@ def case_detail(case_id):
 def append_case_notes(complaint_id):
     if session.get('role') != 'Detective':
         flash('Unauthorized.', 'error')
-        return redirect('/login')
+        return redirect(url_for('login'))
 
     new_note = request.form.get('new_note', '').strip()
     if not new_note:
@@ -740,7 +746,6 @@ def append_case_notes(complaint_id):
 
     conn = get_db_connection()
 
-    # Verify case is assigned to this detective
     check = conn.execute('''
         SELECT assigned_detective_id, notes FROM Cases WHERE complaint_id = ?
     ''', (complaint_id,)).fetchone()
@@ -748,14 +753,13 @@ def append_case_notes(complaint_id):
     if not check:
         flash('Case not found.', 'error')
         conn.close()
-        return redirect('/detective_assigned_cases')
+        return redirect(url_for('detective_assigned_cases'))
 
     if check['assigned_detective_id'] != session['user_id']:
         flash('You can only add notes to cases assigned to you.', 'error')
         conn.close()
-        return redirect('/detective_assigned_cases')
+        return redirect(url_for('detective_assigned_cases'))
 
-    # Append note with timestamp
     timestamp = datetime.utcnow().strftime('%Y-%m-%d %H:%M')
     detective_name = session.get('name', 'Detective')
     stamped_note = f"[{timestamp}] {detective_name}: {new_note}"
@@ -789,7 +793,7 @@ def append_case_notes(complaint_id):
 def update_case_status(complaint_id):
     if 'user_id' not in session:
         flash('Please log in first.', 'error')
-        return redirect('/login')
+        return redirect(url_for('login'))
 
     new_status = request.form.get('status', '').strip()
     valid = ['Pending', 'In Progress', 'Resolved']
@@ -807,12 +811,12 @@ def update_case_status(complaint_id):
     if not case_check:
         flash('Case not found.', 'error')
         conn.close()
-        return redirect('/my_assigned_cases')
+        return redirect(url_for('my_assigned_cases'))
 
     if case_check['assigned_police_id'] != session['user_id']:
         flash('You can only update cases assigned to you.', 'error')
         conn.close()
-        return redirect('/my_assigned_cases')
+        return redirect(url_for('my_assigned_cases'))
 
     conn.execute(
         "UPDATE Complaints SET status = ? WHERE complaint_id = ?",
@@ -946,7 +950,6 @@ def detective_dashboard():
 
     conn = get_db_connection()
 
-    # 1. Get Stats (Pending, In Progress, Resolved)
     pending = conn.execute('''
         SELECT COUNT(*) FROM Complaints c
         JOIN Cases cs ON c.complaint_id = cs.complaint_id
@@ -965,7 +968,6 @@ def detective_dashboard():
         WHERE cs.assigned_detective_id = ? AND c.status = 'Resolved'
     ''', (session.get('user_id'),)).fetchone()[0]
 
-    # 2. High Priority Alerts (Matching HTML variables: complaint_id, category, location, status, priority)
     high_priority = conn.execute("""
         SELECT  c.complaint_id,
                 cc.name            AS category,
@@ -980,7 +982,6 @@ def detective_dashboard():
         LIMIT   4
     """).fetchall()
 
-    # 3. All Complaints (For bottom table)
     all_complaints = conn.execute("""
         SELECT  c.complaint_id,
                 cc.name                        AS category,
@@ -993,7 +994,6 @@ def detective_dashboard():
         ORDER   BY c.created_at DESC
     """).fetchall()
 
-    # 4. Notifications (Matching HTML variables: message, time_ago, is_new)
     notifications_raw = conn.execute("""
         SELECT message, created_at
         FROM Notifications
@@ -1003,7 +1003,6 @@ def detective_dashboard():
 
     conn.close()
 
-    # Process notifications to add time_ago and is_new flags
     now = datetime.utcnow()
     notifications = []
     for n in notifications_raw:
@@ -1029,7 +1028,7 @@ def detective_dashboard():
 def detective_assigned_cases():
     if 'user_id' not in session:
         flash('Please log in first.', 'error')
-        return redirect('/login')
+        return redirect(url_for('login'))
 
     db = get_db_connection()
     cases = db.execute('''
@@ -1086,7 +1085,6 @@ def admin_dashboard():
     in_progress = conn.execute("SELECT COUNT(*) FROM Complaints WHERE status = 'In Progress'").fetchone()[0]
     resolved = conn.execute("SELECT COUNT(*) FROM Complaints WHERE status = 'Resolved'").fetchone()[0]
 
-    # Cases without officer (pending/in-progress, no officer assigned)
     no_officer = conn.execute("""
         SELECT c.complaint_id, cc.name as category, c.description, c.location, c.status, cs.priority, c.created_at
         FROM Complaints c
@@ -1096,7 +1094,6 @@ def admin_dashboard():
         ORDER BY cs.priority DESC, c.created_at DESC
     """).fetchall()
 
-    # Cases without detective (has officer, no detective, pending/in-progress)
     no_detective = conn.execute("""
         SELECT c.complaint_id, cc.name as category, c.location, c.status, cs.priority, c.created_at,
                ap.name as officer_name
@@ -1110,7 +1107,6 @@ def admin_dashboard():
         ORDER BY cs.priority DESC, c.created_at DESC
     """).fetchall()
 
-    # Available officers
     officers = conn.execute("""
         SELECT personnel_id, name, badge_number
         FROM AuthorizedPersonnel
@@ -1118,7 +1114,6 @@ def admin_dashboard():
         ORDER BY name
     """).fetchall()
 
-    # Available detectives
     detectives = conn.execute("""
         SELECT p.personnel_id, p.name, p.badge_number, d.specialization
         FROM AuthorizedPersonnel p
@@ -1126,7 +1121,6 @@ def admin_dashboard():
         ORDER BY p.name
     """).fetchall()
 
-    # High priority (not resolved)
     high_priority = conn.execute("""
         SELECT c.complaint_id, cc.name as category, c.description, c.location, c.status, cs.priority
         FROM Complaints c
@@ -1137,7 +1131,6 @@ def admin_dashboard():
         LIMIT 5
     """).fetchall()
 
-    # Recent cases (top 5)
     recent_raw = conn.execute("""
         SELECT c.complaint_id, cc.name as category, c.location, c.status, c.created_at,
                COALESCE(cs.priority, 'Medium') as priority
@@ -1148,7 +1141,6 @@ def admin_dashboard():
         LIMIT 5
     """).fetchall()
 
-    # Notifications (latest 10)
     notifications_raw = conn.execute("""
         SELECT message, created_at
         FROM Notifications
@@ -1156,7 +1148,6 @@ def admin_dashboard():
         LIMIT 10
     """).fetchall()
 
-    # All complaints for table
     all_complaints = conn.execute("""
         SELECT c.complaint_id, cc.name as category, c.location, c.status,
                COALESCE(cs.priority, 'Medium') as priority, c.created_at
@@ -1168,7 +1159,6 @@ def admin_dashboard():
 
     conn.close()
 
-    # Build lists with time_ago
     now = datetime.utcnow()
     recent = []
     for r in recent_raw:
@@ -1302,7 +1292,6 @@ def dispatch_unit():
     conn.execute(
         "INSERT INTO Dispatch (complaint_id, assigned_unit_id, status, eta) VALUES (?, ?, 'Dispatched', ?)",
         (complaint_id, unit_id, eta))
-    # Update complaint status
     conn.execute("UPDATE Complaints SET status = 'In Progress' WHERE complaint_id = ?", (complaint_id,))
     conn.execute("INSERT INTO Notifications (message) VALUES (?)",
                  f'Emergency unit dispatched to Complaint #{complaint_id}. ETA: {eta} mins.')
@@ -1310,8 +1299,7 @@ def dispatch_unit():
     conn.close()
 
     flash('Unit dispatched successfully!', 'success')
-    # Redirect to admin_dashboard as operator_dashboard route does not exist
-    return redirect(url_for('admin_dashboard'))
+    return redirect(url_for('operator_dashboard'))
 
 
 @app.route('/update_dispatch/<int:dispatch_id>', methods=['POST'])
@@ -1327,7 +1315,7 @@ def update_dispatch(dispatch_id):
                          (dispatch['complaint_id'],))
     conn.commit()
     conn.close()
-    return redirect(url_for('admin_dashboard'))
+    return redirect(url_for('operator_dashboard'))
 
 
 @app.route('/profile')
@@ -1405,7 +1393,6 @@ def volunteer_dashboard():
 
     conn = get_db_connection()
 
-    # 1. Community Updates
     updates_raw = conn.execute("""
         SELECT message, created_at
         FROM Notifications
@@ -1421,8 +1408,6 @@ def volunteer_dashboard():
             'time_ago': time_ago(u['created_at'])
         })
 
-    # 2. Tasks
-    # Joining on authorized personnel ID
     tasks_raw = conn.execute("""
         SELECT 
             cc.name as category_name,
@@ -1456,6 +1441,103 @@ def volunteer_dashboard():
         community_updates=community_updates,
         tasks=tasks
     )
+
+
+# ---------------------------------------------------------
+# OPERATOR DASHBOARD BACKEND LOGIC
+# ---------------------------------------------------------
+
+def get_operator_stats():
+    """Generates stats for the top row of the dashboard."""
+    # In a real app, fetch this from the database
+    # Example:
+    # conn = get_db_connection()
+    # calls = conn.execute("SELECT COUNT(*) FROM Dispatch WHERE status='Pending'").fetchone()[0]
+    # return {'incoming_calls': calls, ...}
+
+    return {
+        'incoming_calls': random.randint(5, 25),
+        'units_available': random.randint(3, 12),
+        'active_dispatch': random.randint(4, 15)
+    }
+
+
+def get_high_priority_alerts():
+    alert_types = ['SOS - App Trigger', '911 Call - Fire', '911 Call - Assault', 'Distress Signal']
+    locations = ['Market Area', 'Sector 4, Gulberg', 'Main Boulevard', 'DHA Phase 6', 'Railway Station']
+
+    alerts = []
+    for i in range(random.randint(2, 5)):
+        alerts.append({
+            'call_id': 1000 + i,
+            'type': random.choice(alert_types),
+            'location': random.choice(locations),
+            'caller_info': f'Unknown {random.randint(100, 999)}',
+            'status': random.choice(['Active', 'Connecting'])
+        })
+    return alerts
+
+
+def get_operator_notifications():
+    messages = [
+        "Unit Alpha-2 has arrived on scene.",
+        "New SOS signal detected near Sector 5.",
+        "Unit Bravo-4 marked available.",
+        "Unit Charlie-1 requesting backup.",
+        "Call dropped: #1042 - Attempting callback."
+    ]
+    notifs = []
+    for msg in messages:
+        notifs.append({
+            'message': msg,
+            'time_ago': f"{random.randint(1, 59)} mins ago",
+            'is_new': random.choice([True, False])
+        })
+    return notifs
+
+
+def get_active_dispatches():
+    units = ['Alpha-1', 'Alpha-2', 'Bravo-4', 'Charlie-1', 'Delta-3', 'Echo-9']
+    locations = ['Johar Town', 'Iqbal Town', 'Model Town', 'Gulberg III', 'Cantonment']
+
+    dispatches = []
+    for i, unit in enumerate(random.sample(units, k=len(units))):
+        dispatches.append({
+            'dispatch_id': 5000 + i,
+            'unit_number': unit,
+            'target_location': random.choice(locations),
+            'eta': f"{random.randint(2, 15)} mins",
+            'priority': random.choice(['High', 'Medium', 'Low'])
+        })
+    return dispatches
+
+
+@app.route('/operator_dashboard')
+def operator_dashboard():
+    if session.get('role') not in ('Operator', 'Admin'):
+        return redirect(url_for('login'))
+
+    if 'name' not in session:
+        session['name'] = 'Sarah'
+
+    stats = get_operator_stats()
+    high_priority = get_high_priority_alerts()
+    notifications = get_operator_notifications()
+    active_dispatches = get_active_dispatches()
+
+    return render_template(
+        'operator_dashboard.html',
+        session=session,
+        incoming_calls=stats['incoming_calls'],
+        units_available=stats['units_available'],
+        active_dispatch=stats['active_dispatch'],
+        high_priority=high_priority,
+        notifications=notifications,
+        active_dispatches=active_dispatches
+    )
+with app.app_context():
+    init_db()
+
 
 if __name__ == '__main__':
     app.run(debug=True)
