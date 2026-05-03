@@ -36,7 +36,6 @@
       justify-content: stretch;
     }
     
-    /* FULL SCREEN CONTAINER */
     .app-container {
       width: 100vw;
       height: 100vh;
@@ -93,23 +92,6 @@
       font-size: 1rem;
     }
     
-    .logout-link {
-      font-size: 0.8rem;
-      color: var(--muted);
-      text-decoration: none;
-      border: 1.5px solid var(--border);
-      padding: 8px 16px;
-      border-radius: 8px;
-      transition: all 0.3s ease;
-      font-weight: 600;
-    }
-    
-    .logout-link:hover {
-      color: var(--red);
-      border-color: var(--red);
-      background: rgba(255,78,106,0.05);
-    }
-    
     /* MAIN CONTENT AREA */
     .app-content {
       flex: 1;
@@ -121,16 +103,12 @@
       scrollbar-color: rgba(0,200,255,0.2) transparent;
     }
     
-    .app-content::-webkit-scrollbar {
-      width: 6px;
-    }
-    
+    .app-content::-webkit-scrollbar { width: 6px; }
     .app-content::-webkit-scrollbar-thumb {
       background: rgba(0,200,255,0.3);
       border-radius: 3px;
     }
     
-    /* CONTENT WRAPPER */
     .content {
       flex: 1;
       padding: 32px 40px;
@@ -142,10 +120,7 @@
       width: 100%;
     }
     
-    /* Welcome Section */
-    .welcome-section {
-      margin-bottom: 8px;
-    }
+    .welcome-section { margin-bottom: 8px; }
     
     .page-title {
       font-family: 'Bebas Neue', sans-serif;
@@ -160,7 +135,6 @@
       margin-top: 4px;
     }
     
-    /* Action Buttons */
     .action-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -206,14 +180,12 @@
       box-shadow: 0 6px 25px rgba(255,78,106,0.3);
     }
     
-    /* Dashboard Grid - Two Columns for Desktop */
     .dashboard-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 30px;
     }
     
-    /* Section Cards */
     .section-card {
       background: rgba(255,255,255,0.03);
       border: 1px solid var(--border);
@@ -242,16 +214,9 @@
       transition: all 0.2s;
     }
     
-    .section-link:hover {
-      text-decoration: underline;
-    }
+    .section-link:hover { text-decoration: underline; }
     
-    /* Notifications List */
-    .notif-list {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
+    .notif-list { display: flex; flex-direction: column; gap: 16px; }
     
     .notif-card {
       background: var(--card);
@@ -280,22 +245,11 @@
       flex-shrink: 0;
     }
     
-    .ni-bell {
-      background: rgba(0,200,255,0.15);
-    }
+    .ni-bell { background: rgba(0,200,255,0.15); }
+    .ni-person { background: rgba(0,229,160,0.15); }
+    .ni-check { background: rgba(0,229,160,0.15); }
     
-    .ni-person {
-      background: rgba(0,229,160,0.15);
-    }
-    
-    .ni-check {
-      background: rgba(0,229,160,0.15);
-    }
-    
-    .notif-body {
-      flex: 1;
-      min-width: 0;
-    }
+    .notif-body { flex: 1; min-width: 0; }
     
     .notif-top {
       display: flex;
@@ -323,17 +277,9 @@
       animation: badgePulse 2s infinite;
     }
     
-    .notif-time {
-      font-size: 0.75rem;
-      color: var(--muted);
-    }
+    .notif-time { font-size: 0.75rem; color: var(--muted); }
     
-    /* Reports List */
-    .report-list {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
+    .report-list { display: flex; flex-direction: column; gap: 16px; }
     
     .report-card {
       background: var(--card);
@@ -351,22 +297,9 @@
       background: rgba(0,200,255,0.05);
     }
     
-    .report-type {
-      font-size: 0.95rem;
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
-    
-    .report-loc {
-      font-size: 0.75rem;
-      color: var(--muted);
-      margin-bottom: 4px;
-    }
-    
-    .report-date {
-      font-size: 0.7rem;
-      color: var(--muted);
-    }
+    .report-type { font-size: 0.95rem; font-weight: 600; margin-bottom: 6px; }
+    .report-loc { font-size: 0.75rem; color: var(--muted); margin-bottom: 4px; }
+    .report-date { font-size: 0.7rem; color: var(--muted); }
     
     .status-pill {
       font-size: 0.7rem;
@@ -378,20 +311,9 @@
       letter-spacing: 0.5px;
     }
     
-    .sp-pending {
-      background: rgba(255,184,48,0.2);
-      color: var(--yellow);
-    }
-    
-    .sp-progress {
-      background: rgba(0,200,255,0.2);
-      color: var(--cyan);
-    }
-    
-    .sp-resolved {
-      background: rgba(0,229,160,0.15);
-      color: var(--green);
-    }
+    .sp-pending { background: rgba(255,184,48,0.2); color: var(--yellow); }
+    .sp-progress { background: rgba(0,200,255,0.2); color: var(--cyan); }
+    .sp-resolved { background: rgba(0,229,160,0.15); color: var(--green); }
     
     .empty-state {
       text-align: center;
@@ -407,213 +329,59 @@
       50% { opacity: 0.6; }
     }
     
-    /* RESPONSIVE BREAKPOINTS */
     @media (max-width: 1024px) {
-      .dashboard-grid {
-        grid-template-columns: 1fr;
-        gap: 24px;
-      }
-      
-      .content {
-        padding: 28px 32px;
-      }
+      .dashboard-grid { grid-template-columns: 1fr; gap: 24px; }
+      .content { padding: 28px 32px; }
     }
     
     @media (max-width: 768px) {
-      .header {
-        padding: 16px 24px;
-      }
-      
-      .logo {
-        font-size: 1.4rem;
-      }
-      
-      .user-avatar {
-        width: 40px;
-        height: 40px;
-        font-size: 0.9rem;
-      }
-      
-      .logout-link {
-        padding: 6px 12px;
-        font-size: 0.75rem;
-      }
-      
-      .content {
-        padding: 24px 20px;
-        gap: 24px;
-      }
-      
-      .page-title {
-        font-size: 2rem;
-      }
-      
-      .page-sub {
-        font-size: 0.85rem;
-      }
-      
-      .action-grid {
-        gap: 16px;
-      }
-      
-      .action-btn {
-        padding: 16px 20px;
-        font-size: 1rem;
-      }
-      
-      .section-card {
-        padding: 24px 20px;
-      }
-      
-      .section-title {
-        font-size: 1.2rem;
-      }
+      .header { padding: 16px 24px; }
+      .logo { font-size: 1.4rem; }
+      .user-avatar { width: 40px; height: 40px; font-size: 0.9rem; }
+      .content { padding: 24px 20px; gap: 24px; }
+      .page-title { font-size: 2rem; }
+      .action-grid { gap: 16px; }
+      .action-btn { padding: 16px 20px; font-size: 1rem; }
+      .section-card { padding: 24px 20px; }
     }
     
     @media (max-width: 480px) {
-      .header {
-        padding: 14px 16px;
-      }
-      
-      .logo {
-        font-size: 1.2rem;
-        letter-spacing: 3px;
-      }
-      
-      .header-right {
-        gap: 12px;
-      }
-      
-      .user-avatar {
-        width: 36px;
-        height: 36px;
-        font-size: 0.8rem;
-      }
-      
-      .logout-link {
-        padding: 5px 10px;
-        font-size: 0.7rem;
-      }
-      
-      .content {
-        padding: 20px 16px;
-        gap: 20px;
-      }
-      
-      .page-title {
-        font-size: 1.8rem;
-      }
-      
-      .page-sub {
-        font-size: 0.8rem;
-      }
-      
-      .action-grid {
-        grid-template-columns: 1fr;
-        gap: 12px;
-      }
-      
-      .action-btn {
-        padding: 14px 18px;
-        font-size: 0.95rem;
-      }
-      
-      .section-card {
-        padding: 20px 16px;
-      }
-      
-      .section-title {
-        font-size: 1.1rem;
-      }
-      
-      .section-link {
-        font-size: 0.75rem;
-      }
-      
-      .notif-card {
-        padding: 14px;
-        gap: 12px;
-      }
-      
-      .notif-icon {
-        width: 40px;
-        height: 40px;
-        font-size: 1.1rem;
-      }
-      
-      .notif-text {
-        font-size: 0.85rem;
-      }
-      
-      .report-card {
-        padding: 14px;
-      }
-      
-      .report-type {
-        font-size: 0.85rem;
-      }
-      
-      .status-pill {
-        font-size: 0.65rem;
-        padding: 4px 8px;
-      }
+      .header { padding: 14px 16px; }
+      .logo { font-size: 1.2rem; letter-spacing: 3px; }
+      .header-right { gap: 12px; }
+      .user-avatar { width: 36px; height: 36px; font-size: 0.8rem; }
+      .content { padding: 20px 16px; gap: 20px; }
+      .page-title { font-size: 1.8rem; }
+      .action-grid { grid-template-columns: 1fr; gap: 12px; }
+      .action-btn { padding: 14px 18px; font-size: 0.95rem; }
+      .section-card { padding: 20px 16px; }
+      .notif-card { padding: 14px; gap: 12px; }
+      .report-card { padding: 14px; }
+      .status-pill { font-size: 0.65rem; padding: 4px 8px; }
     }
     
-    /* Desktop Large Screens */
     @media (min-width: 1200px) {
-      .content {
-        padding: 40px 60px;
-      }
-      
-      .header {
-        padding: 24px 60px;
-      }
-      
-      .logo {
-        font-size: 1.8rem;
-      }
-      
-      .page-title {
-        font-size: 3rem;
-      }
-      
-      .action-grid {
-        max-width: 800px;
-      }
-      
-      .section-card {
-        padding: 32px;
-      }
+      .content { padding: 40px 60px; }
+      .header { padding: 24px 60px; }
+      .logo { font-size: 1.8rem; }
+      .page-title { font-size: 3rem; }
+      .action-grid { max-width: 800px; }
+      .section-card { padding: 32px; }
     }
     
-    /* Ultra-wide screens */
-    @media (min-width: 1600px) {
-      .dashboard-grid {
-        gap: 40px;
-      }
-    }
-    
-    /* Small screen height fix */
     @media (max-height: 700px) {
-      .content {
-        padding: 20px 30px;
-        gap: 20px;
-      }
-      
-      .section-card {
-        padding: 20px;
-      }
+      .content { padding: 20px 30px; gap: 20px; }
+      .section-card { padding: 20px; }
     }
   </style>
 </head>
 <body>
   <div class="app-container">
-    <!-- HEADER -->
+    <!-- HEADER (logout button removed) -->
     <div class="header">
       <div class="logo">SAFE<span>CITY</span></div>
       <div class="header-right">
         <div class="user-avatar">{{ session.name[0] if session.name else 'U' }}</div>
-        <a href="/" class="logout-link">Logout</a>
       </div>
     </div>
 
@@ -625,15 +393,13 @@
           <div class="page-sub">Welcome, {{ session.name if session.name else 'User' }}. Stay safe and report any incident.</div>
         </div>
 
-        <!-- Action Buttons -->
         <div class="action-grid">
           <a href="/report" class="action-btn btn-report">👮 Report Crime</a>
           <button onclick="alert('Emergency services notified!')" class="action-btn btn-sos">🚨 SOS Alert</button>
         </div>
 
-        <!-- Dashboard Grid - Notifications and Reports -->
         <div class="dashboard-grid">
-          <!-- Left Column - Notifications -->
+          <!-- Notifications -->
           <div class="section-card">
             <div class="section-head">
               <div class="section-title">Notifications</div>
@@ -648,9 +414,7 @@
                 <div class="notif-body">
                   <div class="notif-top">
                     <div class="notif-text">{{ n.message }}</div>
-                    {% if n.is_new %}
-                    <span class="new-badge">NEW</span>
-                    {% endif %}
+                    {% if n.is_new %}<span class="new-badge">NEW</span>{% endif %}
                   </div>
                   <div class="notif-time">{{ n.time_ago }}</div>
                 </div>
@@ -661,7 +425,7 @@
             </div>
           </div>
 
-          <!-- Right Column - Recent Reports -->
+          <!-- Recent Reports -->
           <div class="section-card">
             <div class="section-head">
               <div class="section-title">Recent Reports</div>

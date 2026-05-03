@@ -56,9 +56,8 @@ def run_initdb():
 
 
 @app.route('/')
-def splashscreenindex():
-    return render_template('splashscreenindex.html')
-
+def splash():
+    return render_template('splash.html')
 
 
 @app.route('/viewdb')
@@ -80,9 +79,6 @@ def view_db():
 
     return render_template("initdb.html", table_data=table_data)
 
-@app.route('/splash')
-def splash():
-    return render_template('splash.html')
 
 @app.route('/portal')
 def portal():
