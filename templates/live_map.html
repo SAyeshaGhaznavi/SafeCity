@@ -444,7 +444,7 @@
   const form = document.querySelector('.dispatch-form');
   form.addEventListener('submit', () => {
      setTimeout(() => {
-       // Flash is handled by Jinja reload, but we simulate the UI reset
+
        form.reset();
        document.getElementById('detailPanel').classList.remove('active');
        selectedId = null;
