@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeCity – Live Tactical Map</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* Core Theme Variables */
+    :root {
+      --navy: #0a0f1e;
+      --cyan: #00c8ff;
+      --white: #f0f4ff;
+      --muted: #8fa0b5;
+      --red: #ff4e6a;
+      --yellow: #ffb830;
+      --green: #00e5a0;
+      --border: rgba(0, 200, 255, 0.15);
+      --card-bg: rgba(20, 26, 45, 0.8);
+    }
+
+    body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: var(--navy); font-family: 'DM Sans', sans-serif; color: var(--white); }
+
+    /* Layout */
+    .app-container { display: flex; height: 100vh; width: 100vw; }
+
+    /* Sidebar Controls */
+    .sidebar {
+      width: 400px;
+      background: rgba(10, 15, 30, 0.98);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      z-index: 10;
+      backdrop-filter: blur(10px);
+      padding: 24px;
+      box-shadow: 5px 0 30px rgba(0,0,0,0.5);
+    }
+
+    .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border); }
+    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.6rem; letter-spacing: 1px; }
+    .logo span { color: var(--cyan); }
+    .back-btn { text-decoration: none; color: var(--muted); font-size: 0.9rem; font-weight: 600; transition: 0.2s; }
+    .back-btn:hover { color: var(--white); }
+
+    .sidebar-title { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 12px; font-weight: 700; }
+
+    /* Incident List */
+    .incident-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; padding-right: 5px; }
+
+    .incident-card {
+      background: var(--card-bg);
+      border:1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .incident-card:hover, .incident-card.active {
+      background: rgba(0, 200, 255, 0.08);
+      border-color: var(--cyan);
+      transform: translateX(4px);
+    }
+
+    /* Priority Border Strip */
+    .incident-card.priority-high { border-left: 4px solid var(--red); }
+    .incident-card.priority-medium { border-left: 4px solid var(--yellow); }
+    .incident-card.priority-low { border-left: 4px solid var(--green); }
+
+    .ic-header { display: flex; justify-content: space-between; align-items: center; }
+    .ic-id { font-weight: 700; font-size: 1.1rem; color: var(--white); letter-spacing: 0.5px; }
+
+    /* FIXED BADGES: Smaller text, bigger rectangle */
+    .badge {
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      white-space: nowrap;
+      letter-spacing: 0.5px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 70px;
+      height: 24px;
+      box-sizing: border-box;
+    }
+
+    .badge-red { background: rgba(255, 78, 106, 0.2); color: var(--red); border: 1px solid rgba(255, 78, 106, 0.3); }
+    .badge-yellow { background: rgba(255, 184, 48, 0.2); color: var(--yellow); border: 1px solid rgba(255, 184, 48, 0.3); }
+    .badge-green { background: rgba(0, 229, 160, 0.2); color: var(--green); border: 1px solid rgba(0, 229, 160, 0.3); }
+
+    .ic-loc {
+      font-size: 0.9rem;
+      color: var(--cyan);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 500;
+    }
+
+    .ic-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* Detail Panel */
+    .detail-panel {
+      height: auto;
+      min-height: 280px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid var(--border);
+      display: none;
+      flex-direction: column;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
+    }
+    .detail-panel.active { display: flex; }
+
+    .detail-title { font-weight: 700; margin-bottom: 15px; font-family: 'Bebas Neue'; font-size: 1.4rem; letter-spacing: 0.5px; color: var(--white); }
+    .detail-row { display: flex; margin-bottom: 8px; font-size: 0.9rem; }
+    .detail-label { color: var(--muted); width: 80px; flex-shrink: 0; }
+    .detail-val { color: var(--white); }
+
+    .dispatch-form { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border); }
+
+    .select-input {
+      width: 100%;
+      padding: 12px;
+      background: #0d1225;
+      border:1px solid var(--border);
+      color: white;
+      border-radius: 8px;
+      outline: none;
+      font-family: inherit;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    .select-input:focus { border-color: var(--cyan); }
+
+    .btn-dispatch {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--cyan), #0088ff);
+      color: var(--navy);
+      border: none;
+      border-radius: 8px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-size: 0.95rem;
+    }
+    .btn-dispatch:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0,200,255,0.4); }
+
+    /* Map Area */
+    .map-container { flex: 1; position: relative; background: radial-gradient(circle at center, #111827 0%, #0a0f1e 100%); overflow: hidden; cursor: crosshair; }
+    canvas { display: block; }
+
+    /* Overlay UI on Map */
+    .map-legend { position: absolute; top: 20px; right: 20px; background: rgba(10,15,30,0.9); padding: 15px 20px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.85rem; pointer-events: none; display: flex; flex-direction: column; gap: 8px; backdrop-filter: blur(5px); }
+    .legend-item { display: flex; align-items: center; gap: 10px; font-weight: 500; }
+    .dot { width: 12px; height: 12px; border-radius: 50%; box-shadow: 0 0 8px currentColor; }
+    .dot-red { background: var(--red); color: var(--red); }
+    .dot-blue { background: var(--cyan); color: var(--cyan); }
+    .dot-amber { background: #f59e0b; color: #f59e0b; }
+    .dot-green { background: var(--green); color: var(--green); }
+
+    /* Toast Notification */
+    .toast { position: fixed; bottom: 30px; right: 30px; background: #0a1520; border: 1px solid #00e5a0; color: #00e5a0; padding: 15px 25px; border-radius: 8px; font-weight: 700; transform: translateY(100px); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 100; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 10px; }
+    .toast::before { content: '✓'; font-size: 1.2rem; }
+    .toast.show { transform: translateY(0); }
+
+    .toast-error { border-color: var(--red); color: var(--red); }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+
+  <!-- FLASH MESSAGES CONTAINER (New) -->
+  <div id="flashContainer" style="position:fixed; top:16px; right:16px; z-index:9999; display:flex; flex-direction:column; gap:8px;">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="toast toast-{{ category }} show" style="transform: translateY(0); transition: none;">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">LIVE <span>MAP</span></div>
+      <a href="/operator_dashboard" class="back-btn">← Dashboard</a>
+    </div>
+
+    <div class="sidebar-title">Active Incidents</div>
+
+    <div class="incident-list" id="incidentList">
+      <!-- Incidents injected by JS -->
+    </div>
+
+    <!-- Detail & Dispatch Panel -->
+    <div class="detail-panel" id="detailPanel">
+      <div class="detail-title">Incident Details</div>
+      <div id="detailContent" style="margin-bottom: 15px;">
+        <!-- Dynamic Content -->
+      </div>
+      <form class="dispatch-form" action="/dispatch_unit" method="POST">
+        <input type="hidden" id="inputComplaintId" name="complaint_id">
+        <select id="unitSelect" name="unit_id" class="select-input" required>
+          <option value="" disabled selected>Select Unit to Dispatch...</option>
+          {% for u in units %}
+            <option value="{{ u.personnel_id }}">
+              {{ u.type }}: {{ u.name }} ({{ u.badge_number }})
+            </option>
+          {% endfor %}
+        </select>
+        <select name="eta" class="select-input">
+            <option value="5">ETA: ~ 5 mins</option>
+            <option value="10" selected>ETA: ~ 10 mins</option>
+            <option value="15">ETA: ~ 15 mins</option>
+            <option value="30">ETA: ~ 30 mins</option>
+        </select>
+        <button type="submit" class="btn-dispatch">Dispatch Unit</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Map Area -->
+  <div class="map-container" id="mapContainer">
+    <canvas id="cityMap"></canvas>
+    <div class="map-legend">
+      <div class="legend-item"><div class="dot dot-red"></div> Active Incident</div>
+      <div class="legend-item"><div class="dot dot-blue"></div> Police Unit</div>
+      <div class="legend-item"><div class="dot dot-amber"></div> Volunteer Unit</div>
+      <div class="legend-item"><div class="dot dot-green"></div> Ambulance</div>
+      <div class="legend-item"><div class="dot dot-red" style="background:var(--red)"></div> Firefighter</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // --- Data from Jinja ---
+  const incidents = [
+    {% for inc in incidents %}
+    {
+      id: {{ inc.complaint_id }},
+      type: "{{ inc.category }}",
+      loc: "{{ inc.location }}",
+      desc: "{{ inc.description }}",
+      priority: "{{ inc.priority }}",
+      // Consistent pseudo-coordinates
+      x: ({{ inc.location|length }} * 97) % 800 + 100,
+      y: ({{ inc.location|length }} * 53) % 500 + 100
+    }{{ "," if not loop.last }}
+    {% endfor %}
+  ];
+
+  const activeUnits = [
+    {% for u in units %}
+    {
+      id: {{ u.personnel_id }},
+      name: "{{ u.name }}",
+      type: "{{ u.type }}",
+      x: Math.random() * 900 + 50,
+      y: Math.random() * 600 + 50,
+      status: 'Idle'
+    }{{ "," if not loop.last }}
+    {% endfor %}
+  ];
+
+  const dispatches = [
+    {% for d in active_dispatches %}
+    {
+        targetId: {{ d.complaint_id }},
+        unitId: {{ d.assigned_unit_id }},
+        progress: 0.5
+    }{{ "," if not loop.last }}
+    {% endfor %}
+  ];
+
+  // --- Canvas Logic ---
+  const canvas = document.getElementById('cityMap');
+  const ctx = canvas.getContext('2d');
+  let width, height;
+
+  function resize() {
+    width = canvas.width = document.getElementById('mapContainer').offsetWidth;
+    height = canvas.height = document.getElementById('mapContainer').offsetHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  // --- Rendering ---
+  let selectedId = null;
+
+  function drawGrid() {
+    ctx.strokeStyle = 'rgba(0, 200, 255, 0.05)';
+    ctx.lineWidth = 1;
+    const gridSize = 50;
+    for(let x=0; x<width; x+=gridSize) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,height); ctx.stroke(); }
+    for(let y=0; y<height; y+=gridSize) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(width,y); ctx.stroke(); }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, width, height);
+    drawGrid();
+
+    const time = Date.now() / 1000;
+
+    // Draw Routes
+    dispatches.forEach(d => {
+      const unit = activeUnits.find(u => u.id == d.unitId);
+      const target = incidents.find(i => i.id == d.targetId);
+      if(unit && target) {
+        ctx.beginPath();
+        ctx.moveTo(unit.x, unit.y);
+        ctx.lineTo(target.x, target.y);
+        ctx.strokeStyle = `rgba(0, 200, 255, ${0.3 + Math.sin(time * 5) * 0.1})`;
+        ctx.setLineDash([5, 5]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    });
+
+    // Draw Incidents
+    incidents.forEach(inc => {
+      const isSelected = selectedId === inc.id;
+      const pulse = Math.sin(time * 3) * 3;
+
+      ctx.beginPath();
+      ctx.arc(inc.x, inc.y, isSelected ? 14 : 9, 0, Math.PI * 2);
+      ctx.fillStyle = inc.priority === 'High' ? '#ff4e6a' : '#ffb830';
+      ctx.shadowBlur = isSelected ? 25 : 12;
+      ctx.shadowColor = ctx.fillStyle;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      if(inc.priority === 'High') {
+        ctx.beginPath();
+        ctx.arc(inc.x, inc.y, 9 + pulse + (time*5 % 20), 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(255, 78, 106, ${1 - (time*5 % 20)/20})`;
+        ctx.stroke();
+      }
+    });
+
+    // Draw Units (Updated with new colors)
+    activeUnits.forEach(unit => {
+      let color = '#00c8ff'; // Default Police
+      if(unit.type === 'Police') color = '#00c8ff';
+      else if(unit.type === 'Volunteer') color = '#f59e0b';
+      else if(unit.type === 'Ambulance') color = '#00e5a0'; // Green
+      else if(unit.type === 'Firefighter') color = '#ff4e6a'; // Red
+
+      ctx.beginPath();
+      ctx.rect(unit.x - 6, unit.y - 6, 12, 12);
+      ctx.fillStyle = color;
+      ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  // --- Interaction ---
+  function selectIncident(id) {
+    selectedId = id;
+    const inc = incidents.find(i => i.id === id);
+
+    document.querySelectorAll('.incident-card').forEach(c => c.classList.remove('active'));
+    document.getElementById(`card-${id}`).classList.add('active');
+
+    const panel = document.getElementById('detailPanel');
+    const content = document.getElementById('detailContent');
+
+    panel.classList.add('active');
+    document.getElementById('inputComplaintId').value = id;
+
+    content.innerHTML = `
+      <div class="detail-row"><div class="detail-label">ID:</div><div class="detail-val">#${inc.id}</div></div>
+      <div class="detail-row"><div class="detail-label">Type:</div><div class="detail-val" style="color:var(--white)">${inc.type}</div></div>
+      <div class="detail-row"><div class="detail-label">Loc:</div><div class="detail-val" style="color:var(--cyan)">${inc.loc}</div></div>
+      <div class="detail-row"><div class="detail-label">Priority:</div><div class="detail-val" style="color:${inc.priority === 'High' ? 'var(--red)' : 'var(--yellow)'}">${inc.priority}</div></div>
+      <div style="margin-top:10px; font-size:0.85rem; line-height:1.4; color:var(--muted)">${inc.desc}</div>
+    `;
+  }
+
+  canvas.addEventListener('click', e => {
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    incidents.forEach(inc => {
+      const dist = Math.hypot(mouseX - inc.x, mouseY - inc.y);
+      if(dist < 20) selectIncident(inc.id);
+    });
+  });
+
+  // --- Init List ---
+  const listContainer = document.getElementById('incidentList');
+  incidents.forEach(inc => {
+    const div = document.createElement('div');
+    div.className = `incident-card priority-${inc.priority.toLowerCase()}`;
+    div.id = `card-${inc.id}`;
+    div.innerHTML = `
+      <div class="ic-header">
+        <span class="ic-id">#${inc.id}</span>
+        <span class="badge ${inc.priority === 'High' ? 'badge-red' : (inc.priority === 'Low' ? 'badge-green' : 'badge-yellow')}">${inc.priority}</span>
+      </div>
+      <div class="ic-loc">📍 ${inc.loc}</div>
+      <div class="ic-desc">${inc.desc}</div>
+    `;
+    div.onclick = () => selectIncident(inc.id);
+    listContainer.appendChild(div);
+  });
+
+  requestAnimationFrame(draw);
+
+  // Handle Form Submit
+  const form = document.querySelector('.dispatch-form');
+  form.addEventListener('submit', () => {
+     setTimeout(() => {
+       // Flash is handled by Jinja reload, but we simulate the UI reset
+       form.reset();
+       document.getElementById('detailPanel').classList.remove('active');
+       selectedId = null;
+       document.querySelectorAll('.incident-card').forEach(c => c.classList.remove('active'));
+     }, 500);
+  });
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeCity – Emergency Logs</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #0a0f1e;
+      --cyan: #00c8ff;
+      --white: #f0f4ff;
+      --muted: #7a8db0;
+      --red: #ff4e6a;
+      --border: rgba(0, 200, 255, 0.15);
+    }
+
+    body { background: var(--navy); color: var(--white); font-family: 'DM Sans', sans-serif; margin: 0; padding: 20px; }
+
+    .container { max-width: 1200px; margin: 0 auto; }
+
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 16px; }
+    .title { font-family: 'Bebas Neue'; font-size: 2.5rem; letter-spacing: 2px; }
+    .title span { color: var(--red); }
+    .nav-link { color: var(--cyan); text-decoration: none; font-weight: 600; }
+
+    .card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 16px; padding: 20px; overflow: hidden; }
+
+    table { width: 100%; border-collapse: collapse; }
+    th { text-align: left; padding: 16px; color: var(--muted); border-bottom: 1px solid var(--border); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+    td { padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.95rem; vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover { background: rgba(0,200,255,0.03); }
+
+    .badge { padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+    .badge-high { background: rgba(255, 78, 106, 0.15); color: var(--red); border: 1px solid rgba(255, 78, 106, 0.3); }
+    .badge-med { background: rgba(255, 184, 48, 0.15); color: #ffb830; border: 1px solid rgba(255, 184, 48, 0.3); }
+    .badge-pending { background: rgba(255, 255, 255, 0.1); color: var(--white); }
+    .badge-progress { background: rgba(0, 200, 255, 0.15); color: var(--cyan); }
+
+    .btn-dispatch { background: var(--cyan); color: var(--navy); border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-block; font-size: 0.85rem; transition: 0.2s; }
+    .btn-dispatch:hover { background: #33d1ff; box-shadow: 0 0 10px rgba(0,200,255,0.4); }
+
+    .empty-state { text-align: center; padding: 40px; color: var(--muted); }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="title">EMERGENCY <span>LOGS</span></div>
+    <a href="/operator_dashboard" class="nav-link">← Back to Dashboard</a>
+  </div>
+
+  <div class="card">
+    {% if logs %}
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Type</th>
+          <th>Location</th>
+          <th>Status</th>
+          <th>Assigned Unit</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in logs %}
+        <tr>
+          <td style="font-weight:700; color:var(--cyan)">#{{ log.complaint_id }}</td>
+          <td>{{ log.category }}</td>
+          <td style="color:var(--muted)">📍 {{ log.location }}</td>
+          <td>
+            {% if log.status == 'Pending' %}
+              <span class="badge badge-pending">Pending</span>
+            {% elif log.status == 'In Progress' %}
+              <span class="badge badge-progress">In Progress</span>
+            {% else %}
+              <span class="badge" style="color:var(--green)">Resolved</span>
+            {% endif %}
+          </td>
+          <td>
+            {{ log.officer_name if log.officer_name else '<span style="color:#555">Unassigned</span>' }}
+          </td>
+          <td>
+            <a href="/live_map" class="btn-dispatch">Dispatch Unit</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+      No active emergency logs at this time.
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+</body>
+</html>

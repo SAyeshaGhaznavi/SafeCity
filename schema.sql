@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS AuthorizedPersonnel (
     email TEXT UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
     badge_number TEXT UNIQUE NOT NULL,
-    type TEXT DEFAULT 'Police' CHECK(type IN ('Police','Detective','Operator','Admin','Volunteer'))
+    type TEXT DEFAULT 'Police' CHECK(type IN ('Police','Detective','Operator','Admin','Volunteer', 'Ambulance', 'Firefighter'))
 );
 
 CREATE TABLE IF NOT EXISTS Detectives (
@@ -126,9 +126,6 @@ CREATE TABLE IF NOT EXISTS Logs (
     FOREIGN KEY (user_id) REFERENCES Citizens(citizen_id)
 );
 
--- ==========================================
--- INSERT DATA
--- ==========================================
 
 INSERT INTO Citizens (full_name, cnic) VALUES
 ('Ali Raza', '35202-1234567-1'),
@@ -157,7 +154,12 @@ INSERT INTO AuthorizedPersonnel (name, email, password_hash, badge_number, type)
 ('Ali Raza', 'ali@safe.com', 'ali123', 'VOL-001', 'Volunteer'),
 ('Ayesha Khan', 'ayesha@safe.com', 'ayesha123', 'VOL-002', 'Volunteer'),
 ('Usman Tariq', 'usman@safe.com', 'usman123', 'VOL-003', 'Volunteer'),
-('Fatima Noor', 'fatima@safe.com', 'fatima123', 'VOL-004', 'Volunteer');
+('Fatima Noor', 'fatima@safe.com', 'fatima123', 'VOL-004', 'Volunteer'),
+
+('Ambulance 1', 'amb1@safe.com', 'amb101', 'AMB-001', 'Ambulance'),
+('Firefighter 1', 'ff1@safe.com', 'ff101', 'FIRE-001', 'Firefighter'),
+('Ambulance 2', 'amb2@safe.com', 'amb201', 'AMB-002', 'Ambulance'),
+('Firefighter 2', 'ff2@safe.com', 'ff201', 'FIRE-002', 'Firefighter');
 
 INSERT INTO Detectives (personnel_id, specialization) VALUES
 (2, 'Cyber Crime'),

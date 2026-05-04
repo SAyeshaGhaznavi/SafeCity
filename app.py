@@ -18,8 +18,12 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 DATABASE = "safecity.db"
 
 
+#def get_db_connection():
+ #   conn = sqlite3.connect(DATABASE)
+  #  conn.row_factory = sqlite3.Row
+   # return conn
 def get_db_connection():
-    conn = sqlite3.connect(DATABASE)
+    conn = sqlite3.connect(DATABASE, timeout=10)
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -1177,7 +1181,6 @@ def admin_dashboard():
 
     conn.close()
 
-    # --- DATA FORMATTING ---
     now = datetime.utcnow()
 
     recent = []
@@ -1238,14 +1241,11 @@ def admin_assign_officer(complaint_id):
         flash('Invalid officer selected.', 'error')
         conn.close()
         return redirect(url_for('admin_dashboard'))
-
-    # FIXED: Update Cases table assignment
     conn.execute(
         "UPDATE Cases SET assigned_police_id = ?, last_updated = CURRENT_TIMESTAMP WHERE complaint_id = ?",
         (officer_id, complaint_id)
     )
 
-    # FIXED: Also update Complaints table status to 'In Progress' so that dashboard updates
     conn.execute(
         "UPDATE Complaints SET status = 'In Progress' WHERE complaint_id = ?",
         (complaint_id,)
@@ -1316,26 +1316,6 @@ def admin_assign_detective(complaint_id):
     flash(f"Detective {detective['name']} assigned to case #{complaint_id}.", 'success')
     return redirect(url_for('admin_dashboard'))
 
-@app.route('/dispatch_unit', methods=['POST'])
-def dispatch_unit():
-    if session.get('role') != 'Operator': return redirect(url_for('login'))
-
-    complaint_id = request.form.get('complaint_id')
-    unit_id = request.form.get('unit_id')
-    eta = request.form.get('eta', 10)
-
-    conn = get_db_connection()
-    conn.execute(
-        "INSERT INTO Dispatch (complaint_id, assigned_unit_id, status, eta) VALUES (?, ?, 'Dispatched', ?)",
-        (complaint_id, unit_id, eta))
-    conn.execute("UPDATE Complaints SET status = 'In Progress' WHERE complaint_id = ?", (complaint_id,))
-    conn.execute("INSERT INTO Notifications (message) VALUES (?)",
-                 f'Emergency unit dispatched to Complaint #{complaint_id}. ETA: {eta} mins.')
-    conn.commit()
-    conn.close()
-
-    flash('Unit dispatched successfully!', 'success')
-    return redirect(url_for('operator_dashboard'))
 
 
 @app.route('/update_dispatch/<int:dispatch_id>', methods=['POST'])
@@ -1679,6 +1659,110 @@ def schedule():
     db.close()
 
     return render_template('case_tracking.html', cases=all_cases, filter_type='assigned', viewer_role='volunteer')
+
+
+@app.route('/live_map')
+def live_map():
+    if session.get('role') not in ('Operator', 'Admin', 'Police'):
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+
+    # 1. Get High Priority / Pending Complaints (Fixed Column Names)
+    incidents = conn.execute("""
+        SELECT c.complaint_id, cc.name as category, c.description, c.location, 
+               c.status, cs.priority, c.created_at
+        FROM Complaints c
+        JOIN CrimeCategories cc ON c.category_id = cc.category_id
+        LEFT JOIN Cases cs ON c.complaint_id = cs.complaint_id
+        WHERE (cs.priority = 'High' OR c.status = 'Pending')
+        ORDER BY c.created_at DESC
+    """).fetchall()
+
+    # 2. Get Units (Updated to include Ambulance and Firefighter)
+    units = conn.execute("""
+        SELECT p.personnel_id, p.name, p.badge_number, p.type
+        FROM AuthorizedPersonnel p
+        WHERE p.type IN ('Police', 'Volunteer', 'Ambulance', 'Firefighter')
+        ORDER BY p.type, p.name
+    """).fetchall()
+
+    # 3. Get Active Dispatches (Fixed Column Names)
+    active_dispatches = conn.execute("""
+        SELECT d.dispatch_id, d.complaint_id, d.assigned_unit_id, d.status, d.eta,
+               ap.name as unit_name, ap.type as unit_type,
+               c.location as target_location
+        FROM Dispatch d
+        JOIN AuthorizedPersonnel ap ON d.assigned_unit_id = ap.personnel_id
+        JOIN Complaints c ON d.complaint_id = c.complaint_id
+        WHERE d.status != 'Completed'
+    """).fetchall()
+
+    conn.close()
+
+    return render_template('live_map.html',
+                           incidents=incidents,
+                           units=units,
+                           active_dispatches=active_dispatches)
+
+@app.route('/dispatch_unit', methods=['POST'])
+def dispatch_unit():
+    if session.get('role') not in ('Operator', 'Admin'):
+        return redirect(url_for('login'))
+
+    complaint_id = request.form.get('complaint_id')
+    unit_id = request.form.get('unit_id')
+    eta = request.form.get('eta', 10)
+
+    with app.app_context():
+        conn = get_db_connection()
+        conn.execute(
+            "INSERT INTO Dispatch (complaint_id, assigned_unit_id, status, eta) VALUES (?, ?, 'Dispatched', ?)",
+            (complaint_id, unit_id, eta)
+        )
+        conn.execute("UPDATE Complaints SET status = 'In Progress' WHERE complaint_id = ?", (complaint_id,))
+
+
+        unit = conn.execute("SELECT name, type FROM AuthorizedPersonnel WHERE personnel_id = ?", (unit_id,)).fetchone()
+        unit_name = unit['name'] if unit else 'Unknown'
+
+        conn.execute(
+            "INSERT INTO Notifications (message) VALUES (?)",
+            (f'{unit_name} (Unit) dispatched to Complaint #{complaint_id}. ETA: {eta} mins.',)
+        )
+        conn.commit()
+        conn.close()
+
+    flash(f'{unit_name} dispatched successfully to Case #{complaint_id}!', 'success')
+    return redirect(url_for('live_map'))
+
+@app.route('/alerts/critical')
+def alerts_critical():
+    return redirect(url_for('case_tracking', filter_type='high_priority'))
+
+@app.route('/emergency_logs')
+def emergency_logs():
+    if session.get('role') not in ('Operator', 'Admin'):
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+
+    logs = conn.execute("""
+        SELECT c.complaint_id, cc.name as category, c.description, c.location, 
+               c.status, cs.priority, c.created_at,
+               cs.assigned_police_id,
+               ap.name as officer_name
+        FROM Complaints c
+        JOIN CrimeCategories cc ON c.category_id = cc.category_id
+        LEFT JOIN Cases cs ON c.complaint_id = cs.complaint_id
+        LEFT JOIN AuthorizedPersonnel ap ON cs.assigned_police_id = ap.personnel_id
+        WHERE cs.priority = 'High' OR c.status IN ('Pending', 'In Progress')
+        ORDER BY c.created_at DESC
+    """).fetchall()
+
+    conn.close()
+    return render_template('emergency_logs.html', logs=logs)
+
 
 with app.app_context():
     try:
