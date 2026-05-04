@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeCity – Log Patrol</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --navy:#0a0f1e;
+      --cyan:#00c8ff;
+      --white:#f0f4ff;
+      --muted:#7a8db0;
+      --green:#00e5a0;
+      --border:rgba(0,200,255,0.15);
+    }
+
+    body {
+      background: var(--navy);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--white);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+      padding: 40px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: var(--cyan);
+      letter-spacing: 2px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      background: rgba(10,15,30,0.5);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--white);
+      font-family: inherit;
+      font-size: 1rem;
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--cyan);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--green), #00b38f);
+      color: var(--navy);
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .back-link:hover { color: var(--white); }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>LOG PATROL ACTIVITY</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div style="padding: 10px; margin-bottom: 15px; border-radius: 6px; background: {% if category == 'error' %}rgba(255,78,106,0.2); color: #ff4e6a{% else %}rgba(0,229,160,0.2); color: #00e5a0{% endif %}; font-size: 0.9rem;">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+      <div class="form-group">
+        <label for="location">Patrol Location / Zone</label>
+        <input type="text" id="location" name="location" placeholder="e.g. Gulberg III, Main Market" required>
+      </div>
+
+      <div class="form-group">
+        <label for="notes">Observation Notes</label>
+        <textarea id="notes" name="notes" rows="4" placeholder="Describe any suspicious activity or patrol status..."></textarea>
+      </div>
+
+      <button type="submit" class="btn">SUBMIT LOG</button>
+    </form>
+
+    <a href="/volunteer_dashboard" class="back-link">← Back to Dashboard</a>
+  </div>
+
+</body>
+</html>

@@ -1,3 +1,22 @@
+
+PRAGMA foreign_keys = OFF;
+
+
+DROP TABLE IF EXISTS Logs;
+DROP TABLE IF EXISTS VolunteerAssignments;
+DROP TABLE IF EXISTS VolunteerDetails;
+DROP TABLE IF EXISTS Dispatch;
+DROP TABLE IF EXISTS Evidence;
+DROP TABLE IF EXISTS Cases;
+DROP TABLE IF EXISTS Complaints;
+DROP TABLE IF EXISTS Detectives;
+DROP TABLE IF EXISTS AuthorizedPersonnel;
+DROP TABLE IF EXISTS Citizens;
+DROP TABLE IF EXISTS CrimeCategories;
+DROP TABLE IF EXISTS Notifications;
+
+PRAGMA foreign_keys = ON;
+
 CREATE TABLE IF NOT EXISTS Citizens (
     citizen_id INTEGER PRIMARY KEY AUTOINCREMENT,
     full_name TEXT NOT NULL,
@@ -10,7 +29,7 @@ CREATE TABLE IF NOT EXISTS AuthorizedPersonnel (
     email TEXT UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
     badge_number TEXT UNIQUE NOT NULL,
-    type TEXT DEFAULT 'Police' CHECK(type IN ('Police','Detective','Operator','Admin'))
+    type TEXT DEFAULT 'Police' CHECK(type IN ('Police','Detective','Operator','Admin','Volunteer'))
 );
 
 CREATE TABLE IF NOT EXISTS Detectives (
@@ -47,7 +66,6 @@ CREATE TABLE IF NOT EXISTS Evidence (
     FOREIGN KEY (complaint_id) REFERENCES Complaints(complaint_id)
 );
 
--- UPDATE THE CASES TABLE DEFINITION IN schema.sql
 CREATE TABLE IF NOT EXISTS Cases (
     case_id INTEGER PRIMARY KEY AUTOINCREMENT,
     complaint_id INTEGER UNIQUE,
@@ -76,7 +94,6 @@ CREATE TABLE IF NOT EXISTS Dispatch (
     FOREIGN KEY (assigned_unit_id) REFERENCES Citizens(citizen_id)
 );
 
-DROP TABLE IF EXISTS VolunteerDetails;
 CREATE TABLE IF NOT EXISTS VolunteerDetails (
     volunteer_id INTEGER PRIMARY KEY,
     availability INTEGER DEFAULT 1,
@@ -109,6 +126,10 @@ CREATE TABLE IF NOT EXISTS Logs (
     FOREIGN KEY (user_id) REFERENCES Citizens(citizen_id)
 );
 
+-- ==========================================
+-- INSERT DATA
+-- ==========================================
+
 INSERT INTO Citizens (full_name, cnic) VALUES
 ('Ali Raza', '35202-1234567-1'),
 ('Ayesha Khan', '35202-2345678-2'),
@@ -131,7 +152,12 @@ INSERT INTO AuthorizedPersonnel (name, email, password_hash, badge_number, type)
 ('Detective Imran', 'imran@safe.com', 'im99', 'BADGE-1007', 'Detective'),
 ('Officer Asma', 'asma@safe.com', 'as99', 'BADGE-1008', 'Police'),
 ('Detective Farah', 'farah@safe.com', 'fa99', 'BADGE-1009', 'Detective'),
-('Operator Ali', 'operatorali@safe.com', 'oa99', 'BADGE-1010', 'Operator');
+('Operator Ali', 'operatorali@safe.com', 'oa99', 'BADGE-1010', 'Operator'),
+
+('Ali Raza', 'ali@safe.com', 'ali123', 'VOL-001', 'Volunteer'),
+('Ayesha Khan', 'ayesha@safe.com', 'ayesha123', 'VOL-002', 'Volunteer'),
+('Usman Tariq', 'usman@safe.com', 'usman123', 'VOL-003', 'Volunteer'),
+('Fatima Noor', 'fatima@safe.com', 'fatima123', 'VOL-004', 'Volunteer');
 
 INSERT INTO Detectives (personnel_id, specialization) VALUES
 (2, 'Cyber Crime'),
@@ -140,22 +166,9 @@ INSERT INTO Detectives (personnel_id, specialization) VALUES
 
 INSERT INTO CrimeCategories (name)
 VALUES
-('Theft'),
-('Assault'),
-('Vandalism'),
-('Fraud'),
-('Cybercrime'),
-('Murder'),
-('Accident'),
-('Kidnapping'),
-('Drug Offense'),
-('Domestic Violence'),
-('Robbery'),
-('Burglary'),
-('Extortion'),
-('Noise Complaint'),
-('Traffic Violation'),
-('Other');
+('Theft'), ('Assault'), ('Vandalism'), ('Fraud'), ('Cybercrime'), ('Murder'),
+('Accident'), ('Kidnapping'), ('Drug Offense'), ('Domestic Violence'), ('Robbery'),
+('Burglary'), ('Extortion'), ('Noise Complaint'), ('Traffic Violation'), ('Other');
 
 INSERT INTO Complaints (user_id, category_id, description, location, status, created_at)
 VALUES
@@ -222,7 +235,6 @@ VALUES
 (24, NULL, NULL, NULL, 'Low', 'Unassigned - forwarded to municipal corporation', '2026-04-01 16:15:00'),
 (25, 8, 7, 3, 'High', 'Brawl at pub - Detective Imran taking statements, volunteer assisting', '2026-04-02 00:10:00');
 
-
 INSERT INTO Dispatch (complaint_id, assigned_unit_id, status, eta)
 VALUES
 (2, 4, 'Dispatched', 10),
@@ -243,13 +255,7 @@ VALUES
 
 INSERT INTO VolunteerAssignments (volunteer_id, complaint_id)
 VALUES
-(1, 2),
-(2, 15),
-(2, 23),
-(2, 17),
-(3, 19),
-(3, 25),
-(2, 22);
+(1, 2), (2, 15), (2, 23), (2, 17), (3, 19), (3, 25), (2, 22);
 
 INSERT INTO Notifications (message, created_at) VALUES
 ('Trespassing in Samnabad reported. A patrol unit will be notified.', '2026-03-31 15:05:00'),
@@ -292,18 +298,8 @@ INSERT INTO Notifications (message, created_at) VALUES
 
 INSERT INTO Logs (user_id, action)
 VALUES
-(1, 'Created complaint'),
-(2, 'Updated case status'),
-(3, 'Viewed complaint details'),
-(6, 'Created complaint (Traffic Accident)'),
-(7, 'Created complaint (Missing Child)'),
-(8, 'Created complaint (Drug Offense)'),
-(9, 'Created complaint (Domestic Violence)'),
-(10, 'Created complaint (Robbery)'),
-(6, 'Created complaint (Burglary)'),
-(7, 'Created complaint (Extortion)'),
-(8, 'Updated complaint status (Noise Resolved)'),
-(9, 'Uploaded evidence for Missing Child'),
-(10, 'Viewed case details'),
-(6, 'Viewed case details'),
-(7, 'Registered as volunteer');
+(1, 'Created complaint'), (2, 'Updated case status'), (3, 'Viewed complaint details'), (6, 'Created complaint (Traffic Accident)'),
+(7, 'Created complaint (Missing Child)'), (8, 'Created complaint (Drug Offense)'), (9, 'Created complaint (Domestic Violence)'),
+(10, 'Created complaint (Robbery)'), (6, 'Created complaint (Burglary)'), (7, 'Created complaint (Extortion)'),
+(8, 'Updated complaint status (Noise Resolved)'), (9, 'Uploaded evidence for Missing Child'), (10, 'Viewed case details'),
+(6, 'Viewed case details'), (7, 'Registered as volunteer');

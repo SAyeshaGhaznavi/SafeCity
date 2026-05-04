@@ -17,6 +17,7 @@
       --green:#00e5a0;
       --border:rgba(0,200,255,0.15);
       --card:rgba(255,255,255,0.04);
+      --volunteer: #f59e0b; /* Amber for volunteers */
     }
 
     html, body {
@@ -93,24 +94,25 @@
     .c-green .stat-num{color:var(--green)}
     .stat-lbl{font-size:clamp(0.58rem, 1vw, 0.75rem);color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:clamp(3px, 0.5vh, 6px)}
 
-    /* ACTION BUTTONS */
-    .action-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:clamp(10px, 1.5vw, 20px);margin-bottom:0}
-    /* ✅ FIXED: Removed overflow:hidden so badge isn't clipped */
-    .action-btn{padding:clamp(14px, 2vh, 22px) clamp(16px, 2vw, 24px);border:none;border-radius:clamp(12px, 1.5vw, 16px);font-size:clamp(0.82rem, 1.3vw, 1.05rem);font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:clamp(8px, 1vw, 12px);transition:all .25s;text-decoration:none;font-family:'DM Sans',sans-serif;position:relative}
-    /* ✅ FIXED: Added top border-radius to the line so it doesn't poke out square */
+    /* ACTION BUTTONS - Updated to 4 columns */
+    .action-grid{display:grid;grid-template-columns: repeat(4, 1fr); gap:clamp(10px, 1.5vw, 20px);margin-bottom:0}
+    @media(max-width: 1024px) { .action-grid{grid-template-columns: 1fr 1fr; } }
+    @media(max-width: 600px) { .action-grid{grid-template-columns: 1fr; } }
+
+    .action-btn{padding:clamp(14px, 2vh, 22px) clamp(16px, 2vw, 24px);border:none;border-radius:clamp(12px, 1.5vw, 16px);font-size:clamp(0.75rem, 1.2vw, 0.95rem);font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:clamp(6px, 1vw, 10px);transition:all .25s;text-decoration:none;font-family:'DM Sans',sans-serif;position:relative;flex-direction:column; text-align:center}
     .action-btn::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:clamp(12px, 1.5vw, 16px) clamp(12px, 1.5vw, 16px) 0 0}
     .action-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.3)}
+
     .btn-officers{background:linear-gradient(135deg,var(--cyan),#0088ff);color:var(--navy);box-shadow:0 4px 15px rgba(0,200,255,0.2)}
     .btn-officers::before{background:linear-gradient(90deg,#fff,transparent)}
-    .btn-officers:hover{box-shadow:0 6px 25px rgba(0,200,255,0.3)}
     .btn-detectives{background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;box-shadow:0 4px 15px rgba(168,85,247,0.2)}
     .btn-detectives::before{background:linear-gradient(90deg,#fff,transparent)}
-    .btn-detectives:hover{box-shadow:0 6px 25px rgba(168,85,247,0.3)}
+    .btn-volunteers{background:linear-gradient(135deg,var(--volunteer),#d97706);color:#fff;box-shadow:0 4px 15px rgba(245,158,11,0.2)}
+    .btn-volunteers::before{background:linear-gradient(90deg,#fff,transparent)}
     .btn-stats{background:linear-gradient(135deg,var(--yellow),#f59e0b);color:var(--navy);box-shadow:0 4px 15px rgba(255,184,48,0.2)}
     .btn-stats::before{background:linear-gradient(90deg,#fff,transparent)}
-    .btn-stats:hover{box-shadow:0 6px 25px rgba(255,184,48,0.3)}
-    /* ✅ FIXED: Increased size slightly so numbers don't feel squeezed */
-    .action-badge{position:absolute;top:-8px;right:-8px;background:var(--red);color:#fff;font-size:0.72rem;font-weight:800;min-width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2.5px solid var(--navy);padding:0 4px}
+
+    .action-badge{position:absolute;top:-8px;right:-8px;background:var(--red);color:#fff;font-size:0.65rem;font-weight:800;min-width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2.5px solid var(--navy);padding:0 4px}
 
     /* SECTION CARDS */
     .section-card{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:20px;padding:clamp(18px, 2.5vh, 28px);display:flex;flex-direction:column}
@@ -195,53 +197,10 @@
     .assign-btn:hover{background:rgba(0,200,255,0.2);border-color:var(--cyan);transform:translateY(-1px)}
     .assign-btn-purple{background:rgba(168,85,247,0.1);border-color:rgba(168,85,247,0.25);color:#a855f7}
     .assign-btn-purple:hover{background:rgba(168,85,247,0.2);border-color:#a855f7}
+    .assign-btn-amber{background:rgba(245,158,11,0.1);border-color:rgba(245,158,11,0.25);color:var(--volunteer)}
+    .assign-btn-amber:hover{background:rgba(245,158,11,0.2);border-color:var(--volunteer)}
 
     @keyframes badgePulse{0%,100%{opacity:1}50%{opacity:.6}}
-
-    /* RESPONSIVE */
-    @media(max-width:1024px){
-      .dashboard-grid{grid-template-columns:1fr;gap:24px}
-      .action-grid{grid-template-columns:1fr 1fr}
-    }
-    @media(max-width:768px){
-      .logo{font-size:1.3rem}
-      .officer-avatar{width:38px;height:38px;font-size:0.85rem}
-      .logout-link{padding:6px 12px;font-size:0.72rem}
-      .page-title{font-size:2rem}
-      .action-grid{gap:14px}
-      .action-btn{padding:16px 20px;font-size:1rem}
-      .section-card{padding:20px 16px}
-      .section-title{font-size:1.2rem}
-      .modal-box{max-height:90vh;border-radius:18px}
-      .modal-header{padding:18px 20px}
-      .modal-title{font-size:1.3rem}
-      .modal-body{padding:18px 20px}
-    }
-    @media(max-width:480px){
-      .logo{font-size:1.1rem;letter-spacing:3px}
-      .online-badge{display:none}
-      .page-title{font-size:1.7rem}
-      .action-grid{grid-template-columns:1fr;gap:12px}
-      .action-btn{padding:14px 18px;font-size:0.95rem}
-      .section-card{padding:16px 12px}
-      .section-title{font-size:1.1rem}
-      .data-table{font-size:0.78rem}
-      .data-table th,.data-table td{padding:8px 10px}
-      .notif-card{padding:12px;gap:10px}
-      .notif-icon{width:36px;height:36px;font-size:1rem}
-      .modal-box{border-radius:14px}
-    }
-    @media(min-width:1200px){
-      .content{padding:clamp(20px, 3vh, 40px) clamp(24px, 4vw, 60px)}
-      .page-title{font-size:3rem}
-      .section-card{padding:32px}
-    }
-    @media(max-height:700px){
-      .content{padding:16px 24px;gap:16px}
-      .section-card{padding:16px}
-      .page-title{font-size:2rem}
-      .modal-box{max-height:90vh}
-    }
   </style>
 </head>
 <body>
@@ -265,7 +224,7 @@
       </div>
       <div class="header-right">
         <div class="officer-avatar">{{ session.name[0] if session.name else 'A' }}</div>
-        <a href="/" class="logout-link">Logout</a>
+        <a href="/logout" class="logout-link">Logout</a>
       </div>
     </div>
 
@@ -297,22 +256,28 @@
           </div>
         </div>
 
-        <!-- ACTION BUTTONS -->
+        <!-- ACTION BUTTONS (Updated with Volunteer) -->
         <div class="action-grid">
           <button onclick="openModal('officerModal')" class="action-btn btn-officers">
-            👮 Cases Without Officers
+            <span>👮 Officers</span>
             {% if no_officer|length > 0 %}
               <span class="action-badge">{{ no_officer|length }}</span>
             {% endif %}
           </button>
           <button onclick="openModal('detectiveModal')" class="action-btn btn-detectives">
-            🔍 Cases Without Detectives
+            <span>🔍 Detectives</span>
             {% if no_detective|length > 0 %}
               <span class="action-badge">{{ no_detective|length }}</span>
             {% endif %}
           </button>
+          <button onclick="openModal('volunteerModal')" class="action-btn btn-volunteers">
+            <span>🤝 Volunteers</span>
+            {% if no_volunteer|length > 0 %}
+              <span class="action-badge">{{ no_volunteer|length }}</span>
+            {% endif %}
+          </button>
           <a href="/statistics_board" class="action-btn btn-stats">
-            📈 Statistics
+            <span>📈 Stats</span>
           </a>
         </div>
 
@@ -615,6 +580,65 @@
                 No detectives registered in the system
               {% else %}
                 All cases have detectives assigned
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== MODAL: ASSIGN VOLUNTEERS (NEW) ===== -->
+    <div class="modal-overlay" id="volunteerModal">
+      <div class="modal-box">
+        <div class="modal-header">
+          <div class="modal-title" style="color:var(--volunteer)">🤝 Assign Volunteers <span class="section-count">{{ no_volunteer|length }}</span></div>
+          <button class="modal-close" onclick="closeModal('volunteerModal')">✕</button>
+        </div>
+        <div class="modal-body">
+          {% if no_volunteer and volunteers %}
+            {% for c in no_volunteer %}
+            <div class="assign-card" style="border-color:rgba(245,158,11,0.25)">
+              <div class="assign-top">
+                <div class="assign-id">#{{ c['complaint_id'] }}</div>
+                <div class="assign-pills">
+                  {% if c['status'] == 'Pending' %}
+                    <span class="sp sp-new">Pending</span>
+                  {% else %}
+                    <span class="sp sp-progress">In Progress</span>
+                  {% endif %}
+                  {% if c['priority'] == 'High' %}
+                    <span class="pr pr-high">● High</span>
+                  {% elif c['priority'] == 'Medium' %}
+                    <span class="pr pr-med">● Med</span>
+                  {% else %}
+                    <span class="pr pr-low">● Low</span>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="assign-info">
+                <span>📍 {{ c['location'] }}</span>
+                {% if c['officer_name'] %}
+                <span>👮 {{ c['officer_name'] }}</span>
+                {% endif %}
+              </div>
+              <form method="POST" action="/admin_assign_volunteer/{{ c['complaint_id'] }}" class="assign-row">
+                <select name="volunteer_id" class="assign-select" required>
+                  <option value="">Select Volunteer</option>
+                  {% for v in volunteers %}
+                  <option value="{{ v['personnel_id'] }}">{{ v['name'] }} — {{ v['badge_number'] }}</option>
+                  {% endfor %}
+                </select>
+                <button type="submit" class="assign-btn assign-btn-amber">Assign</button>
+              </form>
+            </div>
+            {% endfor %}
+          {% else %}
+            <div class="empty-state">
+              <div class="empty-icon">✅</div>
+              {% if not volunteers %}
+                No volunteers registered in the system
+              {% else %}
+                All active cases have volunteers assigned
               {% endif %}
             </div>
           {% endif %}
