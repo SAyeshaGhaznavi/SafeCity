@@ -1771,5 +1771,30 @@ with app.app_context():
         print(f"DB Init Note: {e} ")
 
 
+@app.route('/dispatch/active')
+def active_dispatches_list():
+    if session.get('role') not in ('Operator', 'Admin'):
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+
+    # Query REAL dispatch data from the database
+    dispatches = conn.execute("""
+        SELECT d.dispatch_id, d.assigned_unit_id, d.status, d.eta, d.created_at,
+               ap.name as unit_name, ap.badge_number as unit_badge, ap.type as unit_type,
+               c.complaint_id, c.location, cs.priority, cc.name as category
+        FROM Dispatch d
+        JOIN AuthorizedPersonnel ap ON d.assigned_unit_id = ap.personnel_id
+        JOIN Complaints c ON d.complaint_id = c.complaint_id
+        JOIN Cases cs ON c.complaint_id = cs.complaint_id
+        JOIN CrimeCategories cc ON c.category_id = cc.category_id
+        WHERE d.status != 'Completed'
+        ORDER BY d.created_at DESC
+    """).fetchall()
+
+    conn.close()
+
+    return render_template('active_dispatches.html', dispatches=dispatches)
+
 if __name__ == '__main__':
     app.run(debug=True)

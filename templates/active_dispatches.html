@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <title>SafeCity – Active Dispatch Monitor</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --navy:#0a0f1e;
+      --cyan:#00c8ff;
+      --white:#f0f4ff;
+      --muted:#7a8db0;
+      --red:#ff4e6a;
+      --yellow:#ffb830;
+      --green:#00e5a0;
+      --border:rgba(0,200,255,0.15);
+      --card:rgba(255,255,255,0.04);
+    }
+
+    html, body {
+      height:100vh;width:100vw;
+      background:var(--navy);
+      font-family:'DM Sans',sans-serif;
+      margin:0;padding:0;
+      color:var(--white);overflow:hidden;
+    }
+    body{display:flex;align-items:stretch;justify-content:stretch}
+
+    .app-container {
+      width:100vw;height:100vh;background:var(--navy);overflow:hidden;
+      display:flex;flex-direction:column;position:relative;
+      background-image:linear-gradient(rgba(0,200,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,255,0.025) 1px,transparent 1px);
+      background-size:50px 50px;
+    }
+
+    /* HEADER */
+    .header{
+      padding:clamp(14px, 2vh, 24px) clamp(16px, 3vw, 40px);
+      border-bottom:1.5px solid var(--border);
+      display:flex;align-items:center;justify-content:space-between;
+      flex-shrink:0;background:rgba(10,15,30,0.95);backdrop-filter:blur(10px);
+    }
+    .header-left{display:flex;align-items:center;gap:clamp(10px, 1.5vw, 16px)}
+    .logo{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.1rem, 2.5vw, 1.8rem);letter-spacing:clamp(3px, 0.5vw, 5px)}
+    .logo span{color:var(--cyan)}
+    .header-right{display:flex;align-items:center;gap:clamp(8px, 1.5vw, 16px)}
+    .back-btn{font-size:clamp(0.65rem, 1vw, 0.8rem);color:var(--muted);text-decoration:none;border:1.5px solid var(--border);padding:clamp(4px, 0.8vh, 8px) clamp(8px, 1.5vw, 16px);border-radius:clamp(5px, 0.8vw, 8px);transition:all .2s;font-weight:600}
+    .back-btn:hover{color:var(--white);border-color:var(--white)}
+
+    /* CONTENT */
+    .app-content{flex:1;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;scrollbar-width:thin;scrollbar-color:rgba(0,200,255,0.2) transparent}
+    .app-content::-webkit-scrollbar{width:6px}
+    .app-content::-webkit-scrollbar-thumb{background:rgba(0,200,255,0.3);border-radius:3px}
+
+    .content{flex:1;padding:clamp(14px, 2.5vh, 32px) clamp(14px, 3vw, 40px);display:flex;flex-direction:column;gap:clamp(14px, 2vh, 24px);width:100%}
+
+    .page-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.5rem, 3vw, 2.5rem);letter-spacing:clamp(2px, 0.4vw, 3px)}
+    .page-sub{font-size:clamp(0.68rem, 1.1vw, 0.9rem);color:var(--muted);margin-top:4px}
+
+    /* TABLE */
+    .table-wrap{overflow-x:auto;overflow-y:auto;flex:1;max-height:600px;scrollbar-width:thin;scrollbar-color:rgba(0,200,255,0.15) transparent}
+    .table-wrap::-webkit-scrollbar{width:4px;height:4px}
+    .table-wrap::-webkit-scrollbar-thumb{background:rgba(0,200,255,0.2);border-radius:2px}
+    .data-table{width:100%;font-size:clamp(0.72rem, 1.1vw, 0.85rem);min-width:600px;border-collapse:collapse}
+    .data-table th{padding:clamp(8px, 1.5vh, 12px) clamp(12px, 1.5vw, 16px);color:var(--muted);text-transform:uppercase;letter-spacing:.8px;font-size:clamp(0.6rem, 0.9vw, 0.7rem);border-bottom:1.5px solid var(--border);text-align:left;font-weight:600;background:rgba(10,15,30,.5);position:sticky;top:0;z-index:2}
+    .data-table td{padding:clamp(9px, 1.5vh, 14px) clamp(12px, 1.5vw, 16px);border-bottom:1px solid rgba(0,200,255,0.05);vertical-align:middle}
+    .data-table tr:hover{background:rgba(0,200,255,0.03)}
+    .data-table tr:last-child td{border-bottom:none}
+    .td-id{color:var(--cyan);font-weight:700;white-space:nowrap}
+
+    /* BADGES */
+    .sp{font-size:clamp(0.6rem, 0.9vw, 0.65rem);font-weight:700;padding:clamp(3px, 0.5vh, 4px) clamp(7px, 1vw, 10px);border-radius:clamp(4px, 0.6vw, 6px);text-transform:uppercase;white-space:nowrap;letter-spacing:.5px;display:inline-block}
+    .sp-dispatched{background:rgba(78,168,255,0.2);color:#4ea8ff}
+    .sp-route{background:rgba(0,200,255,0.2);color:var(--cyan)}
+    .sp-arrived{background:rgba(0,229,160,0.15);color:var(--green)}
+
+    .pr{font-size:clamp(0.6rem, 0.9vw, 0.65rem);font-weight:700;padding:clamp(2px, 0.4vh, 3px) clamp(6px, 0.8vw, 8px);border-radius:5px;white-space:nowrap;display:inline-block}
+    .pr-high{color:var(--red);background:rgba(255,78,106,0.12)}
+    .pr-med{color:var(--yellow);background:rgba(255,184,48,0.12)}
+    .pr-low{color:var(--green);background:rgba(0,229,160,0.12)}
+
+    .empty-state{text-align:center;padding:clamp(20px, 3vh, 40px) clamp(12px, 2vw, 20px);font-size:clamp(0.72rem, 1vw, 0.85rem);color:var(--muted);background:rgba(255,255,255,0.02);border-radius:12px}
+    .empty-icon{font-size:clamp(1.5rem, 3vw, 2.2rem);margin-bottom:8px;opacity:.5}
+
+    /* ACTION BUTTON */
+    .btn-update {
+        font-size:0.8rem;
+        padding:6px 12px;
+        background:var(--cyan);
+        color:var(--navy);
+        border:none;
+        border-radius:4px;
+        cursor:pointer;
+        font-weight:700;
+        text-decoration:none;
+    }
+    .btn-update:hover { opacity: 0.8; }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- HEADER -->
+    <div class="header">
+      <div class="header-left">
+        <div class="logo">ACTIVE <span>DISPATCHES</span></div>
+      </div>
+      <div class="header-right">
+        <a href="/operator_dashboard" class="back-btn">← Back to Dashboard</a>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="app-content">
+      <div class="content">
+        <div>
+          <div class="page-title">Active Dispatch Monitor</div>
+          <div class="page-sub">Live tracking of all active emergency units.</div>
+        </div>
+
+        {% if dispatches %}
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Unit</th>
+                <th>Type</th>
+                <th>Location</th>
+                <th>Priority</th>
+                <th>ETA</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for d in dispatches %}
+              <tr>
+                <td class="td-id">#{{ d['dispatch_id'] }}</td>
+                <td>{{ d['unit_name'] }} <span style="font-size:0.8rem; color:var(--muted)">({{ d['unit_badge'] }})</span></td>
+                <td>{{ d['unit_type'] }}</td>
+                <td style="color:var(--muted)">📍 {{ d['location'] }}</td>
+                <td>
+                  {% if d['priority'] == 'High' %}
+                    <span class="pr pr-high">● High</span>
+                  {% elif d['priority'] == 'Medium' %}
+                    <span class="pr pr-med">● Med</span>
+                  {% else %}
+                    <span class="pr pr-low">● Low</span>
+                  {% endif %}
+                </td>
+                <td style="color:var(--yellow)">{{ d['eta'] }} min</td>
+                <td>
+                  {% if d['status'] == 'Dispatched' %}
+                    <span class="sp sp-dispatched">Dispatched</span>
+                  {% elif d['status'] == 'On Route' %}
+                    <span class="sp sp-route">On Route</span>
+                  {% elif d['status'] == 'Arrived' %}
+                    <span class="sp sp-arrived">Arrived</span>
+                  {% endif %}
+                </td>
+                <td>
+                    <form action="/update_dispatch/{{ d['dispatch_id'] }}" method="POST" style="display:inline;">
+                        <select name="status" onchange="this.form.submit()" style="background:#0d1225; color:white; border:1px solid var(--border); padding:4px; border-radius:4px;">
+                            <option value="Dispatched" {% if d['status'] == 'Dispatched' %}selected{% endif %}>Dispatched</option>
+                            <option value="On Route" {% if d['status'] == 'On Route' %}selected{% endif %}>On Route</option>
+                            <option value="Arrived" {% if d['status'] == 'Arrived' %}selected{% endif %}>Arrived</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </form>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+          <div class="empty-icon">🏁</div>
+          No active dispatches at this time.
+        </div>
+        {% endif %}
+
+      </div>
+    </div>
+  </div>
+</body>
+</html>
